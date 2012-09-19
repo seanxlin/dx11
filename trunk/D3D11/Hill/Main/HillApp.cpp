@@ -5,9 +5,10 @@
 #include <DirectXMath.h>
 #include <vector>
 
+#include "HLSL/Vertex.h"
+
 #include <GeometryGenerator.h>
 #include <MathHelper.h>
-#include "HLSL/Vertex.h"
 
 namespace 
 {
@@ -21,12 +22,21 @@ namespace Framework
 {
     void HillApp::drawScene()
     {
+        // Update state
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::White));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        mImmediateContext->IASetInputLayout(mInputLayout);
+        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
-        //
+        const uint32_t stride = sizeof(Geometry::Vertex);
+        const uint32_t offset = 0;
+        mImmediateContext->IASetVertexBuffers(0, 1, &mGridVertexBuffer, &stride, &offset);
+        mImmediateContext->IASetIndexBuffer(mGridIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
+
+        ID3D11Buffer* constantBuffer = mPerFrameBuffer.buffer();
+        mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+
         // Update per frame buffer
-        //
         DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mWorld);
         DirectX::XMMATRIX view = DirectX::XMLoadFloat4x4(&mView);
         DirectX::XMMATRIX projection = DirectX::XMLoadFloat4x4(&mProjection);
@@ -37,20 +47,7 @@ namespace Framework
 
         mPerFrameBuffer.applyChanges(mImmediateContext);
 
-        //
-        // Update states
-        //
-        mImmediateContext->IASetInputLayout(mInputLayout);
-        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        const uint32_t stride = sizeof(Geometry::Vertex);
-        const uint32_t offset = 0;
-        mImmediateContext->IASetVertexBuffers(0, 1, &mBoxVertexBuffer, &stride, &offset);
-        mImmediateContext->IASetIndexBuffer(mBoxIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        ID3D11Buffer* constantBuffer = mPerFrameBuffer.buffer();
-        mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-                
-        // Draw box
+        // Draw grid        
         mImmediateContext->DrawIndexed(mGridIndexCount, 0, 0);
 
         const HRESULT result = mSwapChain->Present(0, 0);
@@ -75,8 +72,8 @@ namespace Framework
         else if( (btnState & MK_RBUTTON) != 0 )
         {
             // Make each pixel correspond to 0.2 unit in the scene.
-            const float dx = 0.2f*static_cast<float>(x - mLastMousePos.x);
-            const float dy = 0.2f*static_cast<float>(y - mLastMousePos.y);
+            const float dx = 0.2f * static_cast<float>(x - mLastMousePos.x);
+            const float dy = 0.2f * static_cast<float>(y - mLastMousePos.y);
 
             // Update the camera radius based on input.
             mRadius += dx - dy;
@@ -142,29 +139,30 @@ namespace Framework
             }
         }
 
-        D3D11_BUFFER_DESC vbd;
-        vbd.Usage = D3D11_USAGE_IMMUTABLE;
-        vbd.ByteWidth = sizeof(Geometry::Vertex) * grid.mVertices.size();
-        vbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        vbd.CPUAccessFlags = 0;
-        vbd.MiscFlags = 0;
-        D3D11_SUBRESOURCE_DATA vinitData;
-        vinitData.pSysMem = &vertices[0];
-        mDevice->CreateBuffer(&vbd, &vinitData, &mBoxVertexBuffer);
+        D3D11_BUFFER_DESC vertexBufferDesc;
+        vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+        vertexBufferDesc.ByteWidth = sizeof(Geometry::Vertex) * grid.mVertices.size();
+        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        vertexBufferDesc.CPUAccessFlags = 0;
+        vertexBufferDesc.MiscFlags = 0;
+
+        D3D11_SUBRESOURCE_DATA initData;
+        initData.pSysMem = &vertices[0];
+        mDevice->CreateBuffer(&vertexBufferDesc, &initData, &mGridVertexBuffer);
 
         //
         // Pack the indices of all the meshes into one index buffer.
         //
 
-        D3D11_BUFFER_DESC ibd;
-        ibd.Usage = D3D11_USAGE_IMMUTABLE;
-        ibd.ByteWidth = sizeof(uint32_t) * mGridIndexCount;
-        ibd.BindFlags = D3D11_BIND_INDEX_BUFFER;
-        ibd.CPUAccessFlags = 0;
-        ibd.MiscFlags = 0;
-        D3D11_SUBRESOURCE_DATA iinitData;
-        iinitData.pSysMem = &grid.mIndices[0];
-        mDevice->CreateBuffer(&ibd, &iinitData, &mBoxIndexBuffer);
+        D3D11_BUFFER_DESC indexBufferDesc;
+        indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
+        indexBufferDesc.ByteWidth = sizeof(uint32_t) * mGridIndexCount;
+        indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
+        indexBufferDesc.CPUAccessFlags = 0;
+        indexBufferDesc.MiscFlags = 0;
+
+        initData.pSysMem = &grid.mIndices[0];
+        mDevice->CreateBuffer(&indexBufferDesc, &initData, &mGridIndexBuffer);
     }
 
     void HillApp::buildShaders()

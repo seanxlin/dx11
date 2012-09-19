@@ -4,7 +4,7 @@
 #include <sstream>
 #include <WindowsX.h>
 
-#include "D3DErrorChecker.h"
+#include <D3DErrorChecker.h>
 
 namespace
 {

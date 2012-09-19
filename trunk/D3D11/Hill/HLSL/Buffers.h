@@ -4,7 +4,7 @@
 
 namespace Shaders
 {
-    struct PerFrameBuffer
+    struct PerObjectBuffer
     {
         DirectX::XMFLOAT4X4 mWorldViewProjectionTranspose;
     };
