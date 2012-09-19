@@ -5,19 +5,28 @@
 #include <DirectXMath.h>
 #include <vector>
 
-#include <MathHelper.h>
 #include "HLSL/Vertex.h"
+
+#include <MathHelper.h>
 
 namespace Framework
 {
     void BoxApp::drawScene()
     {
+        // Update state
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::White));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        mImmediateContext->IASetInputLayout(mInputLayout);
+        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        const uint32_t stride = sizeof(Geometry::Vertex);
+        const uint32_t offset = 0;
+        mImmediateContext->IASetVertexBuffers(0, 1, &mBoxVertexBuffer, &stride, &offset);
+        mImmediateContext->IASetIndexBuffer(mBoxIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-        //
+        ID3D11Buffer* constantBuffer = mPerFrameBuffer.buffer();
+        mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+
         // Update per frame buffer
-        //
         DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mWorld);
         DirectX::XMMATRIX view = DirectX::XMLoadFloat4x4(&mView);
         DirectX::XMMATRIX projection = DirectX::XMLoadFloat4x4(&mProjection);
@@ -28,27 +37,14 @@ namespace Framework
 
         mPerFrameBuffer.applyChanges(mImmediateContext);
 
-        //
-        // Update states
-        //
-        mImmediateContext->IASetInputLayout(mInputLayout);
-        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-        const uint32_t stride = sizeof(Geometry::Vertex);
-        const uint32_t offset = 0;
-        mImmediateContext->IASetVertexBuffers(0, 1, &mBoxVertexBuffer, &stride, &offset);
-        mImmediateContext->IASetIndexBuffer(mBoxIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
-        ID3D11Buffer* constantBuffer = mPerFrameBuffer.buffer();
-        mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
-                
-        // Draw box
+        // Draw box 
         mImmediateContext->DrawIndexed(36, 0, 0);
 
         const HRESULT result = mSwapChain->Present(0, 0);
         DebugUtils::ErrorChecker(result);
     }
 
-    void BoxApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
+    void BoxApp::onMouseMove(WPARAM btnState, const int32_t x, const int32_t y)
     {
         if((btnState & MK_LBUTTON) != 0)
         {

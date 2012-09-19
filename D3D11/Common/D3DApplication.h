@@ -1,11 +1,10 @@
 #pragma once
 
 #include <cstdint>
+#include <d3dx11.h>
 #include <string>
 
-#include <d3dx11.h>
-
-#include "Timer.h"
+#include <Timer.h>
 
 namespace Framework
 {
@@ -15,24 +14,15 @@ namespace Framework
         D3DApplication(HINSTANCE hInstance);
         virtual ~D3DApplication();
 
-        __forceinline HINSTANCE appInstance() const
-        {
-            return mAppInstance;
-        }
+        inline HINSTANCE appInstance() const;
 
-        __forceinline HWND mainWindow() const
-        {
-            return mMainWindow;
-        }
+        inline HWND mainWindow() const;
 
-        __forceinline float aspectRatio() const
-        {
-            return static_cast<float>(mClientWidth) / mClientHeight;
-        }
+        inline float aspectRatio() const;
 
         int run();
 
-        // Framework methods.  Derived client class overrides these methods to 
+        // Derived client class overrides these methods to 
         // implement specific application requirements.
         virtual bool init();
         virtual void onResize(); 
@@ -41,9 +31,9 @@ namespace Framework
         virtual LRESULT msgProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
         // Convenience overrides for handling mouse input.
-        virtual void onMouseDown(WPARAM btnState, const int32_t x, const int32_t y) { }
-        virtual void onMouseUp(WPARAM btnState, const int32_t x, const int32_t y) { }
-        virtual void onMouseMove(WPARAM btnState, const int32_t x, const int32_t y) { }
+        virtual void onMouseDown(WPARAM btnState, const int32_t x, const int32_t y) = 0;
+        virtual void onMouseUp(WPARAM btnState, const int32_t x, const int32_t y) = 0;
+        virtual void onMouseMove(WPARAM btnState, const int32_t x, const int32_t y) = 0;
 
     protected:
         bool initMainWindow();
@@ -77,4 +67,19 @@ namespace Framework
         bool mIsResizing;
         bool mEnable4xMsaa;
     };
+
+    inline HINSTANCE D3DApplication::appInstance() const
+    {
+        return mAppInstance;
+    }
+
+    inline HWND D3DApplication::mainWindow() const
+    {
+        return mMainWindow;
+    }
+
+    inline float D3DApplication::aspectRatio() const
+    {
+        return static_cast<float>(mClientWidth) / mClientHeight;
+    }
 }

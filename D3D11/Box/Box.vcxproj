@@ -71,7 +71,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>D:\Nikko\Programming\D3D11_SVN\D3D11\Box;$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory);$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
     <LibraryPath>$(D3D11_SDK)\Lib\x64;$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
@@ -81,7 +81,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>D:\Nikko\Programming\D3D11_SVN\D3D11\Box;$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
+    <IncludePath>$(MSBuildProjectDirectory);$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
     <LibraryPath>$(D3D11_SDK)\Lib\x64;$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
   </PropertyGroup>

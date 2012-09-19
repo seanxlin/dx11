@@ -1,15 +1,3 @@
-//***************************************************************************************
-// Defines a static class for procedurally generating the geometry of 
-// common mathematical objects.
-//
-// All triangles are generated "outward" facing.  If you want "inward" 
-// facing triangles (for example, if you want to place the camera inside
-// a sphere to simulate a sky), you will need to:
-//   1. Change the Direct3D cull mode or manually reverse the winding order.
-//   2. Invert the normal.
-//   3. Update the texture coordinates and tangent vectors.
-//***************************************************************************************
-
 #include "GeometryGenerator.h"
 
 #include <DirectXMath.h>
@@ -112,45 +100,45 @@ namespace Geometry
 
 	    meshData.mVertices.push_back(topVertex);
 
-	    const float phiStep   = DirectX::XM_PI / stackCount;
+	    const float phiStep = DirectX::XM_PI / stackCount;
 	    const float thetaStep = 2.0f * DirectX::XM_PI / sliceCount;
 
         {
-        	    // Compute vertices for each stack ring (do not count the poles as rings).
-        DirectX::XMVECTOR tangentU;
-        DirectX::XMVECTOR position;
-	    for(uint32_t i = 1; i <= stackCount - 1; ++i)
-	    {
-		    const float phi = i * phiStep;
+            // Compute vertices for each stack ring (do not count the poles as rings).
+            DirectX::XMVECTOR tangentU;
+            DirectX::XMVECTOR position;
+            for(size_t i = 1; i <= stackCount - 1; ++i)
+            {
+                const float phi = i * phiStep;
 
-		    // Vertices of ring.
-		    Vertex vertex;		
-		    for(uint32_t j = 0; j <= sliceCount; ++j)
-		    {
-			    const float theta = j * thetaStep;
+                // Vertices of ring.
+                Vertex vertex;		
+                for(size_t j = 0; j <= sliceCount; ++j)
+                {
+                    const float theta = j * thetaStep;
 
-			    // spherical to cartesian
-			    vertex.mPosition.x = radius * sinf(phi) * cosf(theta);
-			    vertex.mPosition.y = radius * cosf(phi);
-			    vertex.mPosition.z = radius * sinf(phi) * sinf(theta);
+                    // spherical to cartesian
+                    vertex.mPosition.x = radius * sinf(phi) * cosf(theta);
+                    vertex.mPosition.y = radius * cosf(phi);
+                    vertex.mPosition.z = radius * sinf(phi) * sinf(theta);
 
-			    // Partial derivative of P with respect to theta
-			    vertex.mTangentU.x = -radius * sinf(phi) * sinf(theta);
-			    vertex.mTangentU.y = 0.0f;
-			    vertex.mTangentU.z = +radius * sinf(phi) * cosf(theta);
+                    // Partial derivative of P with respect to theta
+                    vertex.mTangentU.x = -radius * sinf(phi) * sinf(theta);
+                    vertex.mTangentU.y = 0.0f;
+                    vertex.mTangentU.z = +radius * sinf(phi) * cosf(theta);
 
-			    tangentU = DirectX::XMLoadFloat3(&vertex.mTangentU);
-			    DirectX::XMStoreFloat3(&vertex.mTangentU, DirectX::XMVector3Normalize(tangentU));
+                    tangentU = DirectX::XMLoadFloat3(&vertex.mTangentU);
+                    DirectX::XMStoreFloat3(&vertex.mTangentU, DirectX::XMVector3Normalize(tangentU));
 
-			    position = DirectX::XMLoadFloat3(&vertex.mPosition);
-			    DirectX::XMStoreFloat3(&vertex.mNormal, DirectX::XMVector3Normalize(position));
+                    position = DirectX::XMLoadFloat3(&vertex.mPosition);
+                    DirectX::XMStoreFloat3(&vertex.mNormal, DirectX::XMVector3Normalize(position));
 
-			    vertex.mTexCoord.x = theta / DirectX::XM_2PI;
-			    vertex.mTexCoord.y = phi / DirectX::XM_PI;
+                    vertex.mTexCoord.x = theta / DirectX::XM_2PI;
+                    vertex.mTexCoord.y = phi / DirectX::XM_PI;
 
-			    meshData.mVertices.push_back(vertex);
-		    }
-	    }
+                    meshData.mVertices.push_back(vertex);
+                }
+            }
         }
 
         meshData.mVertices.push_back(bottomVertex);
@@ -300,13 +288,13 @@ namespace Geometry
 	    meshData.mVertices.resize(12);
 	    meshData.mIndices.resize(60);
 
-	    for(uint32_t i = 0; i < 12; ++i)
+	    for(size_t i = 0; i < 12; ++i)
 		    meshData.mVertices[i].mPosition = positions[i];
 
-	    for(uint32_t i = 0; i < 60; ++i)
+	    for(size_t i = 0; i < 60; ++i)
 		    meshData.mIndices[i] = indices[i];
 
-	    for(uint32_t i = 0; i < numSubdivisions; ++i)
+	    for(size_t i = 0; i < numSubdivisions; ++i)
 		    subdivide(meshData);
 
         {
@@ -315,7 +303,7 @@ namespace Geometry
             DirectX::XMVECTOR position;
             DirectX::XMVECTOR tangentU;
             DirectX::XMFLOAT3A normalAux;
-	        for(uint32_t i = 0; i < meshData.mVertices.size(); ++i)
+	        for(size_t i = 0; i < meshData.mVertices.size(); ++i)
 	        {
 		        // Project onto unit sphere.
 		        normal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&meshData.mVertices[i].mPosition));
@@ -372,14 +360,14 @@ namespace Geometry
 		    DirectX::XMVECTOR biTangentU;
 		    DirectX::XMVECTOR normal;
 		    DirectX::XMFLOAT3 bitangent;
-		    for(uint32_t i = 0; i < ringCount; ++i)
+		    for(size_t i = 0; i < ringCount; ++i)
 		    {
 			    const float y = -0.5f * height + i * stackHeight;
 			    const float r = bottomRadius + i * radiusStep;
 	
 			    // vertices of ring
 			    const float dTheta = 2.0f * DirectX::XM_PI / sliceCount;		
-			    for(uint32_t j = 0; j <= sliceCount; ++j)
+			    for(size_t j = 0; j <= sliceCount; ++j)
 			    {
 				    const float c = cosf(j * dTheta);
 				    const float s = sinf(j * dTheta);
@@ -457,7 +445,7 @@ namespace Geometry
 	    const float dTheta = 2.0f * DirectX::XM_PI / sliceCount;
 
 	    // Duplicate cap ring vertices because the texture coordinates and normals differ.
-	    for(uint32_t i = 0; i <= sliceCount; ++i)
+	    for(size_t i = 0; i <= sliceCount; ++i)
 	    {
 		    const float x = topRadius * cosf(i * dTheta);
 		    const float z = topRadius * sinf(i * dTheta);
@@ -536,10 +524,10 @@ namespace Geometry
 	    const float dv = 1.0f / (numRows - 1);
 
 	    meshData.mVertices.resize(vertexCount);
-	    for(uint32_t i = 0; i < numRows; ++i)
+	    for(size_t i = 0; i < numRows; ++i)
 	    {
 		    const float z = halfDepth - i * dz;
-		    for(uint32_t j = 0; j < numColumns; ++j)
+		    for(size_t j = 0; j < numColumns; ++j)
 		    {
 			    const float x = -halfWidth + j * dx;
 
