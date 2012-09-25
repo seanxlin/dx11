@@ -317,7 +317,7 @@ namespace Geometry
 		        DirectX::XMStoreFloat3(&meshData.mVertices[i].mPosition, position);
 
 		        // Derive texture coordinates from spherical coordinates.
-		        const float theta = MathUtils::angleFromXY(
+		        const float theta = Utils::MathHelper::angleFromXY(
 			        meshData.mVertices[i].mPosition.x, 
 			        meshData.mVertices[i].mPosition.z);
 

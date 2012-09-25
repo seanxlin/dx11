@@ -48,7 +48,7 @@ namespace Framework
         mPerFrameBuffer.applyChanges(mImmediateContext);
 
         // Draw grid        
-        mImmediateContext->DrawIndexed(mGridIndexCount, 0, 0);
+        mImmediateContext->DrawIndexed(static_cast<uint32_t> (mGridIndexCount), 0, 0);
 
         const HRESULT result = mSwapChain->Present(0, 0);
         DebugUtils::ErrorChecker(result);
@@ -67,7 +67,7 @@ namespace Framework
             mPhi += dy;
 
             // Restrict the angle mPhi.
-            mPhi = MathUtils::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
+            mPhi = Utils::MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
         }
         else if( (btnState & MK_RBUTTON) != 0 )
         {
@@ -79,7 +79,7 @@ namespace Framework
             mRadius += dx - dy;
 
             // Restrict the radius.
-            mRadius = MathUtils::clamp(mRadius, 50.0f, 500.0f);
+            mRadius = Utils::MathHelper::clamp(mRadius, 50.0f, 500.0f);
         }
 
         mLastMousePos.x = x;
@@ -89,10 +89,7 @@ namespace Framework
     void HillApp::buildGeometryBuffers()
     {
         Geometry::GeometryGenerator::MeshData grid;
-
-        Geometry::GeometryGenerator geoGen;
-
-        geoGen.createGrid(160.0f, 160.0f, 50, 50, grid);
+        Geometry::GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
 
         mGridIndexCount = grid.mIndices.size();
 
@@ -141,7 +138,7 @@ namespace Framework
 
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        vertexBufferDesc.ByteWidth = sizeof(Geometry::Vertex) * grid.mVertices.size();
+        vertexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(Geometry::Vertex) * grid.mVertices.size());
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;
@@ -156,7 +153,7 @@ namespace Framework
 
         D3D11_BUFFER_DESC indexBufferDesc;
         indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        indexBufferDesc.ByteWidth = sizeof(uint32_t) * mGridIndexCount;
+        indexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(uint32_t) * mGridIndexCount);
         indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         indexBufferDesc.CPUAccessFlags = 0;
         indexBufferDesc.MiscFlags = 0;

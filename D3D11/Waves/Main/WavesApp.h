@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
-// Demonstrates rendering some shapes.
+// Demostrates rendering of a land and waves. The land has color
+// and the waves will be drawn in wireframe mode.
 //
 // Controls:
 //		Hold the left mouse button down and move the mouse to rotate.
@@ -12,26 +13,28 @@
 #include <DirectXMath.h>
 #include <vector>
 
+#include "Waves/Waves.h"
 #include "HLSL/Buffers.h"
 
 #include <ConstantBuffer.h>
 #include <D3DApplication.h>
 #include <D3DErrorChecker.h>
+#include <MathHelper.h>
 
 namespace Framework
 {
-    class ShapesApp : public D3DApplication
+    class WavesApp : public D3DApplication
     {
     public:
-        inline ShapesApp(HINSTANCE hInstance);
+        inline WavesApp(HINSTANCE hInstance);
 
-        inline ~ShapesApp();
+        inline ~WavesApp();
 
         inline bool init();
 
         inline void onResize();
 
-        inline void updateScene(const float dt);
+        void updateScene(const float dt);
 
         void drawScene(); 
 
@@ -43,6 +46,7 @@ namespace Framework
 
     private:
         void buildGeometryBuffers();
+        
         void buildShaders();
 
         inline void buildVertexLayout(std::vector<char>& compiledShader);
@@ -50,7 +54,10 @@ namespace Framework
         inline void buildRasterizerState();
 
     private:
-        ID3D11Buffer* mVertexBuffer;
+        Geometry::Waves mWaves;
+
+        ID3D11Buffer* mLandVertexBuffer;
+        ID3D11Buffer* mWavesVertexBuffer;
         ID3D11Buffer* mIndexBuffer;
 
         ID3D11VertexShader* mVertexShader;
@@ -63,30 +70,18 @@ namespace Framework
         ID3D11RasterizerState* mWireframeRS;
 
         // Define transformations from local spaces to world space.
-        DirectX::XMFLOAT4X4 mSphereWorld[10];
-        DirectX::XMFLOAT4X4 mCylWorld[10];
-        DirectX::XMFLOAT4X4 mBoxWorld;
-        DirectX::XMFLOAT4X4 mGridWorld;
-        DirectX::XMFLOAT4X4 mCenterSphere;
+        DirectX::XMFLOAT4X4 mLandWorld;
+        DirectX::XMFLOAT4X4 mWavesWorld;
 
         DirectX::XMFLOAT4X4 mView;
         DirectX::XMFLOAT4X4 mProjection;
 
-        uint32_t mBoxVertexOffset;
-        uint32_t mGridVertexOffset;
-        uint32_t mSphereVertexOffset;
-        uint32_t mCylinderVertexOffset;
-
-        uint32_t mBoxIndexOffset;
-        uint32_t mGridIndexOffset;
-        uint32_t mSphereIndexOffset;
-        uint32_t mCylinderIndexOffset;
-
-        uint32_t mBoxIndexCount;
-        uint32_t mGridIndexCount;
-        uint32_t mSphereIndexCount;
-        uint32_t mCylinderIndexCount;
-
+        uint32_t mLandIndexOffset;
+        uint32_t mWavesIndexOffset;
+        
+        uint32_t mLandIndexCount;
+        uint32_t mWavesIndexCount;
+        
         float mTheta;
         float mPhi;
         float mRadius;
@@ -94,61 +89,39 @@ namespace Framework
         POINT mLastMousePos;
     };     
 
-    inline ShapesApp::ShapesApp(HINSTANCE hInstance)
+    inline WavesApp::WavesApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
-        , mVertexBuffer(nullptr)
+        , mLandVertexBuffer(nullptr)
+        , mWavesVertexBuffer(nullptr)
         , mIndexBuffer(nullptr)
         , mVertexShader(nullptr)
         , mPixelShader(nullptr)
         , mInputLayout(nullptr)
         , mWireframeRS(nullptr)
-        , mBoxVertexOffset(0)
-        , mGridVertexOffset(0)
-        , mSphereVertexOffset(0)
-        , mCylinderVertexOffset(0)
-        , mBoxIndexOffset(0)
-        , mGridIndexOffset(0)            
-        , mSphereIndexOffset(0)
-        , mCylinderIndexOffset(0)
-        , mBoxIndexCount(0)
-        , mGridIndexCount(0)
-        , mSphereIndexCount(0)
-        , mCylinderIndexCount(0)
+        , mLandIndexOffset(0)
+        , mWavesIndexOffset(0)            
+        , mLandIndexCount(0)
+        , mWavesIndexCount(0)
         , mTheta(1.5f * DirectX::XM_PI)
         , mPhi(0.25f * DirectX::XM_PI)
         , mRadius(5.0f)
     {
-        mMainWindowCaption = L"Shapes Demo";
+        mMainWindowCaption = L"Waves Demo";
 
         mLastMousePos.x = 0;
         mLastMousePos.y = 0;
 
         DirectX::XMMATRIX I = DirectX::XMMatrixIdentity();
-        DirectX::XMStoreFloat4x4(&mGridWorld, I);
+        DirectX::XMStoreFloat4x4(&mLandWorld, I);
+        DirectX::XMStoreFloat4x4(&mWavesWorld, I);
         DirectX::XMStoreFloat4x4(&mView, I);
-        DirectX::XMStoreFloat4x4(&mProjection, I);
-
-        DirectX::XMMATRIX boxScale = DirectX::XMMatrixScaling(2.0f, 1.0f, 2.0f);
-        DirectX::XMMATRIX boxOffset = DirectX::XMMatrixTranslation(0.0f, 0.5f, 0.0f);
-        XMStoreFloat4x4(&mBoxWorld, DirectX::XMMatrixMultiply(boxScale, boxOffset));
-
-        DirectX::XMMATRIX centerSphereScale = DirectX::XMMatrixScaling(2.0f, 2.0f, 2.0f);
-        DirectX::XMMATRIX centerSphereOffset = DirectX::XMMatrixTranslation(0.0f, 2.0f, 0.0f);
-        XMStoreFloat4x4(&mCenterSphere, DirectX::XMMatrixMultiply(centerSphereScale, centerSphereOffset));
-
-        for(size_t i = 0; i < 5; ++i)
-        {
-            DirectX::XMStoreFloat4x4(&mCylWorld[i * 2 + 0], DirectX::XMMatrixTranslation(-5.0f, 1.5f, -10.0f + i * 5.0f));
-            DirectX::XMStoreFloat4x4(&mCylWorld[i * 2 + 1], DirectX::XMMatrixTranslation(+5.0f, 1.5f, -10.0f + i * 5.0f));
-
-            DirectX::XMStoreFloat4x4(&mSphereWorld[i * 2 + 0], DirectX::XMMatrixTranslation(-5.0f, 3.5f, -10.0f + i * 5.0f));
-            DirectX::XMStoreFloat4x4(&mSphereWorld[i * 2 + 1], DirectX::XMMatrixTranslation(+5.0f, 3.5f, -10.0f + i * 5.0f));
-        }
+        DirectX::XMStoreFloat4x4(&mProjection, I);        
     }
 
-    inline ShapesApp::~ShapesApp()
+    inline WavesApp::~WavesApp()
     {
-        mVertexBuffer->Release();
+        mLandVertexBuffer->Release();
+        mWavesVertexBuffer->Release();
         mIndexBuffer->Release();
         mVertexShader->Release();
         mPixelShader->Release();
@@ -156,10 +129,12 @@ namespace Framework
         mWireframeRS->Release();
     }
 
-    inline bool ShapesApp::init()
+    inline bool WavesApp::init()
     {
         if(!D3DApplication::init())
             return false;
+
+        mWaves.init(200, 200, 0.8f, 0.03f, 3.25f, 0.4f);
 
         buildGeometryBuffers();
         buildShaders();            
@@ -169,7 +144,7 @@ namespace Framework
         return true;
     }
 
-    inline void ShapesApp::onResize()
+    inline void WavesApp::onResize()
     {
         D3DApplication::onResize();
 
@@ -178,23 +153,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mProjection, P);
     }
 
-    inline void ShapesApp::updateScene(const float dt)
-    {
-        // Convert Spherical to Cartesian coordinates.
-        const float x = mRadius * sinf(mPhi) * cosf(mTheta);
-        const float z = mRadius * sinf(mPhi) * sinf(mTheta);
-        const float y = mRadius * cosf(mPhi);
-
-        // Build the view matrix.
-        DirectX::XMVECTOR pos = DirectX::XMVectorSet(x, y, z, 1.0f);
-        DirectX::XMVECTOR target = DirectX::XMVectorZero();
-        DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-        DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(pos, target, up);
-        XMStoreFloat4x4(&mView, viewMatrix);
-    }
-
-    inline void ShapesApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void WavesApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
     {
         mLastMousePos.x = x;
         mLastMousePos.y = y;
@@ -202,12 +161,12 @@ namespace Framework
         SetCapture(mMainWindow);
     }
 
-    inline void ShapesApp::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void WavesApp::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
     {
         ReleaseCapture();
-    }
+    }   
 
-    inline void ShapesApp::buildVertexLayout(std::vector<char>& compiledShader)
+    inline void WavesApp::buildVertexLayout(std::vector<char>& compiledShader)
     {
         // Create the vertex input layout.
         D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -223,7 +182,7 @@ namespace Framework
         DebugUtils::ErrorChecker(result);
     }
 
-    inline void ShapesApp::buildRasterizerState()
+    inline void WavesApp::buildRasterizerState()
     {
         D3D11_RASTERIZER_DESC wireframeDesc;
         ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
