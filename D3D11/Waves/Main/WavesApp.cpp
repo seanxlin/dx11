@@ -263,7 +263,7 @@ namespace Framework
         // Create general index buffer (land + waves)
         //
 
-        // Pack the indices of all the meshes into one index buffer.
+        // Pack the indices of land and waves into one index buffer.
         const uint32_t totalIndexCount = mLandIndexCount + mWavesIndexCount;
         std::vector<uint32_t> indices;
         indices.resize(totalIndexCount);
