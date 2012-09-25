@@ -1,8 +1,8 @@
 #include "MathHelper.h"
 
-namespace MathUtils
+namespace Utils
 {
-    float angleFromXY(const float x, const float y)
+    float MathHelper::angleFromXY(const float x, const float y)
     {
         float theta = 0.0f;
 

@@ -96,7 +96,7 @@ namespace Framework
             mPhi += dy;
 
             // Restrict the angle mPhi.
-            mPhi = MathUtils::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
+            mPhi = Utils::MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
         }
         else if( (btnState & MK_RBUTTON) != 0 )
         {
@@ -108,7 +108,7 @@ namespace Framework
             mRadius += dx - dy;
 
             // Restrict the radius.
-            mRadius = MathUtils::clamp(mRadius, 3.0f, 200.0f);
+            mRadius = Utils::MathHelper::clamp(mRadius, 3.0f, 200.0f);
         }
 
         mLastMousePos.x = x;
@@ -122,23 +122,22 @@ namespace Framework
         Geometry::GeometryGenerator::MeshData sphere;
         Geometry::GeometryGenerator::MeshData cylinder;
 
-        Geometry::GeometryGenerator geoGen;
-        geoGen.createBox(1.0f, 1.0f, 1.0f, box);
-        geoGen.createGrid(20.0f, 30.0f, 60, 40, grid);
-        geoGen.createSphere(0.5f, 20, 20, sphere);
-        geoGen.createCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
+        Geometry::GeometryGenerator::createBox(1.0f, 1.0f, 1.0f, box);
+        Geometry::GeometryGenerator::createGrid(20.0f, 30.0f, 60, 40, grid);
+        Geometry::GeometryGenerator::createSphere(0.5f, 20, 20, sphere);
+        Geometry::GeometryGenerator::createCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
 
         // Cache the vertex offsets to each object in the concatenated vertex buffer.
         mBoxVertexOffset = 0;
-        mGridVertexOffset = box.mVertices.size();
-        mSphereVertexOffset = mGridVertexOffset + grid.mVertices.size();
-        mCylinderVertexOffset = mSphereVertexOffset + sphere.mVertices.size();
+        mGridVertexOffset = static_cast<uint32_t> (box.mVertices.size());
+        mSphereVertexOffset = mGridVertexOffset + static_cast<uint32_t> (grid.mVertices.size());
+        mCylinderVertexOffset = mSphereVertexOffset + static_cast<uint32_t> (sphere.mVertices.size());
 
         // Cache the index count of each object.
-        mBoxIndexCount = box.mIndices.size();
-        mGridIndexCount = grid.mIndices.size();
-        mSphereIndexCount = sphere.mIndices.size();
-        mCylinderIndexCount = cylinder.mIndices.size();
+        mBoxIndexCount = static_cast<uint32_t> (box.mIndices.size());
+        mGridIndexCount = static_cast<uint32_t> (grid.mIndices.size());
+        mSphereIndexCount = static_cast<uint32_t> (sphere.mIndices.size());
+        mCylinderIndexCount = static_cast<uint32_t> (cylinder.mIndices.size());
 
         // Cache the starting index for each object in the concatenated index buffer.
         mBoxIndexOffset = 0;
@@ -184,7 +183,7 @@ namespace Framework
 
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        vertexBufferDesc.ByteWidth = sizeof(Geometry::Vertex) * totalVertexCount;
+        vertexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(Geometry::Vertex) * totalVertexCount);
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;
@@ -202,7 +201,7 @@ namespace Framework
 
         D3D11_BUFFER_DESC indexBufferDesc;
         indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        indexBufferDesc.ByteWidth = sizeof(uint32_t) * totalIndexCount;
+        indexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(uint32_t) * totalIndexCount);
         indexBufferDesc.BindFlags = D3D11_BIND_INDEX_BUFFER;
         indexBufferDesc.CPUAccessFlags = 0;
         indexBufferDesc.MiscFlags = 0;

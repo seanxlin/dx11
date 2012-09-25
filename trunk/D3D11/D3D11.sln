@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Hill", "Hill\Hill.vcxproj",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Shapes", "Shapes\Shapes.vcxproj", "{97A38573-2B02-4FD8-8452-2494D5D5E78E}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Waves", "Waves\Waves.vcxproj", "{23CCB98A-F255-4773-A097-87F3CC27DE18}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -61,6 +63,16 @@ Global
 		{97A38573-2B02-4FD8-8452-2494D5D5E78E}.Release|Win32.ActiveCfg = Release|Win32
 		{97A38573-2B02-4FD8-8452-2494D5D5E78E}.Release|Win32.Build.0 = Release|Win32
 		{97A38573-2B02-4FD8-8452-2494D5D5E78E}.Release|x64.ActiveCfg = Release|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Debug|Mixed Platforms.ActiveCfg = Debug|x64
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Debug|Mixed Platforms.Build.0 = Debug|x64
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Debug|Win32.ActiveCfg = Debug|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Debug|Win32.Build.0 = Debug|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Debug|x64.ActiveCfg = Debug|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Release|Mixed Platforms.ActiveCfg = Release|x64
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Release|Mixed Platforms.Build.0 = Release|x64
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Release|Win32.ActiveCfg = Release|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Release|Win32.Build.0 = Release|Win32
+		{23CCB98A-F255-4773-A097-87F3CC27DE18}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
