@@ -19,9 +19,9 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{14D1831B-7303-4FDF-A787-E02B819E6C72}</ProjectGuid>
+    <ProjectGuid>{968F9610-A40B-4B79-B7C0-107AE85D6000}</ProjectGuid>
     <Keyword>Win32Proj</Keyword>
-    <RootNamespace>InitDirect3D</RootNamespace>
+    <RootNamespace>Lighting</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -71,18 +71,18 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IncludePath>$(MSBuildProjectDirectory);$(COMMON_SOURCE);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
     <IncludePath>$(MSBuildProjectDirectory);$(COMMON_SOURCE);$(IncludePath)</IncludePath>
     <LibraryPath>$(LibraryPath)</LibraryPath>
-    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -108,9 +108,12 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>d3d11.lib;d3dx11d.lib;D3DCompiler.lib;dxerr.lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)\HLSL\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -144,21 +147,44 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>d3d11.lib;d3dx11.lib;D3DCompiler.lib;dxerr.lib</AdditionalLibraryDirectories>
       <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)\HLSL\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="..\Common\D3DApplication.h" />
-    <ClInclude Include="..\Common\DxErrorChecker.h" />
-    <ClInclude Include="..\Common\Timer.h" />
-    <ClInclude Include="Main\InitD3DApp.h" />
-  </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\D3DApplication.cpp" />
     <ClCompile Include="..\Common\DxErrorChecker.cpp" />
+    <ClCompile Include="..\Common\GeometryGenerator.cpp" />
+    <ClCompile Include="..\Common\MathHelper.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="Main\main.cpp" />
+    <ClCompile Include="Main\LightingApp.cpp" />
+    <ClCompile Include="Waves\Waves.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Common\ConstantBuffer.h" />
+    <ClInclude Include="..\Common\D3DApplication.h" />
+    <ClInclude Include="..\Common\DxErrorChecker.h" />
+    <ClInclude Include="..\Common\GeometryGenerator.h" />
+    <ClInclude Include="..\Common\MathHelper.h" />
+    <ClInclude Include="..\Common\Timer.h" />
+    <ClInclude Include="HLSL\Buffers.h" />
+    <ClInclude Include="HLSL\Vertex.h" />
+    <ClInclude Include="Main\LightingApp.h" />
+    <ClInclude Include="Waves\Waves.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\PixelShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Pixel</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Pixel</ShaderType>
+    </FxCompile>
+    <FxCompile Include="HLSL\VertexShader.hlsl">
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
+      <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
+    </FxCompile>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

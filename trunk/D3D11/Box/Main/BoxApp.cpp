@@ -41,7 +41,7 @@ namespace Framework
         mImmediateContext->DrawIndexed(36, 0, 0);
 
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
     }
 
     void BoxApp::onMouseMove(WPARAM btnState, const int32_t x, const int32_t y)
@@ -109,7 +109,7 @@ namespace Framework
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = vertices;
         HRESULT result = mDevice->CreateBuffer(&bufferDescription, &initData, &mBoxVertexBuffer);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         // Create the index buffer
         uint16_t indices[] = {
@@ -147,7 +147,7 @@ namespace Framework
 
         initData.pSysMem = indices;
         result = mDevice->CreateBuffer(&bufferDescription, &initData, &mBoxIndexBuffer);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
     }
 
     void BoxApp::buildShaders()
@@ -167,7 +167,7 @@ namespace Framework
         buildVertexLayout(compiledShader);
 
         HRESULT result = mDevice->CreateVertexShader(&compiledShader[0], size, nullptr, &mVertexShader);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
         
         fin.open("HLSL/PixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -178,7 +178,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mPixelShader);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         // Bind shaders to the rendering pipeline
         mImmediateContext->VSSetShader(mVertexShader, nullptr, 0);

@@ -1,0 +1,79 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Main">
+      <UniqueIdentifier>{1405f6ba-4fb2-455a-8656-7f32da8ecec4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Waves">
+      <UniqueIdentifier>{db96ca67-dec6-46a8-95bf-9a7068828c21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Common">
+      <UniqueIdentifier>{23cce33d-6698-4640-a620-c34def87f5ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="HLSL">
+      <UniqueIdentifier>{397a3bf0-01a6-431f-a0c1-b2b9ee09bf79}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Waves\Waves.cpp">
+      <Filter>Waves</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\main.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\D3DApplication.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\GeometryGenerator.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\MathHelper.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\Timer.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\LightingApp.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\DxErrorChecker.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Waves\Waves.h">
+      <Filter>Waves</Filter>
+    </ClInclude>
+    <ClInclude Include="HLSL\Buffers.h">
+      <Filter>HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="HLSL\Vertex.h">
+      <Filter>HLSL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\ConstantBuffer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\D3DApplication.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\GeometryGenerator.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\MathHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\Timer.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\LightingApp.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\DxErrorChecker.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="HLSL\PixelShader.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\VertexShader.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

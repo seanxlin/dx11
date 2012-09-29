@@ -1,5 +1,6 @@
 //////////////////////////////////////////////////////////////////////////
-// Demonstrates rendering a colored box.
+// Demostrates rendering of a land and waves. The land has color
+// and the waves will be drawn in wireframe mode.
 //
 // Controls:
 //		Hold the left mouse button down and move the mouse to rotate.
@@ -12,26 +13,28 @@
 #include <DirectXMath.h>
 #include <vector>
 
+#include "Waves/Waves.h"
 #include "HLSL/Buffers.h"
 
 #include <ConstantBuffer.h>
 #include <D3DApplication.h>
 #include <DxErrorChecker.h>
+#include <MathHelper.h>
 
 namespace Framework
 {
-    class BoxApp : public D3DApplication
+    class LightingApp : public D3DApplication
     {
     public:
-        inline BoxApp(HINSTANCE hInstance);
+        inline LightingApp(HINSTANCE hInstance);
 
-        inline ~BoxApp();
+        inline ~LightingApp();
 
         inline bool init();
 
         inline void onResize();
 
-        inline void updateScene(const float dt);
+        void updateScene(const float dt);
 
         void drawScene(); 
 
@@ -43,76 +46,105 @@ namespace Framework
 
     private:
         void buildGeometryBuffers();
+        
         void buildShaders();
 
         inline void buildVertexLayout(std::vector<char>& compiledShader);
 
+        inline void buildRasterizerState();
+
     private:
-        ID3D11Buffer* mBoxVertexBuffer;
-        ID3D11Buffer* mBoxIndexBuffer;
+        Geometry::Waves mWaves;
+
+        ID3D11Buffer* mLandVertexBuffer;
+        ID3D11Buffer* mWavesVertexBuffer;
+        ID3D11Buffer* mIndexBuffer;
 
         ID3D11VertexShader* mVertexShader;
         ID3D11PixelShader* mPixelShader;
 
-        Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerFrameBuffer;
+        Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
 
         ID3D11InputLayout* mInputLayout;
+        
+        ID3D11RasterizerState* mWireframeRS;
 
-        DirectX::XMFLOAT4X4 mWorld;
+        // Define transformations from local spaces to world space.
+        DirectX::XMFLOAT4X4 mLandWorld;
+        DirectX::XMFLOAT4X4 mWavesWorld;
+
         DirectX::XMFLOAT4X4 mView;
         DirectX::XMFLOAT4X4 mProjection;
 
+        uint32_t mLandIndexOffset;
+        uint32_t mWavesIndexOffset;
+        
+        uint32_t mLandIndexCount;
+        uint32_t mWavesIndexCount;
+        
         float mTheta;
         float mPhi;
         float mRadius;
-
+        
         POINT mLastMousePos;
     };     
 
-    inline BoxApp::BoxApp(HINSTANCE hInstance)
+    inline LightingApp::LightingApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
-        , mBoxVertexBuffer(nullptr)
-        , mBoxIndexBuffer(nullptr)
+        , mLandVertexBuffer(nullptr)
+        , mWavesVertexBuffer(nullptr)
+        , mIndexBuffer(nullptr)
         , mVertexShader(nullptr)
         , mPixelShader(nullptr)
         , mInputLayout(nullptr)
+        , mWireframeRS(nullptr)
+        , mLandIndexOffset(0)
+        , mWavesIndexOffset(0)            
+        , mLandIndexCount(0)
+        , mWavesIndexCount(0)
         , mTheta(1.5f * DirectX::XM_PI)
         , mPhi(0.25f * DirectX::XM_PI)
         , mRadius(5.0f)
     {
-        mMainWindowCaption = L"Box Demo";
+        mMainWindowCaption = L"Waves Demo";
 
         mLastMousePos.x = 0;
         mLastMousePos.y = 0;
 
         DirectX::XMMATRIX I = DirectX::XMMatrixIdentity();
-        DirectX::XMStoreFloat4x4(&mWorld, I);
+        DirectX::XMStoreFloat4x4(&mLandWorld, I);
+        DirectX::XMStoreFloat4x4(&mWavesWorld, I);
         DirectX::XMStoreFloat4x4(&mView, I);
-        DirectX::XMStoreFloat4x4(&mProjection, I);
+        DirectX::XMStoreFloat4x4(&mProjection, I);        
     }
 
-    inline BoxApp::~BoxApp()
+    inline LightingApp::~LightingApp()
     {
-        mBoxVertexBuffer->Release();
-        mBoxIndexBuffer->Release();
+        mLandVertexBuffer->Release();
+        mWavesVertexBuffer->Release();
+        mIndexBuffer->Release();
         mVertexShader->Release();
         mPixelShader->Release();
         mInputLayout->Release();
+        mWireframeRS->Release();
     }
 
-    inline bool BoxApp::init()
+    inline bool LightingApp::init()
     {
         if(!D3DApplication::init())
             return false;
 
+        mWaves.init(200, 200, 0.8f, 0.03f, 3.25f, 0.4f);
+
         buildGeometryBuffers();
         buildShaders();            
-        mPerFrameBuffer.initialize(mDevice);
+        buildRasterizerState();
+        mPerObjectBuffer.initialize(mDevice);
 
         return true;
     }
 
-    inline void BoxApp::onResize()
+    inline void LightingApp::onResize()
     {
         D3DApplication::onResize();
 
@@ -121,23 +153,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mProjection, P);
     }
 
-    inline void BoxApp::updateScene(const float dt)
-    {
-        // Convert Spherical to Cartesian coordinates.
-        const float x = mRadius * sinf(mPhi) * cosf(mTheta);
-        const float z = mRadius * sinf(mPhi) * sinf(mTheta);
-        const float y = mRadius * cosf(mPhi);
-
-        // Build the view matrix.
-        DirectX::XMVECTOR pos = DirectX::XMVectorSet(x, y, z, 1.0f);
-        DirectX::XMVECTOR target = DirectX::XMVectorZero();
-        DirectX::XMVECTOR up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
-
-        DirectX::XMMATRIX viewMatrix = DirectX::XMMatrixLookAtLH(pos, target, up);
-        XMStoreFloat4x4(&mView, viewMatrix);
-    }
-
-    inline void BoxApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void LightingApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
     {
         mLastMousePos.x = x;
         mLastMousePos.y = y;
@@ -145,12 +161,12 @@ namespace Framework
         SetCapture(mMainWindow);
     }
 
-    inline void BoxApp::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void LightingApp::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
     {
         ReleaseCapture();
-    }
-    
-    inline void BoxApp::buildVertexLayout(std::vector<char>& compiledShader)
+    }   
+
+    inline void LightingApp::buildVertexLayout(std::vector<char>& compiledShader)
     {
         // Create the vertex input layout.
         D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
@@ -163,6 +179,19 @@ namespace Framework
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 2, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
+        DebugUtils::DxErrorChecker(result);
+    }
+
+    inline void LightingApp::buildRasterizerState()
+    {
+        D3D11_RASTERIZER_DESC wireframeDesc;
+        ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
+        wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
+        wireframeDesc.CullMode = D3D11_CULL_BACK;
+        wireframeDesc.FrontCounterClockwise = false;
+        wireframeDesc.DepthClipEnable = true;
+
+        HRESULT result = mDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
         DebugUtils::DxErrorChecker(result);
     }
 }

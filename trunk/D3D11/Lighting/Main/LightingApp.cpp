@@ -1,4 +1,4 @@
-#include "WavesApp.h"
+#include "LightingApp.h"
  
 #include <fstream>
 #include <DirectXColors.h>
@@ -21,7 +21,7 @@ namespace
 namespace Framework
 {
 
-    void WavesApp::updateScene(const float dt)
+    void LightingApp::updateScene(const float dt)
     {
         // Convert Spherical to Cartesian coordinates.
         const float x = mRadius * sinf(mPhi) * cosf(mTheta);
@@ -70,7 +70,7 @@ namespace Framework
         mImmediateContext->Unmap(mWavesVertexBuffer, 0);
     }
 
-    void WavesApp::drawScene()
+    void LightingApp::drawScene()
     {
         // Update states
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::LightSkyBlue));
@@ -123,7 +123,7 @@ namespace Framework
         DebugUtils::DxErrorChecker(result);
     }
 
-    void WavesApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
+    void LightingApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
     {
         if((btnState & MK_LBUTTON) != 0)
         {
@@ -155,7 +155,7 @@ namespace Framework
         mLastMousePos.y = y;
     }
 
-    void WavesApp::buildGeometryBuffers()
+    void LightingApp::buildGeometryBuffers()
     {
         // 
         // Calculate vertices and indices for the land.
@@ -301,7 +301,7 @@ namespace Framework
         mDevice->CreateBuffer(&indexBufferDesc, &initData, &mIndexBuffer);
     }
 
-    void WavesApp::buildShaders()
+    void LightingApp::buildShaders()
     {
         //
         // Read compiled vertex and pixel shaders and create them.

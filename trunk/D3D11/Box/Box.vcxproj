@@ -71,8 +71,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>$(MSBuildProjectDirectory);$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
-    <LibraryPath>$(D3D11_SDK)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory);$(COMMON_SOURCE);$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <ExecutablePath>$(ExecutablePath)</ExecutablePath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
   </PropertyGroup>
@@ -81,8 +81,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>$(MSBuildProjectDirectory);$(D3D11_SDK)\Include;$(COMMON_SOURCE);$(IncludePath)</IncludePath>
-    <LibraryPath>$(D3D11_SDK)\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>$(MSBuildProjectDirectory);$(COMMON_SOURCE);$(IncludePath)</IncludePath>
+    <LibraryPath>$(LibraryPath)</LibraryPath>
     <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\$(ProjectName)\</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -110,8 +110,12 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>d3d11.lib;d3dx11d.lib;dxerr.lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3dx11d.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)\HLSL\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -146,11 +150,16 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalLibraryDirectories>d3d11.lib;d3dx11.lib;dxerr.lib</AdditionalLibraryDirectories>
-      <AdditionalDependencies>d3d11.lib;d3dx11.lib;DxErr.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
+    <FxCompile>
+      <ShaderModel>5.0</ShaderModel>
+      <ObjectFileOutput>$(OutDir)\HLSL\%(Filename).cso</ObjectFileOutput>
+    </FxCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\D3DApplication.cpp" />
+    <ClCompile Include="..\Common\DxErrorChecker.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="Main\BoxApp.cpp" />
     <ClCompile Include="Main\main.cpp" />
@@ -158,7 +167,7 @@
   <ItemGroup>
     <ClInclude Include="..\Common\ConstantBuffer.h" />
     <ClInclude Include="..\Common\D3DApplication.h" />
-    <ClInclude Include="..\Common\D3DErrorChecker.h" />
+    <ClInclude Include="..\Common\DxErrorChecker.h" />
     <ClInclude Include="..\Common\MathHelper.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="HLSL\Buffers.h" />
