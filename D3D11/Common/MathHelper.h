@@ -17,6 +17,8 @@ namespace Utils
         // Returns random float in [a, b).
         static inline float randomFloat(const float leftLimit, const float righLimit);
 
+        static inline DirectX::XMMATRIX inverseTranspose(DirectX::CXMMATRIX matrix);
+
         static float angleFromXY(const float x, const float y);
 
     private:
@@ -42,4 +44,14 @@ namespace Utils
     {
         return leftLimit + randomFloat() * (righLimit - leftLimit);
     }
+
+    inline DirectX::XMMATRIX MathHelper::inverseTranspose(DirectX::CXMMATRIX matrix) 
+    { 
+        DirectX::XMMATRIX copy = matrix; 
+        copy.r[3] = DirectX::XMVectorSet( 0.0f, 0.0f, 0.0f, 1.0f); 
+        DirectX::XMVECTOR determinant = DirectX::XMMatrixDeterminant(matrix); 
+        
+        return DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&determinant, matrix)); 
+    }
+
 }

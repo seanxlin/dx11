@@ -16,7 +16,7 @@
 
 #include <ConstantBuffer.h>
 #include <D3DApplication.h>
-#include <D3DErrorChecker.h>
+#include <DxErrorChecker.h>
 
 namespace Framework
 {
@@ -220,7 +220,7 @@ namespace Framework
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 2, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
     }
 
     inline void ShapesApp::buildRasterizerState()
@@ -233,6 +233,6 @@ namespace Framework
         wireframeDesc.DepthClipEnable = true;
 
         HRESULT result = mDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
     }
 }

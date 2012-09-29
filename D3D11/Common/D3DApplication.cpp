@@ -4,7 +4,7 @@
 #include <sstream>
 #include <WindowsX.h>
 
-#include <D3DErrorChecker.h>
+#include <DxErrorChecker.h>
 
 namespace
 {
@@ -126,14 +126,14 @@ namespace Framework
 
         // Resize the swap chain and recreate the render target view.
         HRESULT result = mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         ID3D11Texture2D* backBuffer = nullptr;
         result = mSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<void**>(&backBuffer));
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         result  = mDevice->CreateRenderTargetView(backBuffer, 0, &mRenderTargetView);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
         backBuffer->Release();
 
         // Create the depth/stencil buffer and view.
@@ -163,10 +163,10 @@ namespace Framework
         depthStencilDesc.MiscFlags = 0;
 
         result = mDevice->CreateTexture2D(&depthStencilDesc, 0, &mDepthStencilBuffer);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         result = mDevice->CreateDepthStencilView(mDepthStencilBuffer, 0, &mDepthStencilView);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         // Bind the render target view and depth/stencil view to the pipeline.
         mImmediateContext->OMSetRenderTargets(1, &mRenderTargetView, mDepthStencilView);
@@ -393,7 +393,7 @@ namespace Framework
         // All Direct3D 11 capable devices support 4X MSAA for all render 
         // target formats, so we only need to check quality support.
         result = mDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 4, &m4xMsaaQuality);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         assert(m4xMsaaQuality > 0);
 
@@ -433,18 +433,18 @@ namespace Framework
         // This function is being called with a device from a different IDXGIFactory."
         IDXGIDevice* dxgiDevice = nullptr;
         result = mDevice->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**> (&dxgiDevice));
-        DebugUtils::ErrorChecker(result);  
+        DebugUtils::DxErrorChecker(result);  
 
         IDXGIAdapter* dxgiAdapter = nullptr;
         result = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**> (&dxgiAdapter));
-        DebugUtils::ErrorChecker(result);  
+        DebugUtils::DxErrorChecker(result);  
 
         IDXGIFactory* dxgiFactory = nullptr;
         result = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), reinterpret_cast<void**> (&dxgiFactory));
-        DebugUtils::ErrorChecker(result);  
+        DebugUtils::DxErrorChecker(result);  
 
         result = dxgiFactory->CreateSwapChain(mDevice, &swapChainDescription, &mSwapChain);
-        DebugUtils::ErrorChecker(result);  
+        DebugUtils::DxErrorChecker(result);  
 
         dxgiDevice->Release();
         dxgiAdapter->Release();

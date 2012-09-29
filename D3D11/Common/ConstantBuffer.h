@@ -2,7 +2,7 @@
 
 #include <cassert>
 #include <cstdint>
-#include <D3DX11.h>
+#include <d3d11.h>
 
 namespace Shaders
 {

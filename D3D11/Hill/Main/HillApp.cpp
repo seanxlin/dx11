@@ -7,6 +7,7 @@
 
 #include "HLSL/Vertex.h"
 
+#include <DxErrorChecker.h>
 #include <GeometryGenerator.h>
 #include <MathHelper.h>
 
@@ -51,7 +52,7 @@ namespace Framework
         mImmediateContext->DrawIndexed(static_cast<uint32_t> (mGridIndexCount), 0, 0);
 
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
     }
 
     void HillApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
@@ -179,7 +180,7 @@ namespace Framework
         buildVertexLayout(compiledShader);
 
         HRESULT result = mDevice->CreateVertexShader(&compiledShader[0], size, nullptr, &mVertexShader);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
         
         fin.open("HLSL/PixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -190,7 +191,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mPixelShader);
-        DebugUtils::ErrorChecker(result);
+        DebugUtils::DxErrorChecker(result);
 
         // Bind shaders to the rendering pipeline
         mImmediateContext->VSSetShader(mVertexShader, nullptr, 0);

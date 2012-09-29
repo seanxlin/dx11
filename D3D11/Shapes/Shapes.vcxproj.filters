@@ -18,9 +18,6 @@
     <ClInclude Include="..\Common\D3DApplication.h">
       <Filter>Common</Filter>
     </ClInclude>
-    <ClInclude Include="..\Common\D3DErrorChecker.h">
-      <Filter>Common</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\GeometryGenerator.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -38,6 +35,9 @@
     </ClInclude>
     <ClInclude Include="Main\ShapesApp.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Common\DxErrorChecker.h">
+      <Filter>Common</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -58,6 +58,9 @@
     </ClCompile>
     <ClCompile Include="Main\ShapesApp.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\DxErrorChecker.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
