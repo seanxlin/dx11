@@ -7,7 +7,7 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-    Framework::LightingApp lightingApp(hInstance);
+    Framework::LightingApp lightingApp(hInstance); 
 
     if (!lightingApp.init())
         return 0;
