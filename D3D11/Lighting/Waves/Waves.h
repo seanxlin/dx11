@@ -6,6 +6,7 @@
 
 #pragma once
 
+#include <cstdint>
 #include <DirectXMath.h>
 
 namespace Geometry
@@ -23,6 +24,12 @@ namespace Geometry
 
         // Returns the solution at the ith grid point.
         inline const DirectX::XMFLOAT3& operator[](const uint32_t index) const;
+
+        // Returns the solution normal at the ith grid point.
+        const DirectX::XMFLOAT3& normal(const uint32_t index) const;
+
+        // Returns the unit tangent vector at the ith grid point in the local x-axis direction.
+        const DirectX::XMFLOAT3& tangentX(const uint32_t index) const;
 
         void init(const uint32_t rows, const uint32_t columns, const float dx, const float dt, const float speed, const float damping);
         void update(const float dt);
@@ -45,6 +52,8 @@ namespace Geometry
 
         DirectX::XMFLOAT3* mPreviousSolution;
         DirectX::XMFLOAT3* mCurrentSolution;
+        DirectX::XMFLOAT3* mNormals;
+        DirectX::XMFLOAT3* mTangentX;
     };
 
     inline Waves::Waves()
@@ -59,6 +68,8 @@ namespace Geometry
         , mSpatialStep(0.0f)
         , mPreviousSolution(nullptr)
         , mCurrentSolution(nullptr)
+        , mNormals(nullptr)
+        , mTangentX(nullptr)
     {
 
     }
@@ -67,6 +78,8 @@ namespace Geometry
     {
         delete[] mPreviousSolution;
         delete[] mCurrentSolution;
+        delete[] mNormals;
+        delete[] mTangentX;
     }
 
     inline uint32_t Waves::rows() const
@@ -93,5 +106,17 @@ namespace Geometry
     inline const DirectX::XMFLOAT3& Waves::operator[](const uint32_t index) const 
     { 
         return mCurrentSolution[index]; 
+    }
+
+    // Returns the solution normal at the ith grid point.
+    inline const DirectX::XMFLOAT3& Waves::normal(const uint32_t index) const 
+    { 
+        return mNormals[index];
+    }
+
+    // Returns the unit tangent vector at the ith grid point in the local x-axis direction.
+    inline const DirectX::XMFLOAT3& Waves::tangentX(const uint32_t index) const 
+    { 
+        return mTangentX[index]; 
     }
 }

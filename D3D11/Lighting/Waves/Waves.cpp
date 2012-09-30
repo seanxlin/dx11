@@ -29,9 +29,13 @@ namespace Geometry
         // In case Init() called again.
         delete[] mPreviousSolution;
         delete[] mCurrentSolution;
+        delete[] mNormals;
+        delete[] mTangentX;
 
         mPreviousSolution = new DirectX::XMFLOAT3[rowsPerColumns];
         mCurrentSolution = new DirectX::XMFLOAT3[rowsPerColumns];
+        mNormals = new DirectX::XMFLOAT3[rowsPerColumns];
+        mTangentX = new DirectX::XMFLOAT3[rowsPerColumns];
 
         // Generate grid vertices in system memory.
         const float halfWidth = (columns - 1) * dx * 0.5f;
@@ -46,6 +50,8 @@ namespace Geometry
                 const uint32_t currentIndex = static_cast<uint32_t> (i * columns + j); 
                 mPreviousSolution[currentIndex] = DirectX::XMFLOAT3(x, 0.0f, z);
                 mCurrentSolution[currentIndex] = DirectX::XMFLOAT3(x, 0.0f, z);
+                mNormals[currentIndex] = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+                mTangentX[currentIndex] = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
             }
         }
     }
@@ -90,6 +96,30 @@ namespace Geometry
             std::swap(mPreviousSolution, mCurrentSolution);
 
             t = 0.0f; // reset time
+
+            //
+            // Compute normals using finite difference scheme.
+            //
+            for(uint32_t i = 1; i < mRows - 1; ++i)
+            {
+                for(uint32_t j = 1; j < mColumns - 1; ++j)
+                {
+                    float left = mCurrentSolution[i * mColumns + j - 1].y;
+                    float right = mCurrentSolution[i * mColumns + j + 1].y;
+                    float top = mCurrentSolution[(i - 1) * mColumns + j].y;
+                    float bottom = mCurrentSolution[(i + 1) * mColumns + j].y;
+                    mNormals[i * mColumns + j].x = -right + left;
+                    mNormals[ i* mColumns + j].y = 2.0f * mSpatialStep;
+                    mNormals[i * mColumns + j].z = bottom - top;
+
+                    DirectX::XMVECTOR normalVector = DirectX::XMVector3Normalize(XMLoadFloat3(&mNormals[i * mColumns + j]));
+                    DirectX::XMStoreFloat3(&mNormals[i * mColumns + j], normalVector);
+
+                    mTangentX[i * mColumns + j] = DirectX::XMFLOAT3(2.0f * mSpatialStep, right - left, 0.0f);
+                    DirectX::XMVECTOR tangentVector = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&mTangentX[i * mColumns + j]));
+                    DirectX::XMStoreFloat3(&mTangentX[i * mColumns + j], tangentVector);
+                }
+            }
         }
     }
 

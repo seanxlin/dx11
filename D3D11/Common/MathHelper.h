@@ -9,6 +9,12 @@ namespace Utils
     {
     public:
         template<typename T>
+        static inline T computeMax(const T& a, const T& b);
+
+        template<typename T>
+        static inline T computeMin(const T& a, const T& b);
+
+        template<typename T>
         static inline T clamp(const T& x, const T& low, const T& high);
 
         // Returns random float in [0, 1).
@@ -28,7 +34,19 @@ namespace Utils
     };
 
     template<typename T>
-    T MathHelper::clamp(const T& x, const T& low, const T& high)
+    inline T MathHelper::computeMax(const T& a, const T& b)
+    {
+        return a > b ? a : b;
+    }
+
+    template<typename T>
+    inline T MathHelper::computeMin(const T& a, const T& b)
+    {
+        return a < b ? a : b;
+    }
+
+    template<typename T>
+    inline T MathHelper::clamp(const T& x, const T& low, const T& high)
     {
         return x < low ? low : (x > high ? high : x); 
     }

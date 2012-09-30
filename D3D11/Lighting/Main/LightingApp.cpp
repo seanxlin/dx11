@@ -16,6 +16,20 @@ namespace
     {
         return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
     }
+
+    DirectX::XMFLOAT3 normal(const float x, const float z)
+    {
+        // n = (-df/dx, 1, -df/dz)
+        DirectX::XMFLOAT3 normal(
+            -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z),
+            1.0f,
+            -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z));
+
+        DirectX::XMVECTOR unitNormal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&normal));
+        DirectX::XMStoreFloat3(&normal, unitNormal);
+
+        return normal;
+    }
 }
 
 namespace Framework
@@ -27,6 +41,10 @@ namespace Framework
         const float x = mRadius * sinf(mPhi) * cosf(mTheta);
         const float z = mRadius * sinf(mPhi) * sinf(mTheta);
         const float y = mRadius * cosf(mPhi);
+
+        // Update eye position.        	
+        mEyePositionW = DirectX::XMFLOAT3(x, y, z);
+
 
         // Build the view matrix.
         DirectX::XMVECTOR pos = DirectX::XMVectorSet(x, y, z, 1.0f);
@@ -61,13 +79,30 @@ namespace Framework
         DebugUtils::DxErrorChecker(result);
 
         Geometry::Vertex* vertex = reinterpret_cast<Geometry::Vertex*> (mappedData.pData);
-        for(size_t i = 0; i < mWaves.vertices(); ++i)
+        for(uint32_t i = 0; i < mWaves.vertices(); ++i)
         {
-            vertex[i].mPosition = mWaves[static_cast<uint32_t> (i)];
-            vertex[i].mColor = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+            vertex[i].mPosition = mWaves[i];
+            vertex[i].mNormal = mWaves.normal(i);
         }
 
         mImmediateContext->Unmap(mWavesVertexBuffer, 0);
+
+        //
+        // Animate the lights.
+        //
+
+        // Circle light over the land surface.
+        mPointLight.mPosition.x = 70.0f * cosf(0.2f * mTimer.inGameTime());
+        mPointLight.mPosition.z = 70.0f * sinf(0.2f * mTimer.inGameTime());
+        mPointLight.mPosition.y = Utils::MathHelper::computeMax(height(mPointLight.mPosition.x, 
+            mPointLight.mPosition.z), -3.0f) + 10.0f;
+
+        // The spotlight takes on the camera position and is aimed in the
+        // same direction the camera is looking.  In this way, it looks
+        // like we are holding a flashlight.
+        mSpotLight.mPosition = mEyePositionW;
+        DirectX::XMVECTOR substraction = DirectX::XMVectorSubtract(target, pos);
+        DirectX::XMStoreFloat3(&mSpotLight.mDirection, DirectX::XMVector3Normalize(substraction));
     }
 
     void LightingApp::drawScene()
@@ -78,47 +113,95 @@ namespace Framework
         mImmediateContext->IASetInputLayout(mInputLayout);
         mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
+        // Set global index buffer.
         const uint32_t stride = sizeof(Geometry::Vertex);
         const uint32_t offset = 0;
-        mImmediateContext->IASetVertexBuffers(0, 1, &mLandVertexBuffer, &stride, &offset);
         mImmediateContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        ID3D11Buffer* constantBuffer = mPerObjectBuffer.buffer();
-        mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
+        
+        // Set constant buffers
+        ID3D11Buffer* constantBuffer[] = { mPerFrameBuffer.buffer(), mPerObjectBuffer.buffer() };
+        mImmediateContext->VSSetConstantBuffers(0, 2, constantBuffer);
+        mImmediateContext->PSSetConstantBuffers(0, 2, constantBuffer);
 
         // Compute view * projection matrix
         const DirectX::XMMATRIX view = DirectX::XMLoadFloat4x4(&mView);
         const DirectX::XMMATRIX projection = DirectX::XMLoadFloat4x4(&mProjection);
         const DirectX::XMMATRIX viewProjection = view * projection;
 
+        // Update per frame constant buffers.
+        mPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
+        mPerFrameBuffer.mData.mPointLight = mPointLight;
+        mPerFrameBuffer.mData.mSpotLight = mSpotLight;
+        mPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
+        mPerFrameBuffer.applyChanges(mImmediateContext);
+
+        //////////////////////////////////////////////////////////////////////////
+        // Draw land
+        //////////////////////////////////////////////////////////////////////////
+
+        // Update vertex buffer
+        mImmediateContext->IASetVertexBuffers(0, 1, &mLandVertexBuffer, &stride, &offset);
+        
         //
-        // Draw the land, updating first per object buffer
+        // Update per object constant buffer for land
         //
-        DirectX::XMMATRIX worldViewProjection = DirectX::XMLoadFloat4x4(&mLandWorld) * viewProjection;
-        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
+        DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mLandWorld);
+
+        // Update world matrix
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorld,
+            DirectX::XMMatrixTranspose(world));
+
+        // Update world * view * projection matrix
+        DirectX::XMMATRIX worldViewProjection = world * viewProjection;
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjection,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
+        // Update world inverse transpose matrix
+        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldInverseTranspose,
+            DirectX::XMMatrixTranspose(worldInverseTranspose));
+
+        // Set land material
+        mPerObjectBuffer.mData.mMaterial = mLandMaterial;
+
+        // Apply buffer changes and draw.
         mPerObjectBuffer.applyChanges(mImmediateContext);
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
-        //
-        // Draw the waves, updating first per object buffer
-        //
-        worldViewProjection = DirectX::XMLoadFloat4x4(&mWavesWorld) * viewProjection;
-        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
-            DirectX::XMMatrixTranspose(worldViewProjection));
-
-        // We will draw the waves in wireframe mode.
-        mImmediateContext->RSSetState(mWireframeRS);
+        //////////////////////////////////////////////////////////////////////////
+        // Draw waves
+        //////////////////////////////////////////////////////////////////////////
 
         // Update vertex buffer
         mImmediateContext->IASetVertexBuffers(0, 1, &mWavesVertexBuffer, &stride, &offset);
 
+        //
+        // Update per object constant buffer for waves
+        //
+        world = DirectX::XMLoadFloat4x4(&mWavesWorld);
+
+        // Update world matrix
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorld,
+            DirectX::XMMatrixTranspose(world));
+
+        // Update world * view * projection matrix
+        worldViewProjection = world * viewProjection;
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjection,
+            DirectX::XMMatrixTranspose(worldViewProjection));
+
+        // Update world inverse transpose matrix
+        worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldInverseTranspose,
+            DirectX::XMMatrixTranspose(worldInverseTranspose));
+
+        // Set waves material
+        mPerObjectBuffer.mData.mMaterial = mWavesMaterial;
+
+        // Apply buffer changes and draw.
         mPerObjectBuffer.applyChanges(mImmediateContext);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 
-        // Reset rasterizer state to default
-        mImmediateContext->RSSetState(nullptr);        
-
+        // Present results
         const HRESULT result = mSwapChain->Present(0, 0);
         DebugUtils::DxErrorChecker(result);
     }
@@ -201,33 +284,7 @@ namespace Framework
                 const float y = height(currentVertexPosition.x, currentVertexPosition.z);
                 currentVertexPosition.y = y;
                 vertices[k].mPosition = currentVertexPosition;
-
-                // Color the vertex based on its height.
-                if (y < -10.0f)
-                {
-                    // Sandy beach color.
-                    vertices[k].mColor = DirectX::XMFLOAT4(1.0f, 0.96f, 0.62f, 1.0f);
-                }
-                else if (y < 5.0f)
-                {
-                    // Light yellow-green.
-                    vertices[k].mColor = DirectX::XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
-                }
-                else if (y < 12.0f)
-                {
-                    // Dark yellow-green.
-                    vertices[k].mColor = DirectX::XMFLOAT4(0.1f, 0.48f, 0.19f, 1.0f);
-                }
-                else if (y < 20.0f)
-                {
-                    // Dark brown.
-                    vertices[k].mColor = DirectX::XMFLOAT4(0.45f, 0.39f, 0.34f, 1.0f);
-                }
-                else
-                {
-                    // White snow.
-                    vertices[k].mColor = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-                }
+                vertices[k].mNormal = normal(currentVertexPosition.x, currentVertexPosition.z);
             }      
         } 
 

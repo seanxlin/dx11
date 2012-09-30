@@ -1,29 +1,28 @@
-cbuffer cbPerFrame
+#include "Buffers.hlsli"
+
+struct VertexShaderInput
 {
-	float4x4 gWorldViewProj; 
+	float3 mPositionL : POSITION;
+	float3 mNormalL : NORMAL;
 };
 
-struct VertexShaderIn
+struct VertexShaderOutput
 {
-	float3 PositionL : POSITION;
-    float4 Color : COLOR;
+	float4 mPositionH : SV_POSITION;
+    float3 mPositionW : POSITION;
+    float3 mNormalW : NORMAL;
 };
 
-struct VertexShaderOut
+VertexShaderOutput main(VertexShaderInput input)
 {
-	float4 PositionH : SV_POSITION;
-    float4 Color : COLOR;
-};
-
-VertexShaderOut main(VertexShaderIn input)
-{
-    VertexShaderOut output;
+	VertexShaderOutput output;
 	
+	// Transform to world space space.
+	output.mPositionW = mul(float4(input.mPositionL, 1.0f), gWorld).xyz;
+	output.mNormalW = mul(input.mNormalL, (float3x3)gWorldInverseTranspose);
+		
 	// Transform to homogeneous clip space.
-	output.PositionH = mul(float4(input.PositionL, 1.0f), gWorldViewProj);
+	output.mPositionH = mul(float4(input.mPositionL, 1.0f), gWorldViewProjection);
 	
-	// Just pass vertex color into the pixel shader.
-    output.Color = input.Color;
-
 	return output;
 }

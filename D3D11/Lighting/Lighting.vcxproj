@@ -169,6 +169,7 @@
     <ClInclude Include="..\Common\D3DApplication.h" />
     <ClInclude Include="..\Common\DxErrorChecker.h" />
     <ClInclude Include="..\Common\GeometryGenerator.h" />
+    <ClInclude Include="..\Common\LightHelper.h" />
     <ClInclude Include="..\Common\MathHelper.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="HLSL\Buffers.h" />
@@ -185,6 +186,10 @@
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Vertex</ShaderType>
       <ShaderType Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Vertex</ShaderType>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Buffers.hlsli" />
+    <None Include="HLSL\Lights.hlsli" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
