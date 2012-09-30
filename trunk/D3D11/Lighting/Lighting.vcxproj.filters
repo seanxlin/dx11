@@ -71,6 +71,9 @@
     <ClInclude Include="..\Common\DxErrorChecker.h">
       <Filter>Common</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\LightHelper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\PixelShader.hlsl">
@@ -79,5 +82,13 @@
     <FxCompile Include="HLSL\VertexShader.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="HLSL\Lights.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
+    <None Include="HLSL\Buffers.hlsli">
+      <Filter>HLSL</Filter>
+    </None>
   </ItemGroup>
 </Project>

@@ -1,6 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
-// Demostrates rendering of a land and waves. The land has color
-// and the waves will be drawn in wireframe mode.
+// Demonstrates 3D lighting with directional, point, and spot lights.
 //
 // Controls:
 //		Hold the left mouse button down and move the mouse to rotate.
@@ -19,6 +18,7 @@
 #include <ConstantBuffer.h>
 #include <D3DApplication.h>
 #include <DxErrorChecker.h>
+#include <LightHelper.h>
 #include <MathHelper.h>
 
 namespace Framework
@@ -51,10 +51,14 @@ namespace Framework
 
         inline void buildVertexLayout(std::vector<char>& compiledShader);
 
-        inline void buildRasterizerState();
-
     private:
         Geometry::Waves mWaves;
+
+        Utils::DirectionalLight mDirectionalLight;
+        Utils::PointLight mPointLight;
+        Utils::SpotLight mSpotLight;
+        Utils::Material mLandMaterial;
+        Utils::Material mWavesMaterial;
 
         ID3D11Buffer* mLandVertexBuffer;
         ID3D11Buffer* mWavesVertexBuffer;
@@ -63,11 +67,10 @@ namespace Framework
         ID3D11VertexShader* mVertexShader;
         ID3D11PixelShader* mPixelShader;
 
+        Shaders::ConstantBuffer<Shaders::PerFrameBuffer> mPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
 
         ID3D11InputLayout* mInputLayout;
-        
-        ID3D11RasterizerState* mWireframeRS;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -75,6 +78,8 @@ namespace Framework
 
         DirectX::XMFLOAT4X4 mView;
         DirectX::XMFLOAT4X4 mProjection;
+
+        DirectX::XMFLOAT3 mEyePositionW;
 
         uint32_t mLandIndexOffset;
         uint32_t mWavesIndexOffset;
@@ -97,7 +102,7 @@ namespace Framework
         , mVertexShader(nullptr)
         , mPixelShader(nullptr)
         , mInputLayout(nullptr)
-        , mWireframeRS(nullptr)
+        , mEyePositionW(0.0f, 0.0f, 0.0f)
         , mLandIndexOffset(0)
         , mWavesIndexOffset(0)            
         , mLandIndexCount(0)
@@ -115,7 +120,39 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mLandWorld, I);
         DirectX::XMStoreFloat4x4(&mWavesWorld, I);
         DirectX::XMStoreFloat4x4(&mView, I);
-        DirectX::XMStoreFloat4x4(&mProjection, I);        
+        DirectX::XMStoreFloat4x4(&mProjection, I);  
+
+        DirectX::XMMATRIX wavesOffset = DirectX::XMMatrixTranslation(0.0f, -3.0f, 0.0f);
+        DirectX::XMStoreFloat4x4(&mWavesWorld, wavesOffset);
+
+        // Directional light.
+        mDirectionalLight.mAmbient = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
+        mDirectionalLight.mDiffuse = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+        mDirectionalLight.mSpecular = DirectX::XMFLOAT4(0.5f, 0.5f, 0.5f, 1.0f);
+        mDirectionalLight.mDirection = DirectX::XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
+
+        // Point light--position is changed every frame to animate in UpdateScene function.
+        mPointLight.mAmbient = DirectX::XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+        mPointLight.mDiffuse = DirectX::XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+        mPointLight.mSpecular = DirectX::XMFLOAT4(0.7f, 0.7f, 0.7f, 1.0f);
+        mPointLight.mAttenuation = DirectX::XMFLOAT3(0.0f, 0.1f, 0.0f);
+        mPointLight.mRange = 25.0f;
+
+        // Spot light--position and direction changed every frame to animate in UpdateScene function.
+        mSpotLight.mAmbient = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+        mSpotLight.mDiffuse = DirectX::XMFLOAT4(1.0f, 1.0f, 0.0f, 1.0f);
+        mSpotLight.mSpecular = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        mSpotLight.mAttenuation = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+        mSpotLight.mSpot = 96.0f;
+        mSpotLight.mRange = 10000.0f;
+
+        mLandMaterial.mAmbient = DirectX::XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+        mLandMaterial.mDiffuse = DirectX::XMFLOAT4(0.48f, 0.77f, 0.46f, 1.0f);
+        mLandMaterial.mSpecular = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 16.0f);
+
+        mWavesMaterial.mAmbient = DirectX::XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+        mWavesMaterial.mDiffuse = DirectX::XMFLOAT4(0.137f, 0.42f, 0.556f, 1.0f);
+        mWavesMaterial.mSpecular = DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 96.0f);
     }
 
     inline LightingApp::~LightingApp()
@@ -126,7 +163,6 @@ namespace Framework
         mVertexShader->Release();
         mPixelShader->Release();
         mInputLayout->Release();
-        mWireframeRS->Release();
     }
 
     inline bool LightingApp::init()
@@ -137,8 +173,8 @@ namespace Framework
         mWaves.init(200, 200, 0.8f, 0.03f, 3.25f, 0.4f);
 
         buildGeometryBuffers();
-        buildShaders();            
-        buildRasterizerState();
+        buildShaders();       
+        mPerFrameBuffer.initialize(mDevice);
         mPerObjectBuffer.initialize(mDevice);
 
         return true;
@@ -172,26 +208,13 @@ namespace Framework
         D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
         {
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"COLOR",    0, DXGI_FORMAT_R32G32B32A32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
+            {"NORMAL",    0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
         };
 
         // Create the input layout
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 2, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
-        DebugUtils::DxErrorChecker(result);
-    }
-
-    inline void LightingApp::buildRasterizerState()
-    {
-        D3D11_RASTERIZER_DESC wireframeDesc;
-        ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
-        wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-        wireframeDesc.CullMode = D3D11_CULL_BACK;
-        wireframeDesc.FrontCounterClockwise = false;
-        wireframeDesc.DepthClipEnable = true;
-
-        HRESULT result = mDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
         DebugUtils::DxErrorChecker(result);
     }
 }
