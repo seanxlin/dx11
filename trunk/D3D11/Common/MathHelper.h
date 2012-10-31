@@ -27,6 +27,8 @@ namespace Utils
 
         static float angleFromXY(const float x, const float y);
 
+        static inline float height(const float x, const float z);
+
     private:
         ~MathHelper();
         MathHelper(const MathHelper& copy);
@@ -72,4 +74,8 @@ namespace Utils
         return DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&determinant, matrix)); 
     }
 
+    inline float MathHelper::height(const float x, const float z)
+    {
+        return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
+    }
 }
