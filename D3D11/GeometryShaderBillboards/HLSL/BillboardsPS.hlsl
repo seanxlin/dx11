@@ -41,7 +41,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	toEyeW /= distToEye;
 
     // Sample texture.
-	float3 uvw = float3(input.mTexCoord, input.mPrimitiveID % 3);
+	float3 uvw = float3(input.mTexCoord, input.mPrimitiveID % 2);
 	float4 texColor = gTreeMapArray.Sample(samplerLinear, uvw);
 
 	// Discard pixel if texture alpha < 0.05.  Note that we do this
