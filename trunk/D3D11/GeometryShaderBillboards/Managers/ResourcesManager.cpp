@@ -124,7 +124,7 @@ namespace Managers
         std::vector<std::wstring> texturesFilenames;
         texturesFilenames.push_back(L"Resources/Textures/palm0.dds");
         texturesFilenames.push_back(L"Resources/Textures/palm1.dds");
-        texturesFilenames.push_back(L"Resources/Textures/palm2.dds");
+        //texturesFilenames.push_back(L"Resources/Textures/palm2.dds");
         mPalmsSRV = createTexture2DArraySRV(device, context, texturesFilenames);   
     }
     

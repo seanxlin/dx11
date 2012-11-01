@@ -23,6 +23,11 @@ namespace
 
         return normal;
     }
+
+    float height(const float x, const float z)
+    {
+        return 0.3f * (0.1f * z * sinf(0.1f * x) + 0.1f * x * cosf(0.1f * z));
+    }
 }
 
 namespace Managers
@@ -80,7 +85,7 @@ namespace Managers
             for(size_t i = 0; i < grid.mVertices.size(); ++i)
             {
                 currentVertexPosition = grid.mVertices[i].mPosition;
-                const float y = Utils::MathHelper::height(currentVertexPosition.x, currentVertexPosition.z);
+                const float y = height(currentVertexPosition.x, currentVertexPosition.z);
                 currentVertexPosition.y = y;
                 vertices[i].mPosition = currentVertexPosition;
                 vertices[i].mNormal = normal(currentVertexPosition.x, currentVertexPosition.z);
@@ -130,7 +135,7 @@ namespace Managers
         // Create NonIndexedBufferInfo for billboards
         mBillboardsBufferInfo = new NonIndexedBufferInfo();
 
-        const uint32_t treeCount = 490;
+        const uint32_t treeCount = 200;
         mBillboardsBufferInfo->mBaseVertexLocation = 0;
         mBillboardsBufferInfo->mVertexCount = treeCount;
         Geometry::BillboardVertex vertices[treeCount];
@@ -141,7 +146,7 @@ namespace Managers
             const float z = Utils::MathHelper::randomFloat(-100.0f, 100.0f);
             
             // Move tree slightly above land height.
-            const float y = Utils::MathHelper::height(x, z) + 10.0f;
+            const float y = height(x, z) + 12.0f;
             
             vertices[i].mPosition = DirectX::XMFLOAT3(x,y,z);
             vertices[i].mSize = DirectX::XMFLOAT2(24.0f, 24.0f);
