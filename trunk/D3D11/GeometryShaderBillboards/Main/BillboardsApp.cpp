@@ -174,9 +174,10 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
 
         // Set constant buffers
-        ID3D11Buffer* landConstantBuffer[] = { mCommonPerFrameBuffer.buffer(), mLandPerObjectBuffer.buffer() };
-        mImmediateContext->VSSetConstantBuffers(0, 2, landConstantBuffer);
-        mImmediateContext->PSSetConstantBuffers(0, 2, landConstantBuffer);
+        ID3D11Buffer* pixelShaderBuffers[] = { mCommonPerFrameBuffer.buffer(), mLandPerObjectBuffer.buffer() };
+        ID3D11Buffer* vertexShaderBuffers = mLandPerObjectBuffer.buffer();
+        mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
+        mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         // Get needed info about geometry buffers.
         ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mLandBufferInfo->mVertexBuffer;
