@@ -1,12 +1,8 @@
-#include "Lights.hlsli"
-
-cbuffer cbPerObject : register(b0)
+cbuffer cbPerFrame : register(b0)
 {
-	float4x4 gWorld;
 	float4x4 gWorldInverseTranspose;
 	float4x4 gWorldViewProjection;
     float4x4 gTexTransform;
-	Material gMaterial;
 };
 
 struct VertexShaderInput
@@ -19,7 +15,6 @@ struct VertexShaderInput
 struct VertexShaderOutput
 {
 	float4 mPositionH : SV_POSITION;
-    float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
     float2 mTexCoord : TEXCOORD;
 };
@@ -29,7 +24,6 @@ VertexShaderOutput main(VertexShaderInput input)
 	VertexShaderOutput output;
 	
 	// Transform to world space space.
-	output.mPositionW = mul(float4(input.mPositionL, 1.0f), gWorld).xyz;
 	output.mNormalW = mul(input.mNormalL, (float3x3)gWorldInverseTranspose);
 		
 	// Transform to homogeneous clip space.
