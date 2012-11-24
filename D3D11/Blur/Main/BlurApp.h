@@ -1,9 +1,5 @@
 //////////////////////////////////////////////////////////////////////////
 // Demonstrates blur effect in Compute Shader
-//
-// Controls:
-//		Hold the left mouse button down and move the mouse to rotate.
-//      Hold the right mouse button down to zoom in and out.
 //////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -60,7 +56,6 @@ namespace Framework
         Utils::SpotLight mSpotLight;
 
         Utils::Material mSandMaterial;
-        Utils::Material mPalmMaterial;
 
         Shaders::ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;
@@ -72,18 +67,11 @@ namespace Framework
         // Define textures transformations
         DirectX::XMFLOAT4X4 mSandTexTransform;
 
-        float mTheta;
-        float mPhi;
-        float mRadius;
-
         POINT mLastMousePos;
     };     
 
     inline BlurApp::BlurApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
-        , mTheta(1.5f * DirectX::XM_PI)
-        , mPhi(0.25f * DirectX::XM_PI)
-        , mRadius(5.0f)
     {
         mMainWindowCaption = L"Blur Demo";
 
