@@ -29,6 +29,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Tesselation_BezierSurface",
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NormalMapping", "NormalMapping\NormalMapping.vcxproj", "{7A608192-55D9-4EBB-A4FB-5A8A4F0C8589}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DisplacementMapping", "DisplacementMapping\DisplacementMapping.vcxproj", "{9E0C7745-516F-484D-8851-5D95D3253400}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -207,6 +209,18 @@ Global
 		{7A608192-55D9-4EBB-A4FB-5A8A4F0C8589}.Release|Win32.Build.0 = Release|Win32
 		{7A608192-55D9-4EBB-A4FB-5A8A4F0C8589}.Release|x64.ActiveCfg = Release|x64
 		{7A608192-55D9-4EBB-A4FB-5A8A4F0C8589}.Release|x64.Build.0 = Release|x64
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|Win32.ActiveCfg = Debug|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|Win32.Build.0 = Debug|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|x64.ActiveCfg = Debug|x64
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Debug|x64.Build.0 = Debug|x64
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|Win32.ActiveCfg = Release|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|Win32.Build.0 = Release|Win32
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|x64.ActiveCfg = Release|x64
+		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
