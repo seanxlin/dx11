@@ -10,8 +10,18 @@ namespace Shaders
     {
         DirectX::XMFLOAT4X4 mWorld;
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
-        DirectX::XMFLOAT4X4 mWorldViewProjection;
         DirectX::XMFLOAT4X4 mTexTransform;
+    };
+
+    struct ShapesHSPerFrameBuffer
+    {
+        float mTessellationFactor;
+    };
+
+    struct ShapesDSPerFrameBuffer
+    {
+        DirectX::XMFLOAT4X4 mViewProjection;
+        DirectX::XMFLOAT3 mEyePositionW;
     };
 
     struct ShapesPSPerFrameBuffer

@@ -59,6 +59,8 @@ namespace Managers
     ID3D11VertexShader* ShadersManager::mShapesVS = nullptr;
     ID3D11InputLayout* ShadersManager::mShapesIL = nullptr;
     ID3D11PixelShader* ShadersManager::mShapesPS = nullptr;
+    ID3D11HullShader* ShadersManager::mShapesHS = nullptr;
+    ID3D11DomainShader* ShadersManager::mShapesDS = nullptr;
     
     void ShadersManager::initAll(ID3D11Device * const device)
     {
@@ -77,6 +79,20 @@ namespace Managers
         DebugUtils::DxErrorChecker(result);
 
         //
+        // Hull shaders
+        //
+        computeShaderByteCode(L"HLSL/ShapesHS.cso", shaderByteCode);        
+        result = device->CreateHullShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesHS);
+        DebugUtils::DxErrorChecker(result);
+
+        //
+        // Domain shaders
+        //
+        computeShaderByteCode(L"HLSL/ShapesDS.cso", shaderByteCode);        
+        result = device->CreateDomainShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesDS);
+        DebugUtils::DxErrorChecker(result);
+
+        //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/ShapesPS.cso", shaderByteCode);        
@@ -89,5 +105,7 @@ namespace Managers
         mShapesVS->Release();
         mShapesIL->Release();
         mShapesPS->Release();
+        mShapesHS->Release();
+        mShapesDS->Release();
     }
 }
