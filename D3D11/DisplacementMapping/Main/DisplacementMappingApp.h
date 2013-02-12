@@ -50,9 +50,14 @@ namespace Framework
 
         Utils::Material mFloorMaterial;
         Utils::Material mShapesMaterial;
+        
+        Shaders::ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
+        
+        Shaders::ConstantBuffer<Shaders::ShapesHSPerFrameBuffer> mShapesHSPerFrameBuffer;
+        
+        Shaders::ConstantBuffer<Shaders::ShapesDSPerFrameBuffer> mShapesDSPerFrameBuffer;
 
         Shaders::ConstantBuffer<Shaders::ShapesPSPerFrameBuffer> mShapesPSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
         Shaders::ConstantBuffer<Shaders::ShapesPSPerObjectBuffer> mShapesPSPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
@@ -75,7 +80,7 @@ namespace Framework
 
     inline DisplacementMappingApp::DisplacementMappingApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
-        , mTesselationFactor(64.0f)
+        , mTesselationFactor(0.0001f)
         , mWireframeMode(false)
         , mRotationAmmount(0.0f)
     {
@@ -143,9 +148,14 @@ namespace Framework
     {
         if(!D3DApplication::init())
             return false;
-
-        mShapesPSPerFrameBuffer.initialize(mDevice);
+        
         mShapesVSPerObjectBuffer.initialize(mDevice);
+
+        mShapesHSPerFrameBuffer.initialize(mDevice);
+
+        mShapesDSPerFrameBuffer.initialize(mDevice);
+        
+        mShapesPSPerFrameBuffer.initialize(mDevice);
         mShapesPSPerObjectBuffer.initialize(mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   

@@ -124,8 +124,8 @@ namespace Managers
 
         // Fill vertices to insert in the vertex buffer
         const float radius = 15.0f;
-        const uint32_t sliceCount = 200;
-        const uint32_t stackCount = 100;
+        const uint32_t sliceCount = 20;
+        const uint32_t stackCount = 20;
         Geometry::GeometryGenerator::MeshData sphere;
         Geometry::GeometryGenerator::createSphere(radius, sliceCount, stackCount, sphere);
 
@@ -175,8 +175,8 @@ namespace Managers
         const float bottomRadius = 10.0f; 
         const float topRadius = 10.0f; 
         const float height = 50.0f;
-        const uint32_t sliceCount = 200;
-        const uint32_t stackCount = 100;
+        const uint32_t sliceCount = 20;
+        const uint32_t stackCount = 10;
         Geometry::GeometryGenerator::MeshData cylinder;
         Geometry::GeometryGenerator::createCylinder(bottomRadius, topRadius, height, sliceCount, stackCount, cylinder);
 

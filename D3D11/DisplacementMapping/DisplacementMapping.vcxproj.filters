@@ -117,5 +117,11 @@
     <FxCompile Include="HLSL\ShapesVS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
+    <FxCompile Include="HLSL\ShapesHS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShapesDS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

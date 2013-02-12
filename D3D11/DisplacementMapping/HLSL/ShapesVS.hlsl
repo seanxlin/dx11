@@ -4,7 +4,6 @@ cbuffer cbPerObject : register(b0)
 {
 	float4x4 gWorld;
 	float4x4 gWorldInverseTranspose;
-	float4x4 gWorldViewProjection;
     float4x4 gTexTransform;
 };
 
@@ -18,7 +17,6 @@ struct VertexShaderInput
 
 struct VertexShaderOutput
 {
-	float4 mPositionH : SV_POSITION;
     float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
     float3 mTangentW : TANGENT;
@@ -34,9 +32,6 @@ VertexShaderOutput main(VertexShaderInput input)
 	output.mNormalW = mul(input.mNormalL, (float3x3)gWorldInverseTranspose);
     output.mTangentW = mul(input.mTangentL, (float3x3)gWorld);
 		
-	// Transform to homogeneous clip space.
-	output.mPositionH = mul(float4(input.mPositionL, 1.0f), gWorldViewProjection);
-
     // Output vertex attributes for interpolation across triangle.
 	output.mTexCoord = mul(float4(input.mTexCoord, 0.0f, 1.0f), gTexTransform).xy;
 	

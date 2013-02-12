@@ -1,6 +1,8 @@
 #pragma once
 
 struct ID3D11Device;
+struct ID3D11DomainShader;
+struct ID3D11HullShader;
 struct ID3D11InputLayout;
 struct ID3D11VertexShader;
 struct ID3D11PixelShader;
@@ -16,6 +18,8 @@ namespace Managers
         static ID3D11VertexShader* mShapesVS;
         static ID3D11InputLayout* mShapesIL;
         static ID3D11PixelShader* mShapesPS;
+        static ID3D11HullShader* mShapesHS;
+        static ID3D11DomainShader* mShapesDS;
 
     private:
         ShadersManager();

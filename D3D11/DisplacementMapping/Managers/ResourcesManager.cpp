@@ -124,17 +124,16 @@ namespace Managers
         ID3D11Resource* texture = nullptr;
 
         // Create diffuse and normal maps
-        HRESULT result = CreateDDSTextureFromFile(device, L"Resources/Textures/wood1.dds", &texture, &mFloorDiffuseMapSRV);
+        HRESULT result = CreateDDSTextureFromFile(device, L"Resources/Textures/brick.dds", &texture, &mFloorDiffuseMapSRV);
         DebugUtils::DxErrorChecker(result);  
         
-        result = CreateDDSTextureFromFile(device, L"Resources/Textures/wood1Normal.dds", &texture, &mFloorNormalMapSRV);
+        result = CreateDDSTextureFromFile(device, L"Resources/Textures/brickNormal.dds", &texture, &mFloorNormalMapSRV);
         DebugUtils::DxErrorChecker(result);  
 
-        result = CreateDDSTextureFromFile(device, L"Resources/Textures/brick.dds", &texture, &mCylinderDiffuseMapSRV);
+        result = CreateDDSTextureFromFile(device, L"Resources/Textures/rock.dds", &texture, &mCylinderDiffuseMapSRV);
         DebugUtils::DxErrorChecker(result);
 
-        result = CreateDDSTextureFromFile(device, L"Resources/Textures/brickNormal.dds", &texture, &mCylinderNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        result = CreateDDSTextureFromFile(device, L"Resources/Textures/rockNormal.dds", &texture, &mCylinderNormalMapSRV);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/rock.dds", &texture, &mSpheresDiffuseMapSRV);
         DebugUtils::DxErrorChecker(result);
@@ -158,5 +157,11 @@ namespace Managers
 
         mCylinderDiffuseMapSRV->Release();
         mCylinderNormalMapSRV->Release();
+
+        mBoxDiffuseMapSRV->Release();
+        mBoxNormalMapSRV->Release();
+
+        mSpheresDiffuseMapSRV->Release();
+        mSpheresNormalMapSRV->Release();
     }
 }

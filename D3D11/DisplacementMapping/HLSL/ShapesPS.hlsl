@@ -16,10 +16,10 @@ SamplerState mySampler : register(s0);
 struct PixelShaderInput
 {
 	float4 mPositionH : SV_POSITION;
-    float3 mPositionW : POSITION;
+	float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
-    float3 mTangentW : TANGENT;
-    float2 mTexCoord : TEXCOORD;
+	float3 mTangentW : TANGENT;
+	float2 mTexCoord : TEXCOORD;
 };
 
 Texture2D gDiffuseMap : register(t0);
