@@ -31,6 +31,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "NormalMapping", "NormalMapp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "DisplacementMapping", "DisplacementMapping\DisplacementMapping.vcxproj", "{9E0C7745-516F-484D-8851-5D95D3253400}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Instancing", "Instancing\Instancing.vcxproj", "{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -221,6 +223,18 @@ Global
 		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|Win32.Build.0 = Release|Win32
 		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|x64.ActiveCfg = Release|x64
 		{9E0C7745-516F-484D-8851-5D95D3253400}.Release|x64.Build.0 = Release|x64
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|Win32.Build.0 = Debug|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|x64.ActiveCfg = Debug|x64
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Debug|x64.Build.0 = Debug|x64
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|Win32.ActiveCfg = Release|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|Win32.Build.0 = Release|Win32
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|x64.ActiveCfg = Release|x64
+		{3875E3B3-7076-4C21-88DC-5EEBD6E5F1C0}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
