@@ -3,12 +3,18 @@
 #include <cstdint>
 
 #include <D3D11.h>
+#include <DirectXMath.h>
 
 namespace Managers
 {
     class GeometryBuffersManager
     {
     public:
+        struct InstancedData
+        {
+            DirectX::XMFLOAT4X4 mWorld;
+        };
+
         struct IndexedBufferInfo
         {
             IndexedBufferInfo()
@@ -49,6 +55,7 @@ namespace Managers
 
         static IndexedBufferInfo* mCylinderBufferInfo;
         static IndexedBufferInfo* mFloorBufferInfo;
+        static NonIndexedBufferInfo* mInstancedBufferInfo;
 
     private:
         GeometryBuffersManager();
@@ -56,7 +63,8 @@ namespace Managers
         GeometryBuffersManager(const GeometryBuffersManager& geometryBuffersManager);
         const GeometryBuffersManager& operator=(const GeometryBuffersManager& geometryBuffersManager);
 
-        static void buildCylinderBuffers(ID3D11Device* device);
+        static void buildCylinderBuffers(ID3D11Device * const device);
         static void buildFloorBuffers(ID3D11Device * const device);
+        static void buildInstancedBuffer(ID3D11Device * const device);
     };
 }

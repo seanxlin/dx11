@@ -10,13 +10,15 @@ namespace Managers
 {
     GeometryBuffersManager::IndexedBufferInfo* GeometryBuffersManager::mCylinderBufferInfo =  nullptr;
     GeometryBuffersManager::IndexedBufferInfo* GeometryBuffersManager::mFloorBufferInfo = nullptr;
-   
+    GeometryBuffersManager::NonIndexedBufferInfo* GeometryBuffersManager::mInstancedBufferInfo = nullptr;
+
     void GeometryBuffersManager::initAll(ID3D11Device* device)
     {
         assert(device);
 
         buildCylinderBuffers(device);
         buildFloorBuffers(device);
+        buildInstancedBuffer(device);
     }
 
     void GeometryBuffersManager::destroyAll()
@@ -28,9 +30,39 @@ namespace Managers
         mFloorBufferInfo->mVertexBuffer->Release();
         mFloorBufferInfo->mIndexBuffer->Release();
         delete mFloorBufferInfo;
+
+        mInstancedBufferInfo->mVertexBuffer->Release();
+        delete mInstancedBufferInfo;
     }
 
-    void GeometryBuffersManager::buildCylinderBuffers(ID3D11Device* device)
+    void GeometryBuffersManager::buildInstancedBuffer(ID3D11Device * const device)
+    {
+        assert(device);
+
+        //
+        // Create NonIndexedBuffer and fill known data
+        //
+        mInstancedBufferInfo = new NonIndexedBufferInfo();
+        const size_t vertexCount = 5;
+        mInstancedBufferInfo->mBaseVertexLocation = 0;
+        mInstancedBufferInfo->mVertexCount = vertexCount;
+       
+        //
+        // Create vertex buffer
+        //
+        D3D11_BUFFER_DESC vertexBufferDesc;
+        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        vertexBufferDesc.ByteWidth = sizeof(InstancedData) * vertexCount;
+        vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
+        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        vertexBufferDesc.MiscFlags = 0;
+        vertexBufferDesc.StructureByteStride = 0;
+
+        const HRESULT result = device->CreateBuffer(&vertexBufferDesc, 0, &mInstancedBufferInfo->mVertexBuffer);
+        DebugUtils::DxErrorChecker(result);
+    }
+
+    void GeometryBuffersManager::buildCylinderBuffers(ID3D11Device * const device)
     {
         assert(device);
 
