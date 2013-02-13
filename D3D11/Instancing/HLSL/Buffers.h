@@ -6,11 +6,17 @@
 
 namespace Shaders
 {
-    struct ShapesVSPerObjectBuffer
+    struct FloorVSPerObjectBuffer
     {
         DirectX::XMFLOAT4X4 mWorld;
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
         DirectX::XMFLOAT4X4 mWorldViewProjection;
+        DirectX::XMFLOAT4X4 mTexTransform;
+    };
+
+    struct ShapesVSPerObjectBuffer
+    {
+        DirectX::XMFLOAT4X4 mViewProjection;
         DirectX::XMFLOAT4X4 mTexTransform;
     };
 

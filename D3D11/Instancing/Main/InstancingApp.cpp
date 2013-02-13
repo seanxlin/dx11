@@ -27,6 +27,8 @@ namespace Framework
             mCamera.strafe(50.0f * dt);
 
         mRotationAmmount += 0.25f * dt;
+        
+        updateInstancedBuffer();
     }
 
     void InstancingApp::drawScene()
@@ -71,8 +73,6 @@ namespace Framework
         // Set constant buffers
         //
         ID3D11Buffer* pixelShaderBuffers[] = { mCommonPSPerFrameBuffer.buffer(), mCommonPSPerObjectBuffer.buffer() };
-        ID3D11Buffer* vertexShaderBuffers = mShapesVSPerObjectBuffer.buffer();
-        mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         //
@@ -91,6 +91,28 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
     }
 
+    void InstancingApp::updateInstancedBuffer()
+    {
+        ID3D11Buffer* instancedVertexBuffer = Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexBuffer;
+
+        D3D11_MAPPED_SUBRESOURCE mappedData; 
+        mImmediateContext->Map(instancedVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
+
+        Managers::GeometryBuffersManager::InstancedData* dataView = reinterpret_cast<Managers::GeometryBuffersManager::InstancedData*>(mappedData.pData);
+
+        for(uint32_t i = 0; i < Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexCount; ++i)
+        {
+            DirectX::XMFLOAT3 rotation(0.0, mRotationAmmount, 0.0f); 
+            DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mCylinderWorld[i].mWorld) * DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation));
+            DirectX::XMFLOAT4X4 newWorld;
+            DirectX::XMStoreFloat4x4(&newWorld, world);
+        
+            dataView[i].mWorld = newWorld;
+        }        
+
+        mImmediateContext->Unmap(instancedVertexBuffer, 0);
+    }
+
     void InstancingApp::drawCylinder()
     {
         //
@@ -107,32 +129,29 @@ namespace Framework
         //
         // Set geometry buffers
         //
-        ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mVertexBuffer;
+        ID3D11Buffer* shapesVertexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mVertexBuffer;
+        ID3D11Buffer* instancedVertexBuffer = Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexBuffer;
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexCount;        
 
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
-        uint32_t offset = 0;
+        UINT stride[2] = {sizeof(Geometry::GeometryGenerator::Vertex), sizeof(Managers::GeometryBuffersManager::InstancedData)};
+        UINT offset[2] = {0, 0};
+        ID3D11Buffer* vertexBuffers[2] = {shapesVertexBuffer, instancedVertexBuffer};
+        mImmediateContext->IASetVertexBuffers(0, 2, vertexBuffers, stride, offset);
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
         //
         // Update constant buffers
         //
-        DirectX::XMFLOAT3 rotation(0.0, mRotationAmmount, 0.0f); 
-        DirectX::XMMATRIX world = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation)) * DirectX::XMLoadFloat4x4(&mCylinderWorld);
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
-
         const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
-        DirectX::XMMATRIX worldViewProjection = world * viewProjection;
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
-
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
-
+        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
+        
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
         mShapesVSPerObjectBuffer.applyChanges(mImmediateContext);
+
+        ID3D11Buffer* vertexShaderBuffers = mShapesVSPerObjectBuffer.buffer();
+        mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
         // Set shader resources
@@ -143,9 +162,12 @@ namespace Framework
         //
         // Draw
         //
-        const uint32_t baseVertexLocation = Managers::GeometryBuffersManager::mCylinderBufferInfo->mBaseVertexLocation;
-        const uint32_t startIndexLocation = Managers::GeometryBuffersManager::mCylinderBufferInfo->mStartIndexLocation;
-        mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
+        const uint32_t indexCountPerInstance = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexCount;
+        const uint32_t instanceCount = Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexCount;
+        const uint32_t shapesBaseVertexLocation = Managers::GeometryBuffersManager::mCylinderBufferInfo->mBaseVertexLocation;
+        const uint32_t shapesStartIndexLocation = Managers::GeometryBuffersManager::mCylinderBufferInfo->mStartIndexLocation;
+        const uint32_t startInstanceLocation = Managers::GeometryBuffersManager::mInstancedBufferInfo->mBaseVertexLocation;
+        mImmediateContext->DrawIndexedInstanced(indexCountPerInstance, instanceCount, shapesStartIndexLocation, shapesBaseVertexLocation, 0);       
     }
 
     void InstancingApp::drawFloor()
@@ -178,18 +200,21 @@ namespace Framework
         //
         DirectX::XMFLOAT3 rotation(0.0, mRotationAmmount, 0.0f); 
         DirectX::XMMATRIX world = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation)) * DirectX::XMLoadFloat4x4(&mFloorWorld);
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
+        DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
 
         const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
         DirectX::XMMATRIX worldViewProjection = world * viewProjection;
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
+        DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
+        DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
-        DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        mShapesVSPerObjectBuffer.applyChanges(mImmediateContext);
+        DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
+        mFloorVSPerObjectBuffer.applyChanges(mImmediateContext);
+
+        ID3D11Buffer* vertexShaderBuffers = mFloorVSPerObjectBuffer.buffer();
+        mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
         // Set shader resources
