@@ -42,8 +42,6 @@ namespace Framework
 
         void setShapesGeneralSettings();
 
-        void updateInstancedBuffer();
-
         Utils::Camera mCamera;
 
         Utils::DirectionalLight mDirectionalLight[3];
@@ -60,21 +58,21 @@ namespace Framework
         
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mFloorWorld;
-        Managers::GeometryBuffersManager::InstancedData mCylinderWorld[5];
 
         // Define textures transformations
         DirectX::XMFLOAT4X4 mCommonTexTransform;
 
         POINT mLastMousePos;
 
-        float mRotationAmmount;
+        DirectX::XMFLOAT3 mDefaultShadowLightDirection[3];
+        float mLightRotationAngle;
     };     
 
     inline ShadowMappingApp::ShadowMappingApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
-        , mRotationAmmount(0.0f)
+        , mLightRotationAngle(0.0f)
     {
-        mMainWindowCaption = L"Instancing Demo";
+        mMainWindowCaption = L"Shadow Mapping Demo";
 
         mCamera.setPosition(0.0f, 2.0f, -15.0f);
 
@@ -86,21 +84,6 @@ namespace Framework
         //
         DirectX::XMMATRIX translation = DirectX::XMMatrixIdentity();
         DirectX::XMStoreFloat4x4(&mFloorWorld, translation);
-        
-        translation = DirectX::XMMatrixTranslation(0.0f, 25.0f, 0.0f);
-        DirectX::XMStoreFloat4x4(&mCylinderWorld[0].mWorld, translation);
-        
-        translation = DirectX::XMMatrixTranslation(50.0f, 25.0f, 50.0f);
-        DirectX::XMStoreFloat4x4(&mCylinderWorld[1].mWorld, translation);
-
-        translation = DirectX::XMMatrixTranslation(-50.0f, 25.0f, -50.0f);
-        DirectX::XMStoreFloat4x4(&mCylinderWorld[2].mWorld, translation);
-
-        translation = DirectX::XMMatrixTranslation(50.0f, 25.0f, -50.0f);
-        DirectX::XMStoreFloat4x4(&mCylinderWorld[3].mWorld, translation);
-
-        translation = DirectX::XMMatrixTranslation(-50.0f, 25.0f, 50.0f);
-        DirectX::XMStoreFloat4x4(&mCylinderWorld[4].mWorld, translation);
 
         DirectX::XMMATRIX texTransform = DirectX::XMMatrixScaling(5.0f, 5.0f, 0.0f);
         DirectX::XMStoreFloat4x4(&mCommonTexTransform, texTransform);
@@ -122,6 +105,10 @@ namespace Framework
         mDirectionalLight[2].mDiffuse = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
         mDirectionalLight[2].mSpecular = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
         mDirectionalLight[2].mDirection = DirectX::XMFLOAT3(-0.57735f, -0.57735f, -0.57735f);
+
+        mDefaultShadowLightDirection[0] = mDirectionalLight[0].mDirection;
+        mDefaultShadowLightDirection[1] = mDirectionalLight[1].mDirection;
+        mDefaultShadowLightDirection[2] = mDirectionalLight[2].mDirection;
 
         //
         // Initialize materials
