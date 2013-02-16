@@ -39,6 +39,24 @@ namespace Managers
     {
         assert(device);
 
+        // World matrices to use as instanced data
+        Managers::GeometryBuffersManager::InstancedData worldMatrices[5];
+        DirectX::XMMATRIX translation = DirectX::XMMatrixIdentity();        
+        translation = DirectX::XMMatrixTranslation(0.0f, 25.0f, 0.0f);
+        DirectX::XMStoreFloat4x4(&worldMatrices[0].mWorld, translation);
+
+        translation = DirectX::XMMatrixTranslation(50.0f, 25.0f, 50.0f);
+        DirectX::XMStoreFloat4x4(&worldMatrices[1].mWorld, translation);
+
+        translation = DirectX::XMMatrixTranslation(-50.0f, 25.0f, -50.0f);
+        DirectX::XMStoreFloat4x4(&worldMatrices[2].mWorld, translation);
+
+        translation = DirectX::XMMatrixTranslation(50.0f, 25.0f, -50.0f);
+        DirectX::XMStoreFloat4x4(&worldMatrices[3].mWorld, translation);
+
+        translation = DirectX::XMMatrixTranslation(-50.0f, 25.0f, 50.0f);
+        DirectX::XMStoreFloat4x4(&worldMatrices[4].mWorld, translation);
+
         //
         // Create NonIndexedBuffer and fill known data
         //
@@ -51,14 +69,17 @@ namespace Managers
         // Create vertex buffer
         //
         D3D11_BUFFER_DESC vertexBufferDesc;
-        vertexBufferDesc.Usage = D3D11_USAGE_DYNAMIC;
+        vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
         vertexBufferDesc.ByteWidth = sizeof(InstancedData) * vertexCount;
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
-        vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
+        vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;
         vertexBufferDesc.StructureByteStride = 0;
 
-        const HRESULT result = device->CreateBuffer(&vertexBufferDesc, 0, &mInstancedBufferInfo->mVertexBuffer);
+        D3D11_SUBRESOURCE_DATA initData;
+        initData.pSysMem = &worldMatrices[0];
+
+        const HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mInstancedBufferInfo->mVertexBuffer);
         DebugUtils::DxErrorChecker(result);
     }
 

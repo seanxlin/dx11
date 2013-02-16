@@ -26,9 +26,18 @@ namespace Framework
         if (GetAsyncKeyState('D') & 0x8000)
             mCamera.strafe(50.0f * dt);
 
-        mRotationAmmount += 0.25f * dt;
-        
-        updateInstancedBuffer();
+        //
+        // Animate the lights (and hence shadows).
+        //
+        mLightRotationAngle += 0.25f * dt;
+
+        DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(mLightRotationAngle);
+        for(uint32_t i = 0; i < 3; ++i)
+        {
+            DirectX::XMVECTOR lightDirection = DirectX::XMLoadFloat3(&mDefaultShadowLightDirection[i]);
+            lightDirection =  DirectX::XMVector3TransformNormal(lightDirection, rotationMatrix);
+            XMStoreFloat3(&mDirectionalLight[i].mDirection, lightDirection);
+        }
     }
 
     void ShadowMappingApp::drawScene()
@@ -89,28 +98,6 @@ namespace Framework
         // Set sampler states
         //
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
-    }
-
-    void ShadowMappingApp::updateInstancedBuffer()
-    {
-        ID3D11Buffer* instancedVertexBuffer = Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexBuffer;
-
-        D3D11_MAPPED_SUBRESOURCE mappedData; 
-        mImmediateContext->Map(instancedVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-
-        Managers::GeometryBuffersManager::InstancedData* dataView = reinterpret_cast<Managers::GeometryBuffersManager::InstancedData*>(mappedData.pData);
-
-        for(uint32_t i = 0; i < Managers::GeometryBuffersManager::mInstancedBufferInfo->mVertexCount; ++i)
-        {
-            DirectX::XMFLOAT3 rotation(0.0, mRotationAmmount, 0.0f); 
-            DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mCylinderWorld[i].mWorld) * DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation));
-            DirectX::XMFLOAT4X4 newWorld;
-            DirectX::XMStoreFloat4x4(&newWorld, world);
-        
-            dataView[i].mWorld = newWorld;
-        }        
-
-        mImmediateContext->Unmap(instancedVertexBuffer, 0);
     }
 
     void ShadowMappingApp::drawCylinder()
@@ -198,8 +185,7 @@ namespace Framework
         //
         // Update constant buffers
         //
-        DirectX::XMFLOAT3 rotation(0.0, mRotationAmmount, 0.0f); 
-        DirectX::XMMATRIX world = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation)) * DirectX::XMLoadFloat4x4(&mFloorWorld);
+        DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mFloorWorld);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
 
         const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
