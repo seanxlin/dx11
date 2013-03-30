@@ -164,7 +164,7 @@ namespace Framework
         buildGeometryBuffers();
         buildShaders();            
         buildRasterizerState();
-        mPerObjectBuffer.initialize(mDevice);
+        mPerObjectBuffer.initialize(*mDevice);
 
         return true;
     }

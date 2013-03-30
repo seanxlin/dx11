@@ -162,8 +162,8 @@ namespace Framework
         mImmediateContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
         
         // Set constant buffers
-        ID3D11Buffer* vertexShaderConstantBuffers[] = { mPerFrameBuffer.buffer(), mPerObjectBuffer.buffer() };
-        ID3D11Buffer* pixelShaderConstantBuffers[] = { mPerFrameBuffer.buffer(), mPerObjectBuffer.buffer(), mImmutableBuffer.buffer() };
+        ID3D11Buffer* vertexShaderConstantBuffers[] = { &mPerFrameBuffer.buffer(), &mPerObjectBuffer.buffer() };
+        ID3D11Buffer* pixelShaderConstantBuffers[] = { &mPerFrameBuffer.buffer(), &mPerObjectBuffer.buffer(), &mImmutableBuffer.buffer() };
         mImmediateContext->VSSetConstantBuffers(0, 2, vertexShaderConstantBuffers);
         mImmediateContext->PSSetConstantBuffers(0, 3, pixelShaderConstantBuffers);
 
@@ -177,7 +177,7 @@ namespace Framework
         mPerFrameBuffer.mData.mPointLight = mPointLight;
         mPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
-        mPerFrameBuffer.applyChanges(mImmediateContext);
+        mPerFrameBuffer.applyChanges(*mImmediateContext);
 
         //////////////////////////////////////////////////////////////////////////
         // Draw land
@@ -215,7 +215,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &mGrassTextureSRV);
 
         // Apply buffer changes and draw.
-        mPerObjectBuffer.applyChanges(mImmediateContext);   
+        mPerObjectBuffer.applyChanges(*mImmediateContext);   
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
         //////////////////////////////////////////////////////////////////////////
@@ -254,7 +254,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &mWaterTextureSRV);
 
         // Apply buffer changes and draw.
-        mPerObjectBuffer.applyChanges(mImmediateContext);
+        mPerObjectBuffer.applyChanges(*mImmediateContext);
         mImmediateContext->OMSetBlendState(mTransparentBS, blendFactor, 0xffffffff);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 

@@ -110,7 +110,7 @@ namespace Framework
 
         buildGeometryBuffers();
         buildShaders();            
-        mPerFrameBuffer.initialize(mDevice);
+        mPerFrameBuffer.initialize(*mDevice);
 
         return true;
     }

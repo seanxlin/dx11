@@ -21,6 +21,14 @@ namespace Managers
         static ID3D11InputLayout* mFloorIL;
         static ID3D11PixelShader* mFloorPS;
 
+        static ID3D11VertexShader* mShadowMapVS;
+        static ID3D11InputLayout* mShadowMapIL;
+        static ID3D11PixelShader* mShadowMapPS;
+
+        static ID3D11VertexShader* mFloorShadowMapVS;
+        static ID3D11InputLayout* mFloorShadowMapIL;
+        static ID3D11PixelShader* mFloorShadowMapPS;
+
     private:
         ShadersManager();
         ~ShadersManager();

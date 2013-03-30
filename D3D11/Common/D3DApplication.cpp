@@ -72,20 +72,20 @@ namespace Framework
 
         mTimer.reset();
 
-        while(msg.message != WM_QUIT)
+        while (msg.message != WM_QUIT)
         {
             // If there are Window messages then process them.
-            if(PeekMessage( &msg, 0, 0, 0, PM_REMOVE ))
+            if (PeekMessage(&msg, 0, 0, 0, PM_REMOVE))
             {
-                TranslateMessage( &msg );
-                DispatchMessage( &msg );
+                TranslateMessage(&msg);
+                DispatchMessage(&msg);
             }
             // Otherwise, do animation/game stuff.
             else
             {	
                 mTimer.tick();
 
-                if( !mIsPaused )
+                if ( !mIsPaused )
                 {
                     calculateFrameStats();
                     updateScene(mTimer.deltaTime());	
@@ -115,14 +115,19 @@ namespace Framework
         // Release the old views, as they hold references to the buffers we
         // will be destroying. Also release the old depth/stencil buffer.
         if (mRenderTargetView)
+        {
             mRenderTargetView->Release();
+        }
 
         if (mDepthStencilView)
+        {
             mDepthStencilView->Release();
+        }
 
         if (mDepthStencilBuffer)
+        {
             mDepthStencilBuffer->Release();
-
+        }
 
         // Resize the swap chain and recreate the render target view.
         HRESULT result = mSwapChain->ResizeBuffers(1, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM, 0);

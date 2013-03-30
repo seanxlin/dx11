@@ -34,7 +34,7 @@ namespace Framework
         mImmediateContext->IASetVertexBuffers(0, 1, &mGridVertexBuffer, &stride, &offset);
         mImmediateContext->IASetIndexBuffer(mGridIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
-        ID3D11Buffer* constantBuffer = mPerFrameBuffer.buffer();
+        ID3D11Buffer* constantBuffer = &mPerFrameBuffer.buffer();
         mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         // Update per frame buffer
@@ -46,7 +46,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerFrameBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        mPerFrameBuffer.applyChanges(mImmediateContext);
+        mPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Draw grid        
         mImmediateContext->DrawIndexed(static_cast<uint32_t> (mGridIndexCount), 0, 0);

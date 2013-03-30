@@ -30,9 +30,6 @@
     <ClCompile Include="..\Common\GeometryGenerator.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\LightHelper.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\MathHelper.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -56,6 +53,9 @@
     </ClCompile>
     <ClCompile Include="Main\ShadowMappingApp.cpp">
       <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Common\ShadowMapper.cpp">
+      <Filter>Common</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -104,6 +104,9 @@
     <ClInclude Include="Main\ShadowMappingApp.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\ShadowMapper.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="HLSL\FloorPS.hlsl">
@@ -116,6 +119,18 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\ShapesVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowMapVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ShadowMapPS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\FloorShadowMapVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\FloorShadowMapPS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

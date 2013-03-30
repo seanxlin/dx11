@@ -128,13 +128,13 @@ namespace Framework
         // Set sampler states
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
 
-        ID3D11Buffer* domainShaderBuffers[] = { mBezierSurfaceDSPerFrameBuffer.buffer() };
+        ID3D11Buffer* domainShaderBuffers[] = { &mBezierSurfaceDSPerFrameBuffer.buffer() };
         mImmediateContext->DSSetConstantBuffers(0, 1, domainShaderBuffers);
 
-        ID3D11Buffer* hullShaderBuffers[] = { mBezierSurfaceHSPerFrameBuffer.buffer() };
+        ID3D11Buffer* hullShaderBuffers[] = { &mBezierSurfaceHSPerFrameBuffer.buffer() };
         mImmediateContext->HSSetConstantBuffers(0, 1, hullShaderBuffers);
 
-        ID3D11Buffer* pixelShaderBuffers[] = { mBezierSurfacePSPerFrameBuffer.buffer() };
+        ID3D11Buffer* pixelShaderBuffers[] = { &mBezierSurfacePSPerFrameBuffer.buffer() };
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
 
         // Update vertex buffer
@@ -163,13 +163,13 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mSandTexTransform);
         DirectX::XMStoreFloat4x4(&mBezierSurfaceDSPerFrameBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        mBezierSurfaceDSPerFrameBuffer.applyChanges(mImmediateContext);
+        mBezierSurfaceDSPerFrameBuffer.applyChanges(*mImmediateContext);
         
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
-        mBezierSurfaceHSPerFrameBuffer.applyChanges(mImmediateContext);
-        mBezierSurfaceDSPerFrameBuffer.applyChanges(mImmediateContext);
-        mBezierSurfacePSPerFrameBuffer.applyChanges(mImmediateContext);
+        mBezierSurfaceHSPerFrameBuffer.applyChanges(*mImmediateContext);
+        mBezierSurfaceDSPerFrameBuffer.applyChanges(*mImmediateContext);
+        mBezierSurfacePSPerFrameBuffer.applyChanges(*mImmediateContext);
         mImmediateContext->Draw(vertexCount, baseVertexLocation);
     }
 }

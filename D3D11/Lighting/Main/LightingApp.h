@@ -174,8 +174,8 @@ namespace Framework
 
         buildGeometryBuffers();
         buildShaders();       
-        mPerFrameBuffer.initialize(mDevice);
-        mPerObjectBuffer.initialize(mDevice);
+        mPerFrameBuffer.initialize(*mDevice);
+        mPerObjectBuffer.initialize(*mDevice);
 
         return true;
     }

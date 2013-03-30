@@ -232,14 +232,14 @@ namespace Framework
         buildShaders();       
 
         // Initialize immutable constant buffer
-        mImmutableBuffer.initialize(mDevice);
+        mImmutableBuffer.initialize(*mDevice);
         mImmutableBuffer.mData.mFogStart = 15.0f;
         mImmutableBuffer.mData.mFogRange = 175.0f;
         DirectX::XMStoreFloat4(&mImmutableBuffer.mData.mFogColor, DirectX::Colors::Silver);
-        mImmutableBuffer.applyChanges(mImmediateContext);
+        mImmutableBuffer.applyChanges(*mImmediateContext);
 
-        mPerFrameBuffer.initialize(mDevice);
-        mPerObjectBuffer.initialize(mDevice);
+        mPerFrameBuffer.initialize(*mDevice);
+        mPerObjectBuffer.initialize(*mDevice);
         buildSamplerStates();
         buildBlendStates();
         loadTextures();

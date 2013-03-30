@@ -82,7 +82,7 @@ namespace Framework
         const uint32_t offset = 0;
         mImmediateContext->IASetVertexBuffers(0, 1, &mLandVertexBuffer, &stride, &offset);
         mImmediateContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
-        ID3D11Buffer* constantBuffer = mPerObjectBuffer.buffer();
+        ID3D11Buffer* constantBuffer = &mPerObjectBuffer.buffer();
         mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         // Compute view * projection matrix
@@ -97,7 +97,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        mPerObjectBuffer.applyChanges(mImmediateContext);
+        mPerObjectBuffer.applyChanges(*mImmediateContext);
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
         //
@@ -113,7 +113,7 @@ namespace Framework
         // Update vertex buffer
         mImmediateContext->IASetVertexBuffers(0, 1, &mWavesVertexBuffer, &stride, &offset);
 
-        mPerObjectBuffer.applyChanges(mImmediateContext);
+        mPerObjectBuffer.applyChanges(*mImmediateContext);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 
         // Reset rasterizer state to default

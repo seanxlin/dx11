@@ -1,9 +1,9 @@
 //////////////////////////////////////////////////////////////////////////
 // Simple first person style camera class that lets the viewer explore the 3D scene.
-//   -It keeps track of the camera coordinate system relative to the world space
-//    so that the view matrix can be constructed.  
-//   -It keeps track of the viewing frustum of the camera so that the projection
-//    matrix can be obtained.
+//   - It keeps track of the camera coordinate system relative to the world space
+//     so that the view matrix can be constructed.  
+//   - It keeps track of the viewing frustum of the camera so that the projection
+//     matrix can be obtained.
 //////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -52,7 +52,7 @@ namespace Utils
         inline void lookAt(const DirectX::FXMVECTOR position, const DirectX::FXMVECTOR target, const DirectX::FXMVECTOR worldUp);
         inline void lookAt(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& target, const DirectX::XMFLOAT3& up);
 
-        // Get View/Proj matrices.
+        // Get View/Projection matrices.
         inline DirectX::XMMATRIX view() const;
         inline DirectX::XMMATRIX projection() const;
         inline DirectX::XMMATRIX viewProjection() const;
@@ -69,7 +69,7 @@ namespace Utils
         void updateViewMatrix();
 
     private:
-        // Cache View/Proj matrices.
+        // Cache View/Projection matrices.
         DirectX::XMFLOAT4X4 mView;
         DirectX::XMFLOAT4X4 mProjection;
 
@@ -93,6 +93,12 @@ namespace Utils
         , mRight(1.0f, 0.0f, 0.0f)
         , mUp(0.0f, 1.0f, 0.0f)
         , mLook(0.0f, 0.0f, 1.0f)
+        , mNearZ(0.0f)
+        , mFarZ(0.0f)
+        , mAspect(0.0f)
+        , mFovY(0.0f)
+        , mNearWindowHeight(0.0f)
+        , mFarWindowHeight(0.0f)
     {
         setLens(0.25f * DirectX::XM_PI, 1.0f, 1.0f, 1000.0f);
     }
@@ -174,7 +180,7 @@ namespace Utils
 
     inline float Camera::fovX() const
     {
-        float halfWidth = 0.5f * nearWindowWidth();
+        const float halfWidth = 0.5f * nearWindowWidth();
 
         return 2.0f * atan(halfWidth / mNearZ);
     }
@@ -201,14 +207,15 @@ namespace Utils
 
     inline void Camera::setLens(const float fovY, const float aspect, const float nearPlaneZ, const float farPlaneZ)
     {
-        // cache properties
+        // Cache lens properties
         mFovY = fovY;
         mAspect = aspect;
         mNearZ = nearPlaneZ;
         mFarZ = farPlaneZ;
 
-        mNearWindowHeight = 2.0f * mNearZ * tanf(0.5f * mFovY);
-        mFarWindowHeight  = 2.0f * mFarZ * tanf(0.5f * mFovY);
+        const float halfFovY = 0.5f * mFovY;
+        mNearWindowHeight = 2.0f * mNearZ * tanf(halfFovY);
+        mFarWindowHeight  = 2.0f * mFarZ * tanf(halfFovY);
 
         DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(mFovY, mAspect, mNearZ, mFarZ);
         DirectX::XMStoreFloat4x4(&mProjection, projectionMatrix);
@@ -216,9 +223,9 @@ namespace Utils
 
     inline void Camera::lookAt(DirectX::FXMVECTOR position, DirectX::FXMVECTOR target, DirectX::FXMVECTOR worldUp)
     {
-        DirectX::XMVECTOR look = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(target, position));
-        DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, look));
-        DirectX::XMVECTOR up = DirectX::XMVector3Cross(look, right);
+        const DirectX::XMVECTOR look = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(target, position));
+        const DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, look));
+        const DirectX::XMVECTOR up = DirectX::XMVector3Cross(look, right);
 
         DirectX::XMStoreFloat3(&mPosition, position);
         DirectX::XMStoreFloat3(&mLook, look);
@@ -228,9 +235,9 @@ namespace Utils
 
     inline void Camera::lookAt(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& target, const DirectX::XMFLOAT3& up)
     {
-        DirectX::XMVECTOR positionVec = DirectX::XMLoadFloat3(&position);
-        DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&target);
-        DirectX::XMVECTOR upVec = DirectX::XMLoadFloat3(&up);
+        const DirectX::XMVECTOR positionVec = DirectX::XMLoadFloat3(&position);
+        const DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&target);
+        const DirectX::XMVECTOR upVec = DirectX::XMLoadFloat3(&up);
 
         lookAt(positionVec, targetVec, upVec);
     }
@@ -253,25 +260,25 @@ namespace Utils
     inline void Camera::strafe(const float distance)
     {
         // mPosition += distance * mRight
-        DirectX::XMVECTOR s = DirectX::XMVectorReplicate(distance);
-        DirectX::XMVECTOR r = DirectX::XMLoadFloat3(&mRight);
-        DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&mPosition);
+        const DirectX::XMVECTOR s = DirectX::XMVectorReplicate(distance);
+        const DirectX::XMVECTOR r = DirectX::XMLoadFloat3(&mRight);
+        const DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&mPosition);
         DirectX::XMStoreFloat3(&mPosition, DirectX::XMVectorMultiplyAdd(s, r, p));
     }
 
     inline void Camera::walk(const float distance)
     {
         // mPosition += distance * mLook
-        DirectX::XMVECTOR s = DirectX::XMVectorReplicate(distance);
-        DirectX::XMVECTOR l = DirectX::XMLoadFloat3(&mLook);
-        DirectX::XMVECTOR p = DirectX::XMLoadFloat3(&mPosition);
-        DirectX::XMStoreFloat3(&mPosition, DirectX::XMVectorMultiplyAdd(s, l, p));
+        const DirectX::XMVECTOR distanceVector = DirectX::XMVectorReplicate(distance);
+        const DirectX::XMVECTOR lookVector = DirectX::XMLoadFloat3(&mLook);
+        const DirectX::XMVECTOR positionVector = DirectX::XMLoadFloat3(&mPosition);
+        DirectX::XMStoreFloat3(&mPosition, DirectX::XMVectorMultiplyAdd(distanceVector, lookVector, positionVector));
     }
 
     inline void Camera::pitch(const float angle)
     {
         // Rotate up and look vector about the right vector.
-        DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&mRight), angle);
+       const  DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&mRight), angle);
 
         DirectX::XMStoreFloat3(&mUp, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&mUp), rotationMatrix));
         DirectX::XMStoreFloat3(&mLook, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&mLook), rotationMatrix));
@@ -280,7 +287,7 @@ namespace Utils
     inline void Camera::rotateY(const float angle)
     {
         // Rotate the basis vectors about the world y-axis.
-        DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(angle);
+        const DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(angle);
 
         DirectX::XMStoreFloat3(&mRight, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&mRight), rotationMatrix));
         DirectX::XMStoreFloat3(&mUp, DirectX::XMVector3TransformNormal(DirectX::XMLoadFloat3(&mUp), rotationMatrix));

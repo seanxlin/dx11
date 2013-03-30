@@ -72,7 +72,7 @@ namespace Framework
         //
         // Set constant buffers
         //
-        ID3D11Buffer* pixelShaderBuffers[] = { mCommonPSPerFrameBuffer.buffer(), mCommonPSPerObjectBuffer.buffer() };
+        ID3D11Buffer* pixelShaderBuffers[] = { &mCommonPSPerFrameBuffer.buffer(), &mCommonPSPerObjectBuffer.buffer() };
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         //
@@ -80,10 +80,10 @@ namespace Framework
         //
         memcpy(&mCommonPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mCommonPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
-        mCommonPSPerFrameBuffer.applyChanges(mImmediateContext);
+        mCommonPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         mCommonPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
-        mCommonPSPerObjectBuffer.applyChanges(mImmediateContext);
+        mCommonPSPerObjectBuffer.applyChanges(*mImmediateContext);
         
         //
         // Set sampler states
@@ -148,9 +148,9 @@ namespace Framework
         
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        mShapesVSPerObjectBuffer.applyChanges(mImmediateContext);
+        mShapesVSPerObjectBuffer.applyChanges(*mImmediateContext);
 
-        ID3D11Buffer* vertexShaderBuffers = mShapesVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = &mShapesVSPerObjectBuffer.buffer();
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
@@ -211,9 +211,9 @@ namespace Framework
 
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        mFloorVSPerObjectBuffer.applyChanges(mImmediateContext);
+        mFloorVSPerObjectBuffer.applyChanges(*mImmediateContext);
 
-        ID3D11Buffer* vertexShaderBuffers = mFloorVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = &mFloorVSPerObjectBuffer.buffer();
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //

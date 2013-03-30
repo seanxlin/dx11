@@ -122,9 +122,9 @@ namespace Framework
 
         mBlurFilter.init(mDevice, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
         
-        mLandPerFrameBuffer.initialize(mDevice);
-        mLandPerObjectBuffer.initialize(mDevice);
-        mScreenQuadVSPerFrameBuffer.initialize(mDevice);
+        mLandPerFrameBuffer.initialize(*mDevice);
+        mLandPerObjectBuffer.initialize(*mDevice);
+        mScreenQuadVSPerFrameBuffer.initialize(*mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

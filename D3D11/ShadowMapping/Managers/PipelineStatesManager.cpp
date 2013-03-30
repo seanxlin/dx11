@@ -8,16 +8,20 @@
 namespace Managers
 {
     ID3D11SamplerState* PipelineStatesManager::mAnisotropicSS =  nullptr;
+
     ID3D11RasterizerState* PipelineStatesManager::mWireframeRS = nullptr;
     ID3D11RasterizerState* PipelineStatesManager::mNoCullRS = nullptr;
+    ID3D11RasterizerState* PipelineStatesManager::mDepthRS = nullptr;
+
     ID3D11DepthStencilState* PipelineStatesManager::mLessEqualDSS = nullptr;
+
     ID3D11BlendState* PipelineStatesManager::mAlphaToCoverageBS = nullptr;
     ID3D11BlendState* PipelineStatesManager::mTransparentBS = nullptr;
 
     void PipelineStatesManager::initAll(ID3D11Device* device)
     {
         assert(device);
-
+        
         //
         // Anisotropic sampler state
         //
@@ -42,27 +46,51 @@ namespace Managers
         //
         // Wireframe rasterizer state
         //
-        D3D11_RASTERIZER_DESC wireframeDesc;
-        ZeroMemory(&wireframeDesc, sizeof(D3D11_RASTERIZER_DESC));
-        wireframeDesc.FillMode = D3D11_FILL_WIREFRAME;
-        wireframeDesc.CullMode = D3D11_CULL_BACK;
-        wireframeDesc.FrontCounterClockwise = false;
-        wireframeDesc.DepthClipEnable = true;
+        D3D11_RASTERIZER_DESC rasterizerDesc;
+        ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+        rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+        rasterizerDesc.CullMode = D3D11_CULL_BACK;
+        rasterizerDesc.FrontCounterClockwise = false;
+        rasterizerDesc.DepthClipEnable = true;
 
-        result = device->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
+        result = device->CreateRasterizerState(&rasterizerDesc, &mWireframeRS);
         DebugUtils::DxErrorChecker(result);
 
         //
         // NoCullRS
         //
-        D3D11_RASTERIZER_DESC noCullDesc;
-        ZeroMemory(&noCullDesc, sizeof(D3D11_RASTERIZER_DESC));
-        noCullDesc.FillMode = D3D11_FILL_SOLID;
-        noCullDesc.CullMode = D3D11_CULL_NONE;
-        noCullDesc.FrontCounterClockwise = false;
-        noCullDesc.DepthClipEnable = true;
+        ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_NONE;
+        rasterizerDesc.FrontCounterClockwise = false;
+        rasterizerDesc.DepthClipEnable = true;
 
-        result = device->CreateRasterizerState(&noCullDesc, &mNoCullRS);
+        result = device->CreateRasterizerState(&rasterizerDesc, &mNoCullRS);
+        DebugUtils::DxErrorChecker(result);
+
+        //
+        // Depth Rasterizer state
+        // 
+        // If the depth buffer currently bound to the output-merger stage has a UNORM format or
+        // no depth buffer is bound the bias value is calculated like this: 
+        //
+        // Bias = (float)DepthBias * r + SlopeScaledDepthBias * MaxDepthSlope;
+        //
+        // where r is the minimum representable value > 0 in the depth-buffer format converted to float32.
+        // 
+        // For a 24-bit depth buffer, r = 1 / 2^24.
+        //
+        // Example: DepthBias = 100000 ==> Actual DepthBias = 100000/2^24 = .006
+        ZeroMemory(&rasterizerDesc, sizeof(D3D11_RASTERIZER_DESC));
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_BACK;
+        rasterizerDesc.FrontCounterClockwise = false;
+        rasterizerDesc.DepthClipEnable = true;
+        rasterizerDesc.DepthBias = 100000;
+        rasterizerDesc.DepthBiasClamp = 0.0f;
+        rasterizerDesc.SlopeScaledDepthBias = 1.0f;
+
+        result = device->CreateRasterizerState(&rasterizerDesc, &mDepthRS);
         DebugUtils::DxErrorChecker(result);
 
         //
@@ -123,9 +151,13 @@ namespace Managers
     void PipelineStatesManager::destroyAll()
     {
         mAnisotropicSS->Release();
+
         mWireframeRS->Release();
         mNoCullRS->Release();
+        mDepthRS->Release();
+
         mLessEqualDSS->Release();
+
         mAlphaToCoverageBS->Release();
         mTransparentBS->Release();
     }

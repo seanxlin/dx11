@@ -34,8 +34,8 @@ SamplerState mySampler : register(s0);
 Texture2D gNormalMap : register(t0);
 
 [domain("tri")]
-DomainShaderOutput main(PatchTess patchTess, 
-             float3 barycentric : SV_DomainLocation, 
+DomainShaderOutput main(in PatchTess patchTess, 
+             in const float3 barycentric : SV_DomainLocation, 
              const OutputPatch<DomainShaderInput, NUM_CONTROL_POINTS> trianglePatch)
 {
 	DomainShaderOutput output;
@@ -54,13 +54,14 @@ DomainShaderOutput main(PatchTess patchTess,
 	//
 	
 	// Choose the most detailed mipmap level
-	float mipLevel = 1.0f;
+	const float mipLevel = 1.0f;
 	
 	// Sample height map (stored in alpha channel).
-	float height = gNormalMap.SampleLevel(mySampler, output.mTexCoord, mipLevel).a;
+	const float height = gNormalMap.SampleLevel(mySampler, output.mTexCoord, mipLevel).a;
 	
 	// Offset vertex along normal.
-	output.mPositionW += ((height - 1.0)) * output.mNormalW;
+    const float scaleOffset = 3.0f;
+	output.mPositionW += height * scaleOffset * output.mNormalW;
 	
 	// Project to homogeneous clip space.
 	output.mPositionH = mul(float4(output.mPositionW, 1.0f), gViewProjection);

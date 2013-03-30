@@ -77,7 +77,7 @@ DomainShaderOutput main(PatchTess patchTess,
 
     // Compute positions and texture coordinates.
     output.mPositionH = mul(float4(p, 1.0f), gWorldViewProjection);
-    output.mPositionW = mul(float4(p, 1.0f), gWorld);
+    output.mPositionW = mul(float4(p, 1.0f), gWorld).xyz;
     output.mTexCoord = mul(float4(uv, 0.0f, 1.0f), gTexTransform).xy;
 
     // Compute normal for the current position
