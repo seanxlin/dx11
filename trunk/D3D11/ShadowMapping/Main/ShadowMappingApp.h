@@ -12,6 +12,7 @@
 #include <ConstantBuffer.h>
 #include <D3DApplication.h>
 #include <LightHelper.h>
+#include <ShadowMapper.h>
 
 namespace Framework
 {
@@ -37,10 +38,16 @@ namespace Framework
         void onMouseMove(WPARAM btnState, const int32_t x, const int32_t y);
 
     private:       
+        void drawSceneToShadowMap();
         void drawFloor();
-        void drawCylinder();
+        void drawCylinders();
+
+        void drawCylindersIntoShadowMap();
+        void drawFloorIntoShadowMap();
 
         void setShapesGeneralSettings();
+
+        void buildShadowTransform();
 
         Utils::Camera mCamera;
 
@@ -56,6 +63,9 @@ namespace Framework
         Shaders::ConstantBuffer<Shaders::CommonPSPerFrameBuffer> mCommonPSPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::CommonPSPerObjectBuffer> mCommonPSPerObjectBuffer;
         
+        Shaders::ConstantBuffer<Shaders::ShadowMapVSPerObjectBuffer> mShadowMapVSPerObjectBuffer;
+        Shaders::ConstantBuffer<Shaders::FloorShadowMapVSPerObjectBuffer> mFloorShadowMapVSPerObjectBuffer;
+
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mFloorWorld;
 
@@ -64,12 +74,20 @@ namespace Framework
 
         POINT mLastMousePos;
 
+        Utils::BoundingSphere mSceneBounds;
+        static const int sShadowMapSize = 2048;
+        Utils::ShadowMapper* mShadowMapper;
+        DirectX::XMFLOAT4X4 mLightView;
+        DirectX::XMFLOAT4X4 mLightProjection;
+        DirectX::XMFLOAT4X4 mShadowTransform;
+
         DirectX::XMFLOAT3 mDefaultShadowLightDirection[3];
         float mLightRotationAngle;
     };     
 
     inline ShadowMappingApp::ShadowMappingApp(HINSTANCE hInstance)
         : D3DApplication(hInstance)
+        , mShadowMapper(nullptr)
         , mLightRotationAngle(0.0f)
     {
         mMainWindowCaption = L"Shadow Mapping Demo";
@@ -122,6 +140,13 @@ namespace Framework
         mFloorMaterial.mDiffuse  = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
         mFloorMaterial.mSpecular = DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
         mFloorMaterial.mReflect  = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+
+        // Estimate the scene bounding sphere manually since we know how the scene was constructed.
+        // The grid is the "widest object" with a width of 20 and depth of 30.0f, and centered at
+        // the world space origin.  In general, you need to loop over every world space vertex
+        // position and compute the bounding sphere.
+        mSceneBounds.mCenter = DirectX::XMFLOAT3(0.0f, 0.0f, 0.0f);
+        mSceneBounds.mRadius = sqrtf(10.0f * 10.0f + 15.0f * 15.0f);
     }
 
     inline ShadowMappingApp::~ShadowMappingApp()
@@ -130,6 +155,8 @@ namespace Framework
         Managers::ShadersManager::destroyAll();
         Managers::PipelineStatesManager::destroyAll();
         Managers::GeometryBuffersManager::destroyAll();
+
+        delete mShadowMapper;
     }
 
     inline bool ShadowMappingApp::init()
@@ -137,17 +164,22 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mFloorVSPerObjectBuffer.initialize(mDevice);
+        mFloorVSPerObjectBuffer.initialize(*mDevice);
         
-        mShapesVSPerObjectBuffer.initialize(mDevice);
+        mShapesVSPerObjectBuffer.initialize(*mDevice);
 
-        mCommonPSPerFrameBuffer.initialize(mDevice);
-        mCommonPSPerObjectBuffer.initialize(mDevice);
+        mCommonPSPerFrameBuffer.initialize(*mDevice);
+        mCommonPSPerObjectBuffer.initialize(*mDevice);
         
+        mShadowMapVSPerObjectBuffer.initialize(*mDevice);
+        mFloorShadowMapVSPerObjectBuffer.initialize(*mDevice);
+
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);
         Managers::PipelineStatesManager::initAll(mDevice);
         Managers::GeometryBuffersManager::initAll(mDevice);
+
+        mShadowMapper = new Utils::ShadowMapper(*mDevice, sShadowMapSize, sShadowMapSize);
 
         return true;
     }

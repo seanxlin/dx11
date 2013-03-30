@@ -29,7 +29,7 @@ Texture2D gDiffuseMap : register(t0);
 #define FOG_ENABLED 0 
 #endif
 
-float4 main(PixelShaderInput input) : SV_TARGET
+float4 main(in PixelShaderInput input) : SV_TARGET
 {
 	// Interpolating normal can unnormalize it, so normalize it.
     input.mNormalW = normalize(input.mNormalW); 
@@ -38,7 +38,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	float3 toEyeW = gEyePositionW - input.mPositionW; 
 	 
 	// Cache the distance to the eye from this surface point.
-	float distToEye = length(toEyeW);
+	const float distToEye = length(toEyeW);
 
 	// Normalize.
 	toEyeW /= distToEye;
@@ -91,7 +91,7 @@ float4 main(PixelShaderInput input) : SV_TARGET
 	// Fogging
 	//
 #if FOG_ENABLED
-	float fogLerp = saturate((distToEye - gFogStart) / gFogRange); 
+	const float fogLerp = saturate((distToEye - gFogStart) / gFogRange); 
 
 	// Blend the fog color and the lit color.
 	finalColor = lerp(finalColor, gFogColor, fogLerp);	

@@ -68,7 +68,7 @@ namespace Framework
         mCommonPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mCommonPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mCommonPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
-        mCommonPerFrameBuffer.applyChanges(mImmediateContext);
+        mCommonPerFrameBuffer.applyChanges(*mImmediateContext);
 
         drawBillboards(viewProjection);
         drawLand(viewProjection);
@@ -125,7 +125,7 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
         
         // Set constant buffers
-        ID3D11Buffer* billboardsConstantBuffer[] = { mCommonPerFrameBuffer.buffer(), mBillboardsPerObjectBuffer.buffer() };
+        ID3D11Buffer* billboardsConstantBuffer[] = { &mCommonPerFrameBuffer.buffer(), &mBillboardsPerObjectBuffer.buffer() };
         mImmediateContext->GSSetConstantBuffers(0, 2, billboardsConstantBuffer);
         mImmediateContext->PSSetConstantBuffers(0, 2, billboardsConstantBuffer);
 
@@ -142,7 +142,7 @@ namespace Framework
         // Update pero object constant buffer
         DirectX::XMStoreFloat4x4(&mBillboardsPerObjectBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         mBillboardsPerObjectBuffer.mData.mMaterial = mPalmMaterial;
-        mBillboardsPerObjectBuffer.applyChanges(mImmediateContext);
+        mBillboardsPerObjectBuffer.applyChanges(*mImmediateContext);
 
         // Set blend state
         float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f}; 
@@ -174,8 +174,8 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
 
         // Set constant buffers
-        ID3D11Buffer* pixelShaderBuffers[] = { mCommonPerFrameBuffer.buffer(), mLandPerObjectBuffer.buffer() };
-        ID3D11Buffer* vertexShaderBuffers = mLandPerObjectBuffer.buffer();
+        ID3D11Buffer* pixelShaderBuffers[] = { &mCommonPerFrameBuffer.buffer(), &mLandPerObjectBuffer.buffer() };
+        ID3D11Buffer* vertexShaderBuffers = &mLandPerObjectBuffer.buffer();
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
@@ -219,7 +219,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
         // Apply buffer changes and draw.
-        mLandPerObjectBuffer.applyChanges(mImmediateContext);
+        mLandPerObjectBuffer.applyChanges(*mImmediateContext);
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }
 }

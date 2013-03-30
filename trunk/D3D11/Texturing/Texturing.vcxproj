@@ -175,7 +175,6 @@
     <ClCompile Include="..\Common\DDSTextureLoader.cpp" />
     <ClCompile Include="..\Common\DxErrorChecker.cpp" />
     <ClCompile Include="..\Common\GeometryGenerator.cpp" />
-    <ClCompile Include="..\Common\LightHelper.cpp" />
     <ClCompile Include="..\Common\MathHelper.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
     <ClCompile Include="Main\TexturingApp.cpp" />

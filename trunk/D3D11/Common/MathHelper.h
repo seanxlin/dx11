@@ -20,7 +20,7 @@ namespace Utils
         // Returns random float in [0, 1).
         static inline float randomFloat();
 
-        // Returns random float in [a, b).
+        // Returns random float in [leftLimit, righLimit).
         static inline float randomFloat(const float leftLimit, const float righLimit);
 
         static inline DirectX::XMMATRIX inverseTranspose(DirectX::CXMMATRIX matrix);

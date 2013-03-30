@@ -112,9 +112,9 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mBezierSurfaceDSPerFrameBuffer.initialize(mDevice);
-        mBezierSurfaceHSPerFrameBuffer.initialize(mDevice);
-        mBezierSurfacePSPerFrameBuffer.initialize(mDevice);
+        mBezierSurfaceDSPerFrameBuffer.initialize(*mDevice);
+        mBezierSurfaceHSPerFrameBuffer.initialize(*mDevice);
+        mBezierSurfacePSPerFrameBuffer.initialize(*mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

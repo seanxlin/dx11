@@ -18,6 +18,7 @@ namespace Managers
 
         static ID3D11RasterizerState* mWireframeRS;
         static ID3D11RasterizerState* mNoCullRS;
+        static ID3D11RasterizerState* mDepthRS;
 
         static ID3D11DepthStencilState* mLessEqualDSS;
 

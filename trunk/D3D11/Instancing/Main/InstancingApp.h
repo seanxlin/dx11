@@ -150,12 +150,12 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mFloorVSPerObjectBuffer.initialize(mDevice);
+        mFloorVSPerObjectBuffer.initialize(*mDevice);
         
-        mShapesVSPerObjectBuffer.initialize(mDevice);
+        mShapesVSPerObjectBuffer.initialize(*mDevice);
 
-        mCommonPSPerFrameBuffer.initialize(mDevice);
-        mCommonPSPerObjectBuffer.initialize(mDevice);
+        mCommonPSPerFrameBuffer.initialize(*mDevice);
+        mCommonPSPerObjectBuffer.initialize(*mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

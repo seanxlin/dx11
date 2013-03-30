@@ -133,13 +133,13 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mLandPerFrameBuffer.initialize(mDevice);
-        mLandVSPerObjectBuffer.initialize(mDevice);
-        mLandPSPerObjectBuffer.initialize(mDevice);
-        mSphereVSPerObjectBuffer.initialize(mDevice);
-        mSpherePSPerObjectBuffer.initialize(mDevice);
-        mSpherePSPerFrameBuffer.initialize(mDevice);
-        mSkyPerFrameBuffer.initialize(mDevice);
+        mLandPerFrameBuffer.initialize(*mDevice);
+        mLandVSPerObjectBuffer.initialize(*mDevice);
+        mLandPSPerObjectBuffer.initialize(*mDevice);
+        mSphereVSPerObjectBuffer.initialize(*mDevice);
+        mSpherePSPerObjectBuffer.initialize(*mDevice);
+        mSpherePSPerFrameBuffer.initialize(*mDevice);
+        mSkyPerFrameBuffer.initialize(*mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

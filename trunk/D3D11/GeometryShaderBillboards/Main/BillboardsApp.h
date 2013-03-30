@@ -137,9 +137,9 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
         
-        mCommonPerFrameBuffer.initialize(mDevice);
-        mLandPerObjectBuffer.initialize(mDevice);
-        mBillboardsPerObjectBuffer.initialize(mDevice);
+        mCommonPerFrameBuffer.initialize(*mDevice);
+        mLandPerObjectBuffer.initialize(*mDevice);
+        mBillboardsPerObjectBuffer.initialize(*mDevice);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

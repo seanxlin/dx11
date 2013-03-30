@@ -194,9 +194,9 @@ void computeSpotLight(Material material, SpotLight light, float3 position, float
 	specular *= attenuation;
 }
 
-//---------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////
 // Transforms a normal map sample to world space.
-//---------------------------------------------------------------------------------------
+///////////////////////////////////////////////////////////////////
 float3 normalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, float3 tangentW)
 {
 	// Uncompress each component from [0,1] to [-1,1].
@@ -215,5 +215,40 @@ float3 normalSampleToWorldSpace(float3 normalMapSample, float3 unitNormalW, floa
 	return bumpedNormalW;
 }
 
- 
+///////////////////////////////////////////////////////////////////
+// Performs shadowmap test to determine if a pixel is in shadow.
+///////////////////////////////////////////////////////////////////
+
+static const float SHADOW_MAP_SIZE = 2048.0f;
+static const float SHADOW_MAP_DX = 1.0f / SHADOW_MAP_SIZE;
+
+float computeShadowFactor(SamplerComparisonState shadowSampler, Texture2D shadowMap, 
+					   float4 shadowPositionH)
+{
+	// Complete projection by doing division by w.
+	shadowPositionH.xyz /= shadowPositionH.w;
+	
+	// Depth in NDC space.
+	float depth = shadowPositionH.z;
+
+	// Texel size.
+	const float dx = SHADOW_MAP_DX;
+
+	float percentLit = 0.0f;
+	const float2 offsets[9] = 
+	{
+		float2(-dx,  -dx), float2(0.0f,  -dx), float2(dx,  -dx),
+		float2(-dx, 0.0f), float2(0.0f, 0.0f), float2(dx, 0.0f),
+		float2(-dx,  +dx), float2(0.0f,  +dx), float2(dx,  +dx)
+	};
+
+	[unroll]
+	for(int i = 0; i < 9; ++i)
+	{
+		percentLit += shadowMap.SampleCmpLevelZero(shadowSampler, 
+			shadowPositionH.xy + offsets[i], depth).r;
+	}
+
+	return percentLit /= 9.0f;
+}
  

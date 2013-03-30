@@ -6,7 +6,7 @@ namespace Utils
     void Timer::reset()
     {
         // Last start time will be the current elapsed time.
-        QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER *> (&mLastStartTime) );
+        QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&mLastStartTime));
 
         // Reset the previous tick frame.
         mPreviousTickTime = mLastStartTime;
@@ -28,14 +28,14 @@ namespace Utils
         if (mIsStopped)
         {
             // If timer was stopped then the previous tick time will be the new start time.
-            QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER *> (&mPreviousTickTime) );
+            QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&mPreviousTickTime));
 
             // Update the total in pause time.
             mInPauseTime += (mPreviousTickTime - mLastStopTime);	
 
             // Because the timer was stopped and now started, then there is no last stop time.
             mLastStopTime = 0;
-            mIsStopped  = false;
+            mIsStopped = false;
         }
     }
 
@@ -46,7 +46,7 @@ namespace Utils
         {
             // If the timer is not stopped, then we need to update the 
             // last stop time.
-            QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER *> (&mLastStopTime) );
+            QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&mLastStopTime));
 
             mIsStopped  = true;
         }
@@ -58,12 +58,14 @@ namespace Utils
         // If timer is stopped, then there is no delta time between
         // previous and current tick time.
         if (mIsStopped)
+        {
             mDeltaTime = 0.0;
+        }
 
         else 
         {
             // Update current tick time.
-            QueryPerformanceCounter( reinterpret_cast<LARGE_INTEGER *> (&mCurrentTickTime) );
+            QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&mCurrentTickTime));
 
             // Time difference between this frame and the previous.
             // Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 

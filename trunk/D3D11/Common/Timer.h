@@ -8,24 +8,10 @@ namespace Utils
     class Timer
     {
     public:
-        Timer::Timer()
-            : mLastStartTime(0)
-            , mInPauseTime(0)
-            , mPreviousTickTime(0)
-            , mCurrentTickTime(0)
-            , mSecondsPerCount(0.0)
-            , mDeltaTime(-1.0)
-            , mIsStopped(false)
-        {
-            // Get the frequency of the high-resolution performance counter, if one exists. 
-            // The frequency cannot change while the system is running.
-            uint64_t countsPerSec;
-            QueryPerformanceFrequency( reinterpret_cast<LARGE_INTEGER *> (&countsPerSec) );
-            mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
-        }
+        inline Timer();
 
-        __forceinline float inGameTime() const; // in seconds
-        __forceinline float deltaTime() const; // in seconds
+        inline float inGameTime() const; // in seconds
+        inline float deltaTime() const; // in seconds
 
         // Call before message loop.
         void reset(); 
@@ -51,6 +37,22 @@ namespace Utils
 
         bool mIsStopped;
     };
+
+    inline Timer::Timer()
+        : mLastStartTime(0)
+        , mInPauseTime(0)
+        , mPreviousTickTime(0)
+        , mCurrentTickTime(0)
+        , mSecondsPerCount(0.0)
+        , mDeltaTime(-1.0)
+        , mIsStopped(false)
+    {
+        // Get the frequency of the high-resolution performance counter, if one exists. 
+        // The frequency cannot change while the system is running.
+        uint64_t countsPerSec;
+        QueryPerformanceFrequency( reinterpret_cast<LARGE_INTEGER *> (&countsPerSec) );
+        mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
+    }
 
     // Returns the total time elapsed since reset() was called, NOT counting any
     // time when the clock is stopped.

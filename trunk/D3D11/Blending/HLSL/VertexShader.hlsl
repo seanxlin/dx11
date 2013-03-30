@@ -15,7 +15,7 @@ struct VertexShaderOutput
     float2 mTexCoord : TEXCOORD;
 };
 
-VertexShaderOutput main(VertexShaderInput input)
+VertexShaderOutput main(in VertexShaderInput input)
 {
 	VertexShaderOutput output;
 	

@@ -7,7 +7,7 @@ namespace Utils
 	    DirectX::XMVECTOR right = DirectX::XMLoadFloat3(&mRight);
 	    DirectX::XMVECTOR up = DirectX::XMLoadFloat3(&mUp);
 	    DirectX::XMVECTOR look = DirectX::XMLoadFloat3(&mLook);
-	    DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&mPosition);
+	    const DirectX::XMVECTOR position = DirectX::XMLoadFloat3(&mPosition);
 
 	    // Keep camera's axes orthogonal to each other and of unit length.
 	    look = DirectX::XMVector3Normalize(look);

@@ -4,6 +4,7 @@ cbuffer cbPerObject : register(b0)
 {
 	float4x4 gViewProjection;
     float4x4 gTexTransform;
+    float4x4 gShadowTransform;
 };
 
 struct VertexShaderInput
@@ -18,11 +19,12 @@ struct VertexShaderInput
 
 struct VertexShaderOutput
 {
-	float4 mPositionH : SV_POSITION;
+    float4 mShadowPositionH : TEXCOORD1;
+    float4 mPositionH : SV_POSITION;
     float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
     float3 mTangentW : TANGENT;
-    float2 mTexCoord : TEXCOORD;
+    float2 mTexCoord : TEXCOORD0;
 };
 
 VertexShaderOutput main(VertexShaderInput input)
@@ -39,6 +41,9 @@ VertexShaderOutput main(VertexShaderInput input)
 
     // Output vertex attributes for interpolation across triangle.
 	output.mTexCoord = mul(float4(input.mTexCoord, 0.0f, 1.0f), gTexTransform).xy;
+
+    // Generate projective tex-coords to project shadow map onto scene.
+    output.mShadowPositionH = mul(float4(input.mPositionL, 1.0f), gShadowTransform);
 	
 	return output;
 }

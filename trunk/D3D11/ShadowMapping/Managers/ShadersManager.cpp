@@ -48,7 +48,7 @@ namespace
             {"WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
             {"WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
             {"WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
-            {"WORLD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 648, D3D11_INPUT_PER_INSTANCE_DATA, 1}
+            {"WORLD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1}
         };
 
         // Create the input layout
@@ -59,6 +59,55 @@ namespace
     }
 
     void buildFloorVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
+    {
+        assert(device);
+        assert(!inputLayout);
+        assert(!shaderByteCode.empty());
+
+        // Create the vertex input layout for land and screen quad
+        D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
+        };
+
+        // Create the input layout
+        const HRESULT result = device->CreateInputLayout(vertexDesc, 4, &shaderByteCode[0], 
+            shaderByteCode.size(), &inputLayout);
+
+        DebugUtils::DxErrorChecker(result);
+    }
+
+    void buildShadowMapVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
+    {
+        assert(device);
+        assert(!inputLayout);
+        assert(!shaderByteCode.empty());
+
+        // Create the vertex input layout for land and screen quad
+        D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
+        {
+            {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0},
+            {"WORLD", 0, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 0, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+            {"WORLD", 1, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 16, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+            {"WORLD", 2, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 32, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+            {"WORLD", 3, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 48, D3D11_INPUT_PER_INSTANCE_DATA, 1},
+            {"WORLD", 4, DXGI_FORMAT_R32G32B32A32_FLOAT, 1, 64, D3D11_INPUT_PER_INSTANCE_DATA, 1}
+        };
+
+        // Create the input layout
+        const HRESULT result = device->CreateInputLayout(vertexDesc, 9, &shaderByteCode[0], 
+            shaderByteCode.size(), &inputLayout);
+
+        DebugUtils::DxErrorChecker(result);
+    }
+
+    void buildFloorShadowMapVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
     {
         assert(device);
         assert(!inputLayout);
@@ -90,6 +139,14 @@ namespace Managers
     ID3D11VertexShader* ShadersManager::mFloorVS = nullptr;
     ID3D11InputLayout* ShadersManager::mFloorIL = nullptr;
     ID3D11PixelShader* ShadersManager::mFloorPS = nullptr;
+
+    ID3D11VertexShader* ShadersManager::mShadowMapVS = nullptr;
+    ID3D11InputLayout* ShadersManager::mShadowMapIL = nullptr;
+    ID3D11PixelShader* ShadersManager::mShadowMapPS = nullptr;
+
+    ID3D11VertexShader* ShadersManager::mFloorShadowMapVS = nullptr;
+    ID3D11InputLayout* ShadersManager::mFloorShadowMapIL = nullptr;
+    ID3D11PixelShader* ShadersManager::mFloorShadowMapPS = nullptr;
     
     void ShadersManager::initAll(ID3D11Device * const device)
     {
@@ -112,6 +169,16 @@ namespace Managers
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorVS);
         DebugUtils::DxErrorChecker(result);
 
+        computeShaderByteCode(L"HLSL/ShadowMapVS.cso", shaderByteCode);
+        buildShadowMapVertexLayout(device, shaderByteCode, mShadowMapIL);
+        result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShadowMapVS);
+        DebugUtils::DxErrorChecker(result);
+
+        computeShaderByteCode(L"HLSL/FloorShadowMapVS.cso", shaderByteCode);
+        buildFloorShadowMapVertexLayout(device, shaderByteCode, mFloorShadowMapIL);
+        result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorShadowMapVS);
+        DebugUtils::DxErrorChecker(result);
+
         //
         // Pixel shaders
         //
@@ -121,6 +188,14 @@ namespace Managers
 
         computeShaderByteCode(L"HLSL/FloorPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorPS);
+        DebugUtils::DxErrorChecker(result);
+
+        computeShaderByteCode(L"HLSL/ShadowMapPS.cso", shaderByteCode);        
+        result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShadowMapPS);
+        DebugUtils::DxErrorChecker(result);
+
+        computeShaderByteCode(L"HLSL/FloorShadowMapPS.cso", shaderByteCode);        
+        result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorShadowMapPS);
         DebugUtils::DxErrorChecker(result);
     }
     
@@ -133,5 +208,13 @@ namespace Managers
         mFloorVS->Release();
         mFloorIL->Release();
         mFloorPS->Release();
+
+        mShadowMapVS->Release();
+        mShadowMapIL->Release();
+        mShadowMapPS->Release();
+
+        mFloorShadowMapVS->Release();
+        mFloorShadowMapIL->Release();
+        mFloorShadowMapPS->Release();
     }
 }

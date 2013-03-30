@@ -18,6 +18,19 @@
 
 namespace Geometry
 {
+    struct BoundingSphere
+    {
+        BoundingSphere() 
+            : mCenter(0.0f, 0.0f, 0.0f)
+            , mRadius(0.0f) 
+        {
+
+        }
+
+        DirectX::XMFLOAT3 mCenter;
+        float mRadius;
+    };
+
     class GeometryGenerator
     {
     public:
@@ -25,8 +38,10 @@ namespace Geometry
 	    {
 		    Vertex() { }
 		
-		    Vertex(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT3& normal, 
-			    const DirectX::XMFLOAT3& tangentU, const DirectX::XMFLOAT2& texCoord)
+		    Vertex(const DirectX::XMFLOAT3& position, 
+                   const DirectX::XMFLOAT3& normal, 
+			       const DirectX::XMFLOAT3& tangentU, 
+                   const DirectX::XMFLOAT2& texCoord)
 			    : mPosition(position)
 			    , mNormal(normal)
 			    , mTangentU(tangentU)
@@ -34,10 +49,17 @@ namespace Geometry
 		    {
 		    }
 		
-		    Vertex(const float positionX, const float positionY, const float positionZ,
-			    const float normalX, const float normalY, const float normalZ,
-			    const float tangentUx, const float tangentUy, const float tangentUz,
-			    const float texCoordU, const float texCoordV)
+		    Vertex(const float positionX, 
+                   const float positionY, 
+                   const float positionZ,
+			       const float normalX, 
+                   const float normalY, 
+                   const float normalZ,
+		      	   const float tangentUx, 
+                   const float tangentUy, 
+                   const float tangentUz,
+			       const float texCoordU, 
+                   const float texCoordV)
 			    : mPosition(positionX, positionY, positionZ)
 			    , mNormal(normalX, normalY, normalZ)
 			    , mTangentU(tangentUx, tangentUy, tangentUz)

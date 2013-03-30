@@ -12,12 +12,14 @@ namespace Shaders
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
         DirectX::XMFLOAT4X4 mWorldViewProjection;
         DirectX::XMFLOAT4X4 mTexTransform;
+        DirectX::XMFLOAT4X4 mShadowTransform;
     };
 
     struct ShapesVSPerObjectBuffer
     {
         DirectX::XMFLOAT4X4 mViewProjection;
         DirectX::XMFLOAT4X4 mTexTransform;
+        DirectX::XMFLOAT4X4 mShadowTransform;
     };
 
     struct CommonPSPerFrameBuffer
@@ -29,5 +31,18 @@ namespace Shaders
     struct CommonPSPerObjectBuffer
     {
         Utils::Material mMaterial;
+    };
+
+    struct ShadowMapVSPerObjectBuffer
+    {
+        DirectX::XMFLOAT4X4 mLightViewProjection;
+        DirectX::XMFLOAT4X4 mTexTransform;
+    };
+
+    struct FloorShadowMapVSPerObjectBuffer
+    {
+        DirectX::XMFLOAT4X4 mWorld;
+        DirectX::XMFLOAT4X4 mLightViewProjection;
+        DirectX::XMFLOAT4X4 mTexTransform;
     };
 }
