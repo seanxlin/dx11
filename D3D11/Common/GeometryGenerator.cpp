@@ -510,34 +510,36 @@ namespace Geometry
 
     void GeometryGenerator::createGrid(const float width, const float depth, const uint32_t numRows, const uint32_t numColumns, MeshData& meshData)
     {
-	    const uint32_t vertexCount = numRows * numColumns;
-	    const uint32_t faceCount   = (numRows - 1) * (numColumns - 1) * 2;
+        const uint32_t vexterPerColumn = numColumns + 1;
+        const uint32_t vexterPerRow = numRows + 1;
+	    const uint32_t vertexCount = vexterPerRow * vexterPerColumn;
+	    const uint32_t faceCount   = (vexterPerRow) * (vexterPerColumn) * 2;
 
 	    // Create the vertices.
 	    const float halfWidth = 0.5f * width;
 	    const float halfDepth = 0.5f * depth;
 
-	    const float dx = width / (numColumns - 1);
-	    const float dz = depth / (numRows - 1);
+	    const float dx = width / (vexterPerColumn);
+	    const float dz = depth / (vexterPerRow);
 
-	    const float du = 1.0f / (numColumns - 1);
-	    const float dv = 1.0f / (numRows - 1);
+	    const float du = 1.0f / (vexterPerColumn);
+	    const float dv = 1.0f / (vexterPerRow);
 
 	    meshData.mVertices.resize(vertexCount);
-	    for(size_t i = 0; i < numRows; ++i)
+	    for(size_t i = 0; i < vexterPerRow; ++i)
 	    {
 		    const float z = halfDepth - i * dz;
-		    for(size_t j = 0; j < numColumns; ++j)
+		    for(size_t j = 0; j < vexterPerColumn; ++j)
 		    {
 			    const float x = -halfWidth + j * dx;
 
-                meshData.mVertices[i * numColumns + j].mPosition = DirectX::XMFLOAT3(x, 0.0f, z);
-			    meshData.mVertices[i * numColumns + j].mNormal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
-			    meshData.mVertices[i * numColumns + j].mTangentU = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+                meshData.mVertices[i * vexterPerColumn + j].mPosition = DirectX::XMFLOAT3(x, 0.0f, z);
+			    meshData.mVertices[i * vexterPerColumn + j].mNormal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+			    meshData.mVertices[i * vexterPerColumn + j].mTangentU = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
 
 			    // Stretch texture over grid.
-			    meshData.mVertices[i * numColumns + j].mTexCoord.x = j * du;
-			    meshData.mVertices[i * numColumns + j].mTexCoord.y = i * dv;
+			    meshData.mVertices[i * vexterPerColumn + j].mTexCoord.x = j * du;
+			    meshData.mVertices[i * vexterPerColumn + j].mTexCoord.y = i * dv;
 		    }
 	    }
  
@@ -546,21 +548,93 @@ namespace Geometry
 
 	    // Iterate over each quad and compute indices.
 	    uint32_t k = 0;
-	    for(uint32_t i = 0; i < numRows - 1; ++i)
+	    for(uint32_t i = 0; i < vexterPerRow - 1; ++i)
 	    {
-		    for(uint32_t j = 0; j < numColumns - 1; ++j)
+		    for(uint32_t j = 0; j < vexterPerColumn - 1; ++j)
 		    {
-			    meshData.mIndices[k] = i * numColumns + j;
-			    meshData.mIndices[k + 1] = i * numColumns + j + 1;
-			    meshData.mIndices[k + 2] = (i + 1) * numColumns + j;
+			    meshData.mIndices[k] = i * vexterPerColumn + j;
+			    meshData.mIndices[k + 1] = i * vexterPerColumn + j + 1;
+			    meshData.mIndices[k + 2] = (i + 1) * vexterPerColumn + j;
 
-			    meshData.mIndices[k + 3] = (i + 1) * numColumns + j;
-			    meshData.mIndices[k + 4] = i * numColumns + j + 1;
-			    meshData.mIndices[k + 5] = (i + 1) * numColumns + j + 1;
+			    meshData.mIndices[k + 3] = (i + 1) * vexterPerColumn + j;
+			    meshData.mIndices[k + 4] = i * vexterPerColumn + j + 1;
+			    meshData.mIndices[k + 5] = (i + 1) * vexterPerColumn + j + 1;
 
 			    k += 6; // next quad
 		    }
 	    }
+    }
+
+    void GeometryGenerator::createGridForInterlockingTiles(const float width, const float depth, const uint32_t numRows, const uint32_t numColumns, MeshData& meshData)
+    {
+        const uint32_t vexterPerColumn = numColumns + 1;
+        const uint32_t vexterPerRow = numRows + 1;
+        const uint32_t vertexCount = vexterPerRow * vexterPerColumn;
+        const uint32_t faceCount = (vexterPerRow) * (vexterPerColumn) * 2;
+
+        // Create the vertices.
+        const float halfWidth = 0.5f * width;
+        const float halfDepth = 0.5f * depth;
+
+        const float dx = width / vexterPerColumn;
+        const float dz = depth / vexterPerRow;
+
+        const float du = 1.0f / vexterPerColumn;
+        const float dv = 1.0f / vexterPerRow;
+
+        meshData.mVertices.resize(vertexCount);
+        for(size_t i = 0; i < vexterPerRow; ++i)
+        {
+            const float z = halfDepth - i * dz;
+            for(size_t j = 0; j < vexterPerColumn; ++j)
+            {
+                const float x = -halfWidth + j * dx;
+
+                meshData.mVertices[i * vexterPerColumn + j].mPosition = DirectX::XMFLOAT3(x, 0.0f, z);
+                meshData.mVertices[i * vexterPerColumn + j].mNormal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+                meshData.mVertices[i * vexterPerColumn + j].mTangentU = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+
+                // Stretch texture over grid.
+                meshData.mVertices[i * vexterPerColumn + j].mTexCoord.x = j * du;
+                meshData.mVertices[i * vexterPerColumn + j].mTexCoord.y = i * dv;
+            }
+        }
+
+        // Create the indices.
+        const uint32_t controlPointsPerQuad = 12;
+        meshData.mIndices.resize(numRows * numColumns * controlPointsPerQuad);
+
+        // Iterate over each quad and compute indices.
+        uint32_t k = 0;
+        for(uint32_t z = 0; z < numRows; ++z)
+        {
+            for(uint32_t x = 0; x < numColumns; ++x)
+            {
+                // 0-3 are the actual quad vertices
+                meshData.mIndices[k + 0] = (x + 0) + (z + 0) * vexterPerColumn;
+                meshData.mIndices[k + 1] = (x + 1) + (z + 0) * vexterPerColumn;
+                meshData.mIndices[k + 2] = (x + 0) + (z + 1) * vexterPerColumn;
+                meshData.mIndices[k + 3] = (x + 1) + (z + 1) * vexterPerColumn;
+
+                // 4-5 are +z
+                meshData.mIndices[k + 4] = Utils::MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
+                meshData.mIndices[k + 5] = Utils::MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
+
+                // 6-7 are +x
+                meshData.mIndices[k + 6] = Utils::MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
+                meshData.mIndices[k + 7] = Utils::MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
+
+                // 8-9 are -z
+                meshData.mIndices[k + 8] = Utils::MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
+                meshData.mIndices[k + 9] = Utils::MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
+
+                // 10-11 are -x
+                meshData.mIndices[k + 10] = Utils::MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
+                meshData.mIndices[k + 11] = Utils::MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
+
+                k += controlPointsPerQuad; // 12 control points per quad
+            }
+        }
     }
 
     void GeometryGenerator::createFullscreenQuad(MeshData& meshData)

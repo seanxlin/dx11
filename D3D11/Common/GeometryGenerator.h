@@ -95,9 +95,13 @@ namespace Geometry
 	    // cylinders.  The slices and stacks parameters control the degree of tessellation.
 	    static void createCylinder(const float bottomRadius, const float topRadius, const float height, const uint32_t sliceCount, const uint32_t stackCount, MeshData& meshData);
 
-	    // Creates an mxn grid in the xz-plane with m rows and n columns, centered
+	    // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
 	    // at the origin with the specified width and depth.
 	    static void createGrid(const float width, const float depth, const uint32_t numRows, const uint32_t numColumns, MeshData& meshData);
+
+        // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
+        // at the origin with the specified width and depth.
+        static void createGridForInterlockingTiles(const float width, const float depth, const uint32_t numRows, const uint32_t numColumns, MeshData& meshData);
 
 	    // Creates a quad covering the screen in NDC coordinates.  This is useful for
 	    // postprocessing effects.

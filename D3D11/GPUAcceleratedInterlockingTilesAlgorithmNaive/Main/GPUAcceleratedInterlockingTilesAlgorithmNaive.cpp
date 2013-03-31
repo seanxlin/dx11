@@ -15,6 +15,7 @@ namespace Framework
 {
     GPUAcceleratedInterlockingTilesAlgorithmNaive::GPUAcceleratedInterlockingTilesAlgorithmNaive(HINSTANCE hInstance)
         : D3DApplication(hInstance)
+        , mWireframeMode(false)
     {
         mMainWindowCaption = L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo";
 
@@ -64,8 +65,10 @@ namespace Framework
             return false;
 
         assert(mDevice);
-        mPSPerFrameBuffer.initialize(*mDevice);
-        mVSPerObjectBuffer.initialize(*mDevice);
+        mGridPSPerFrameBuffer.initialize(*mDevice);
+        mGridHSPerFrameBuffer.initialize(*mDevice);
+        mGridDSPerFrameBuffer.initialize(*mDevice);
+        mGridVSPerObjectBuffer.initialize(*mDevice);
         
         assert(mImmediateContext);
         Managers::ShadersManager::initAll(*mDevice);   
@@ -101,12 +104,23 @@ namespace Framework
         {
             mCamera.strafe(offset * dt);
         }
+
+        if (GetAsyncKeyState('T') & 0x8000) 
+        {
+            mWireframeMode = true;
+        }
+
+        if (GetAsyncKeyState('Y') & 0x8000) 
+        {
+            mWireframeMode = false;
+        }
     }
 
     void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawScene()
     {
-        mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
+        mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Silver));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        mImmediateContext->RSSetState(mWireframeMode ? Managers::PipelineStatesManager::mWireframeRS : nullptr);
 
         mCamera.updateViewMatrix();
        
@@ -144,7 +158,7 @@ namespace Framework
         mImmediateContext->IASetInputLayout(inputLayout);
 
         // Primitive Topology
-        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+        mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST);
 
         // Vertex Buffer
         ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mVertexBuffer;
@@ -166,18 +180,55 @@ namespace Framework
 
         // Per Frame Constant Buffer
         DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mWorldMatrix);
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
-        DirectX::XMMATRIX worldViewProjection = world * viewProjection;
         DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
 
-        DirectX::XMStoreFloat4x4(&mVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
-        DirectX::XMStoreFloat4x4(&mVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
-        DirectX::XMStoreFloat4x4(&mVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
-        mVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
+        DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
+        mGridVSPerObjectBuffer.applyChanges(*mImmediateContext);
 
         // Set Constant Buffers
-        ID3D11Buffer* const vertexShaderBuffers[] = { &mVSPerObjectBuffer.buffer() };
+        ID3D11Buffer* const vertexShaderBuffers[] = { &mGridVSPerObjectBuffer.buffer() };
         mImmediateContext->VSSetConstantBuffers(0, 1, vertexShaderBuffers);
+
+        //
+        // Hull Shader Stage
+        //
+
+        // Shader
+        ID3D11HullShader * const hullShader = Managers::ShadersManager::mTerrainHS;
+        mImmediateContext->HSSetShader(hullShader, nullptr, 0);
+
+        // Per Frame Constant Buffer
+        mGridHSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mGridHSPerFrameBuffer.applyChanges(*mImmediateContext);
+
+        // Set Constant Buffers
+        ID3D11Buffer* const hullShaderBuffers = { &mGridHSPerFrameBuffer.buffer() };
+        mImmediateContext->HSSetConstantBuffers(0, 1, &hullShaderBuffers);
+
+        //
+        // Domain Shader Stage
+        //
+
+        // Shader
+        ID3D11DomainShader * const domainShader = Managers::ShadersManager::mTerrainDS;
+        mImmediateContext->DSSetShader(domainShader, nullptr, 0);
+
+        // Per Frame Constant Buffer
+        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
+        mGridDSPerFrameBuffer.applyChanges(*mImmediateContext);
+
+        // Set Constant Buffers
+        ID3D11Buffer* const domainShaderBuffers = { &mGridDSPerFrameBuffer.buffer() };
+        mImmediateContext->DSSetConstantBuffers(0, 1, &domainShaderBuffers);
+
+        // Resources
+        ID3D11ShaderResourceView * const domainShaderResources[] = { Managers::ResourcesManager::mHeightMapSRV };
+        mImmediateContext->DSSetShaderResources(0, 1, domainShaderResources);
+
+        // Sampler state
+        mImmediateContext->DSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         //
         // Pixel Shader Stage
@@ -188,13 +239,13 @@ namespace Framework
         mImmediateContext->PSSetShader(pixelShader, nullptr, 0);
 
         // Per Frame Constant Buffer
-        memcpy(&mPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
-        mPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
-        mPSPerFrameBuffer.mData.mMaterial = mMaterial;
-        mPSPerFrameBuffer.applyChanges(*mImmediateContext);
+        memcpy(&mGridPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
+        mGridPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mGridPSPerFrameBuffer.mData.mMaterial = mMaterial;
+        mGridPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set constant buffers
-        ID3D11Buffer * const pixelShaderBuffers[] = { &mPSPerFrameBuffer.buffer() };
+        ID3D11Buffer * const pixelShaderBuffers[] = { &mGridPSPerFrameBuffer.buffer() };
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
                 
         // Resources
@@ -202,7 +253,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
 
         // Sampler state
-        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
+        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         //
         // Draw

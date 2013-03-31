@@ -13,7 +13,7 @@ namespace Managers
         static void initAll(ID3D11Device* device);
         static void destroyAll();
 
-        static ID3D11SamplerState* mAnisotropicSS;
+        static ID3D11SamplerState* mLinearSS;
 
         static ID3D11RasterizerState* mWireframeRS;
 

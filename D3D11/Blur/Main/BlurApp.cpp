@@ -106,7 +106,7 @@ namespace Framework
         mImmediateContext->PSSetShader(Managers::ShadersManager::mLandPS, nullptr, 0);
 
         // Set sampler states
-        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
+        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         // Set constant buffers
         ID3D11Buffer* pixelShaderBuffers[] = { &mLandPerFrameBuffer.buffer(), &mLandPerObjectBuffer.buffer() };
@@ -169,7 +169,7 @@ namespace Framework
         mImmediateContext->PSSetShader(Managers::ShadersManager::mScreenQuadPS, nullptr, 0);
 
         // Set sampler states
-        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mAnisotropicSS);
+        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         // Set constant buffers
         ID3D11Buffer* pixelShaderBuffers = &mScreenQuadVSPerFrameBuffer.buffer();

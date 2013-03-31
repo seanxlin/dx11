@@ -1,10 +1,7 @@
-#include "Lights.hlsli"
-
-cbuffer cbPerObject : register(b0)
+cbuffer cbPerFrame : register(b0)
 {
 	float4x4 gWorld;
 	float4x4 gWorldInverseTranspose;
-	float4x4 gWorldViewProjection;
 };
 
 struct VSInput
@@ -17,7 +14,6 @@ struct VSInput
 
 struct VSOutput
 {
-	float4 mPositionH : SV_POSITION;
     float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
     float3 mTangentW : TANGENT;
@@ -36,10 +32,7 @@ VSOutput main(in const VSInput vsInput)
 	vsOutput.mNormalW = mul(vsInput.mNormalL, reducedWorldInverseTranspose);
 
     const float3x3 reducedWorld = (float3x3)gWorld;
-    vsOutput.mTangentW = mul(vsInput.mTangentL, reducedWorld);
-		
-	// Transform to homogeneous clip space.
-	vsOutput.mPositionH = mul(vertexPositionL, gWorldViewProjection);
+    vsOutput.mTangentW = mul(vsInput.mTangentL, reducedWorld);		
 
     // Output vertex attributes for interpolation across triangle.
 	vsOutput.mTexCoord = vsInput.mTexCoord;

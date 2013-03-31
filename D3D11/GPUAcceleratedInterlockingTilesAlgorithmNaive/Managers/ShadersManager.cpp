@@ -58,26 +58,33 @@ namespace Managers
     ID3D11VertexShader* ShadersManager::mTerrainVS = nullptr;
     ID3D11InputLayout* ShadersManager::mTerrainIL = nullptr;
     ID3D11PixelShader* ShadersManager::mTerrainPS = nullptr;
+    ID3D11HullShader* ShadersManager::mTerrainHS = nullptr;
+    ID3D11DomainShader* ShadersManager::mTerrainDS = nullptr;
     
     void ShadersManager::initAll(ID3D11Device& device)
     {
         // Store shader byte code, used to create a shader.
         std::vector<char> shaderByteCode;
 
-        //
-        // Vertex shaders
-        //
-
+        // Vertex shader
         computeShaderByteCode(L"HLSL/TerrainVS.cso", shaderByteCode);
         buildShapesVertexLayout(device, shaderByteCode, mTerrainIL);
         HRESULT result = device.CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainVS);
         DebugUtils::DxErrorChecker(result);
 
-        //
-        // Pixel shaders
-        //
+        // Pixel shader
         computeShaderByteCode(L"HLSL/TerrainPS.cso", shaderByteCode);        
         result = device.CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainPS);
+        DebugUtils::DxErrorChecker(result);
+
+        // Hull shader
+        computeShaderByteCode(L"HLSL/TerrainHS.cso", shaderByteCode);        
+        result = device.CreateHullShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainHS);
+        DebugUtils::DxErrorChecker(result);
+
+        // Pixel shader
+        computeShaderByteCode(L"HLSL/TerrainDS.cso", shaderByteCode);        
+        result = device.CreateDomainShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainDS);
         DebugUtils::DxErrorChecker(result);
     }
     
@@ -86,5 +93,7 @@ namespace Managers
         mTerrainVS->Release();
         mTerrainIL->Release();
         mTerrainPS->Release();
+        mTerrainHS->Release();
+        mTerrainDS->Release();
     }
 }

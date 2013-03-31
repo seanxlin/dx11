@@ -7,7 +7,7 @@
 
 namespace Managers
 {
-    ID3D11SamplerState* PipelineStatesManager::mAnisotropicSS =  nullptr;
+    ID3D11SamplerState* PipelineStatesManager::mLinearSS =  nullptr;
     ID3D11RasterizerState* PipelineStatesManager::mWireframeRS = nullptr;
 
     void PipelineStatesManager::initAll(ID3D11Device& device)
@@ -16,21 +16,22 @@ namespace Managers
         // Anisotropic sampler state
         //
         D3D11_SAMPLER_DESC samplerDesc; 
-        samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC; 
-        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP; 
-        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP; 
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR; 
+        samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP; 
+        samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP; 
         samplerDesc.MipLODBias = 0; 
-        samplerDesc.MaxAnisotropy = 4; 
-        samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER; 
-        samplerDesc.BorderColor[0] = 1.0f; 
-        samplerDesc.BorderColor[1] = 1.0f; 
-        samplerDesc.BorderColor[2] = 1.0f; 
-        samplerDesc.BorderColor[3] = 1.0f; 
-        samplerDesc.MinLOD = -3.402823466e+38F; // FLT_MIN 
-        samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
+        samplerDesc.MaxAnisotropy = 16; 
+        samplerDesc.ComparisonFunc = D3D11_COMPARISON_ALWAYS; 
+        samplerDesc.BorderColor[0] = 0.0f; 
+        samplerDesc.BorderColor[1] = 0.0f; 
+        samplerDesc.BorderColor[2] = 0.0f; 
+        samplerDesc.BorderColor[3] = 0.0f; 
+        samplerDesc.MipLODBias = 0.0f; // FLT_MIN 
+        samplerDesc.MinLOD = 0.0f; // FLT_MIN 
+        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX; // FLT_MAX
 
-        HRESULT result = device.CreateSamplerState(&samplerDesc, &mAnisotropicSS);
+        HRESULT result = device.CreateSamplerState(&samplerDesc, &mLinearSS);
         DebugUtils::DxErrorChecker(result);
 
         //
@@ -49,7 +50,7 @@ namespace Managers
 
     void PipelineStatesManager::destroyAll()
     {
-        mAnisotropicSS->Release();
+        mLinearSS->Release();
         mWireframeRS->Release();
     }
 }
