@@ -17,14 +17,7 @@ namespace Managers
         static ID3D11ShaderResourceView* mFloorDiffuseMapSRV;
         static ID3D11ShaderResourceView* mFloorNormalMapSRV;
 
-        static ID3D11ShaderResourceView* mCylinderDiffuseMapSRV;
-        static ID3D11ShaderResourceView* mCylinderNormalMapSRV;
-
-        static ID3D11ShaderResourceView* mSpheresDiffuseMapSRV;
-        static ID3D11ShaderResourceView* mSpheresNormalMapSRV;
-
-        static ID3D11ShaderResourceView* mBoxDiffuseMapSRV;
-        static ID3D11ShaderResourceView* mBoxNormalMapSRV;
+        static ID3D11ShaderResourceView* mHeightMapSRV;
 
     private:
         ResourcesManager();

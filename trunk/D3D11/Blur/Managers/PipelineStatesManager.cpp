@@ -7,7 +7,7 @@
 
 namespace Managers
 {
-    ID3D11SamplerState* PipelineStatesManager::mAnisotropicSS =  nullptr;
+    ID3D11SamplerState* PipelineStatesManager::mLinearSS =  nullptr;
     ID3D11RasterizerState* PipelineStatesManager::mWireframeRS = nullptr;
     ID3D11BlendState* PipelineStatesManager::mAlphaToCoverageBS = nullptr;
     ID3D11BlendState* PipelineStatesManager::mTransparentBS = nullptr;
@@ -34,7 +34,7 @@ namespace Managers
         samplerDesc.MinLOD = -3.402823466e+38F; // FLT_MIN 
         samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
 
-        HRESULT result = device->CreateSamplerState(&samplerDesc, &mAnisotropicSS);
+        HRESULT result = device->CreateSamplerState(&samplerDesc, &mLinearSS);
         DebugUtils::DxErrorChecker(result);
 
         //
@@ -85,7 +85,7 @@ namespace Managers
 
     void PipelineStatesManager::destroyAll()
     {
-        mAnisotropicSS->Release();
+        mLinearSS->Release();
         mWireframeRS->Release();
         mAlphaToCoverageBS->Release();
         mTransparentBS->Release();

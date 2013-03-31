@@ -108,14 +108,7 @@ namespace Managers
     ID3D11ShaderResourceView* ResourcesManager::mFloorDiffuseMapSRV = nullptr;
     ID3D11ShaderResourceView* ResourcesManager::mFloorNormalMapSRV = nullptr;
 
-    ID3D11ShaderResourceView* ResourcesManager::mCylinderDiffuseMapSRV = nullptr;
-    ID3D11ShaderResourceView* ResourcesManager::mCylinderNormalMapSRV = nullptr;
-
-    ID3D11ShaderResourceView* ResourcesManager::mSpheresDiffuseMapSRV = nullptr;
-    ID3D11ShaderResourceView* ResourcesManager::mSpheresNormalMapSRV = nullptr;
-
-    ID3D11ShaderResourceView* ResourcesManager::mBoxDiffuseMapSRV = nullptr;
-    ID3D11ShaderResourceView* ResourcesManager::mBoxNormalMapSRV = nullptr;
+    ID3D11ShaderResourceView* ResourcesManager::mHeightMapSRV = nullptr;
     
     void ResourcesManager::initAll(ID3D11Device& device, ID3D11DeviceContext& context)
     {
@@ -128,22 +121,7 @@ namespace Managers
         result = CreateDDSTextureFromFile(&device, L"Resources/Textures/wood1Normal.dds", &texture, &mFloorNormalMapSRV);
         DebugUtils::DxErrorChecker(result);  
 
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/brick.dds", &texture, &mCylinderDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/brickNormal.dds", &texture, &mCylinderNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/rock.dds", &texture, &mSpheresDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/rockNormal.dds", &texture, &mSpheresNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/redRock.dds", &texture, &mBoxDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/redRockNormal.dds", &texture, &mBoxNormalMapSRV);
+        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/heightMap.dds", &texture, &mHeightMapSRV);
         DebugUtils::DxErrorChecker(result);
 
         texture->Release();
@@ -154,7 +132,6 @@ namespace Managers
         mFloorDiffuseMapSRV->Release();
         mFloorNormalMapSRV->Release();
 
-        mCylinderDiffuseMapSRV->Release();
-        mCylinderNormalMapSRV->Release();
+        mHeightMapSRV->Release();
     }
 }

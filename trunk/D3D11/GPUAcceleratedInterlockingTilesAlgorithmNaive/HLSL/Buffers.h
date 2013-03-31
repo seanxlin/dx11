@@ -6,13 +6,34 @@
 
 namespace Shaders
 {
+    //
+    // Vertex Shader
+    //
     struct GridVSPerFrameBuffer
     {
         DirectX::XMFLOAT4X4 mWorld;
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
-        DirectX::XMFLOAT4X4 mWorldViewProjection;
     };
 
+    //
+    // Hull Shader
+    //
+    struct GridHSPerFrameBuffer
+    {
+        DirectX::XMFLOAT3 mEyePositionW;
+    };
+
+    //
+    // Domain Shader
+    //
+    struct GridDSPerFrameBuffer
+    {
+        DirectX::XMFLOAT4X4 mViewProjection;
+    };
+
+    //
+    // Pixel shader
+    //
     struct GridPSPerFrameBuffer
     {
         Utils::DirectionalLight mDirectionalLight[3];

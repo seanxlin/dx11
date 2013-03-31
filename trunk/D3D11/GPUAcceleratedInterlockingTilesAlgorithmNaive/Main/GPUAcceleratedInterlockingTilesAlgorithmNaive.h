@@ -40,14 +40,22 @@ namespace Framework
         Utils::DirectionalLight mDirectionalLight[3];
 
         Utils::Material mMaterial;
+        
+        Shaders::ConstantBuffer<Shaders::GridVSPerFrameBuffer> mGridVSPerObjectBuffer;
 
-        Shaders::ConstantBuffer<Shaders::GridPSPerFrameBuffer> mPSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::GridVSPerFrameBuffer> mVSPerObjectBuffer;
+        Shaders::ConstantBuffer<Shaders::GridHSPerFrameBuffer> mGridHSPerFrameBuffer;
+
+        Shaders::ConstantBuffer<Shaders::GridDSPerFrameBuffer> mGridDSPerFrameBuffer;
+
+        Shaders::ConstantBuffer<Shaders::GridPSPerFrameBuffer> mGridPSPerFrameBuffer;
+
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mWorldMatrix;
 
         POINT mLastMousePosition;
+
+        bool mWireframeMode;
     };     
 
     inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize()
