@@ -39,7 +39,7 @@ namespace Framework
 
         Utils::DirectionalLight mDirectionalLight[3];
 
-        Utils::Material mMaterial;
+        Utils::Material mTerrainMaterial;
         
         Shaders::ConstantBuffer<Shaders::GridVSPerFrameBuffer> mGridVSPerObjectBuffer;
 
@@ -48,8 +48,7 @@ namespace Framework
         Shaders::ConstantBuffer<Shaders::GridDSPerFrameBuffer> mGridDSPerFrameBuffer;
 
         Shaders::ConstantBuffer<Shaders::GridPSPerFrameBuffer> mGridPSPerFrameBuffer;
-
-
+        
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mWorldMatrix;
 

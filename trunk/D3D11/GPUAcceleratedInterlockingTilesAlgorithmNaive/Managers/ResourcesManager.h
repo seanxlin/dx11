@@ -14,7 +14,7 @@ namespace Managers
         static void initAll(ID3D11Device& device, ID3D11DeviceContext& context);
         static void destroyAll();
 
-        static ID3D11ShaderResourceView* mFloorDiffuseMapSRV;
+        static ID3D11ShaderResourceView* mTerrainDiffuseMapSRV;
         static ID3D11ShaderResourceView* mFloorNormalMapSRV;
 
         static ID3D11ShaderResourceView* mHeightMapSRV;
