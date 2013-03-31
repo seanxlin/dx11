@@ -39,7 +39,7 @@ float sampleHeightMap(in const float2 uv)
     const float height = gHeightMap.SampleLevel(mySampler, uv, 0.0f).r;
         
     // Arbitrary bias to make output more aesthetically pleasing
-    const float biasScaleFactor = 3.0f;
+    const float biasScaleFactor = 50.0f;
     
     return biasScaleFactor * height;
 }

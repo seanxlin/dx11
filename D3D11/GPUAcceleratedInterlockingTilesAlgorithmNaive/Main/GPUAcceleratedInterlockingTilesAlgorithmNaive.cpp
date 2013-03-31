@@ -45,10 +45,10 @@ namespace Framework
         mDirectionalLight[2].mDirection = DirectX::XMFLOAT3(-0.57735f, -0.57735f, -0.57735f);
 
         // Initialize material
-        mMaterial.mAmbient  = DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
-        mMaterial.mDiffuse  = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-        mMaterial.mSpecular = DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
-        mMaterial.mReflect  = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
+        mTerrainMaterial.mAmbient  = DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+        mTerrainMaterial.mDiffuse  = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
+        mTerrainMaterial.mSpecular = DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+        mTerrainMaterial.mReflect  = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     GPUAcceleratedInterlockingTilesAlgorithmNaive::~GPUAcceleratedInterlockingTilesAlgorithmNaive()
@@ -241,7 +241,7 @@ namespace Framework
         // Per Frame Constant Buffer
         memcpy(&mGridPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mGridPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
-        mGridPSPerFrameBuffer.mData.mMaterial = mMaterial;
+        mGridPSPerFrameBuffer.mData.mMaterial = mTerrainMaterial;
         mGridPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set constant buffers
@@ -249,7 +249,7 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
                 
         // Resources
-        ID3D11ShaderResourceView * const pixelShaderResources[] = { Managers::ResourcesManager::mFloorDiffuseMapSRV, Managers::ResourcesManager::mFloorNormalMapSRV };
+        ID3D11ShaderResourceView * const pixelShaderResources[] = { Managers::ResourcesManager::mTerrainDiffuseMapSRV, Managers::ResourcesManager::mFloorNormalMapSRV };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
 
         // Sampler state

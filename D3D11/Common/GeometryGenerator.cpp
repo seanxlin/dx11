@@ -583,20 +583,20 @@ namespace Geometry
         const float dv = 1.0f / vexterPerRow;
 
         meshData.mVertices.resize(vertexCount);
-        for(size_t i = 0; i < vexterPerRow; ++i)
+        for(size_t z = 0; z < vexterPerRow; ++z)
         {
-            const float z = halfDepth - i * dz;
-            for(size_t j = 0; j < vexterPerColumn; ++j)
+            const float zValue = halfDepth - z * dz;
+            for(size_t x = 0; x < vexterPerColumn; ++x)
             {
-                const float x = -halfWidth + j * dx;
+                const float xValue = -halfWidth + x * dx;
 
-                meshData.mVertices[i * vexterPerColumn + j].mPosition = DirectX::XMFLOAT3(x, 0.0f, z);
-                meshData.mVertices[i * vexterPerColumn + j].mNormal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
-                meshData.mVertices[i * vexterPerColumn + j].mTangentU = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
+                meshData.mVertices[z * vexterPerColumn + x].mPosition = DirectX::XMFLOAT3(xValue, 0.0f, zValue);
+                meshData.mVertices[z * vexterPerColumn + x].mNormal = DirectX::XMFLOAT3(0.0f, 1.0f, 0.0f);
+                meshData.mVertices[z * vexterPerColumn + x].mTangentU = DirectX::XMFLOAT3(1.0f, 0.0f, 0.0f);
 
                 // Stretch texture over grid.
-                meshData.mVertices[i * vexterPerColumn + j].mTexCoord.x = j * du;
-                meshData.mVertices[i * vexterPerColumn + j].mTexCoord.y = i * dv;
+                meshData.mVertices[z * vexterPerColumn + x].mTexCoord.x = x * du;
+                meshData.mVertices[z * vexterPerColumn + x].mTexCoord.y = z * dv;
             }
         }
 

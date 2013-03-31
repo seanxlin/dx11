@@ -27,9 +27,11 @@ struct HSPerPatchOutput
 
 #define NUM_INPUT_CONTROL_POINTS 12
 #define NUM_OUTPUT_CONTROL_POINTS 4
-#define MIN_DISTANCE 0
-#define MAX_DISTANCE 2000
+#define MIN_DISTANCE 0.0f
+#define MAX_DISTANCE 400.0f
 #define MIN_MAX_DIFFERENCE_INVERTED (1.0f / (MAX_DISTANCE - MIN_DISTANCE))
+#define MIN_LOD 1.0f
+#define MAX_LOD 5.0f
 
 float3 computePatchMidPoint(const float3 point0, const float3 point1, const float3 point2, const float3 point3)
 {
@@ -47,12 +49,13 @@ float computeScaledDistance(const float3 from, const float3 to)
 
 float computePatchLOD(const float3 midPoint) 
 {
-    // Compute the scaled distance
-    const float scaledDistance = computeScaledDistance(gEyePositionW, midPoint);
+    // Compute the scaled distance. We should avoid scaledDistances greater than 1.0,
+    // because in that case lod will be 0 and patch will dissapear.
+    const float scaledDistance = min(computeScaledDistance(gEyePositionW, midPoint), 1.0f);
 
     // Transform this 0.0 - 1.0 distance scale into the desired LOD's
     // Note: Invert the distance so that close is high detail and far is low detail
-    return lerp(MIN_DISTANCE, MAX_DISTANCE, 1.0f - scaledDistance);
+    return lerp(MIN_LOD, MAX_LOD, 1.0f - scaledDistance);
 }
 
 // Patch Constant Function
@@ -81,7 +84,7 @@ HSPerPatchOutput hsPerPatch(in const InputPatch<HSInput, NUM_INPUT_CONTROL_POINT
     };
 
     // Determine the appropiate LOD for this patch.
-    float distances[] =
+    float lods[] =
     {
         // Main quad
         computePatchLOD(midPoints[0]),
@@ -101,9 +104,8 @@ HSPerPatchOutput hsPerPatch(in const InputPatch<HSInput, NUM_INPUT_CONTROL_POINT
 
     // Set it up so that this patch always has an interior matching 
     // the patch LOD
-    const float distancesAverage = (distances[0] + distances[1] + distances[2] + distances[3]) * 0.25f;
-    hsPerPatchOutput.mInsideTessFactor[0] = distancesAverage;
-    hsPerPatchOutput.mInsideTessFactor[1] = distancesAverage;
+    hsPerPatchOutput.mInsideTessFactor[0] = lods[0];
+    hsPerPatchOutput.mInsideTessFactor[1] = lods[0];
 
     // For the edges its more complex as we have to match
     // the neighboring patches. The rule in this case is:
@@ -113,10 +115,10 @@ HSPerPatchOutput hsPerPatch(in const InputPatch<HSInput, NUM_INPUT_CONTROL_POINT
     // - If the neighbor patch is a higher LOD then
     //   we stick with our LOD and expect them to blend down
     //   towards up.
-    hsPerPatchOutput.mEdgeTessFactor[0] = min(distances[0], distances[3]);
-    hsPerPatchOutput.mEdgeTessFactor[1] = min(distances[0], distances[4]);
-    hsPerPatchOutput.mEdgeTessFactor[2] = min(distances[0], distances[1]);
-    hsPerPatchOutput.mEdgeTessFactor[3] = min(distances[0], distances[2]);
+    hsPerPatchOutput.mEdgeTessFactor[0] = min(lods[0], lods[4]);
+    hsPerPatchOutput.mEdgeTessFactor[1] = min(lods[0], lods[3]);
+    hsPerPatchOutput.mEdgeTessFactor[2] = min(lods[0], lods[2]);
+    hsPerPatchOutput.mEdgeTessFactor[3] = min(lods[0], lods[1]);
 
 	return hsPerPatchOutput;
 }
