@@ -40,13 +40,11 @@ namespace
         D3D11_INPUT_ELEMENT_DESC vertexDesc[] =
         {
             {"POSITION", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 0, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"NORMAL", 0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"TANGENT",  0, DXGI_FORMAT_R32G32B32_FLOAT, 0, 24, D3D11_INPUT_PER_VERTEX_DATA, 0},
-            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 36, D3D11_INPUT_PER_VERTEX_DATA, 0}
+            {"TEXCOORD", 0, DXGI_FORMAT_R32G32_FLOAT, 0, 12, D3D11_INPUT_PER_VERTEX_DATA, 0}
         };
 
         // Create the input layout
-        const HRESULT result = device.CreateInputLayout(vertexDesc, 4, &shaderByteCode[0], 
+        const HRESULT result = device.CreateInputLayout(vertexDesc, 2, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
         DebugUtils::DxErrorChecker(result);

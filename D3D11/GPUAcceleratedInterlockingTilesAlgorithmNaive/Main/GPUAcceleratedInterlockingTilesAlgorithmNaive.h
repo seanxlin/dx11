@@ -51,6 +51,7 @@ namespace Framework
         
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mWorldMatrix;
+        DirectX::XMFLOAT4X4 mTextureScaleMatrix;
 
         POINT mLastMousePosition;
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <cstdint>
+#include <DirectXMath.h>
 
 #include <D3D11.h>
 
@@ -43,11 +44,36 @@ namespace Managers
             uint32_t mVertexCount;
         };
 
+        struct Vertex
+        {
+            Vertex() { }
+
+            Vertex(const DirectX::XMFLOAT3& position,  
+                const DirectX::XMFLOAT2& texCoord)
+                : mPosition(position)
+                , mTexCoord(texCoord)
+            {
+            }
+
+            Vertex(const float positionX, 
+                const float positionY, 
+                const float positionZ,
+                const float texCoordU, 
+                const float texCoordV)
+                : mPosition(positionX, positionY, positionZ)
+                , mTexCoord(texCoordU, texCoordV)
+            {
+            }
+
+            DirectX::XMFLOAT3 mPosition;
+            DirectX::XMFLOAT2 mTexCoord;
+        };
+
     public:
         static void initAll(ID3D11Device& device);
         static void destroyAll();
 
-        static IndexedBufferInfo* mFloorBufferInfo;
+        static IndexedBufferInfo* mTerrainBufferInfo;
 
     private:
         GeometryBuffersManager();
@@ -55,6 +81,6 @@ namespace Managers
         GeometryBuffersManager(const GeometryBuffersManager& geometryBuffersManager);
         const GeometryBuffersManager& operator=(const GeometryBuffersManager& geometryBuffersManager);
 
-        static void buildFloorBuffers(ID3D11Device& device);
+        static void buildTerrainBuffers(ID3D11Device& device);
     };
 }

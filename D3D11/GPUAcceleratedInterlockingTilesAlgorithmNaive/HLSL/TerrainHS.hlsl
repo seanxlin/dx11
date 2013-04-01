@@ -6,16 +6,12 @@ cbuffer cbPerFrame : register(b0)
 struct HSInput
 {
     float3 mPositionW : POSITION;
-    float3 mNormalW : NORMAL;
-    float3 mTangentW : TANGENT;
     float2 mTexCoord : TEXCOORD;
 };
 
 struct HSOutput
 {
 	float3 mPositionW : POSITION;
-    float3 mNormalW : NORMAL;
-    float3 mTangentW : TANGENT;
     float2 mTexCoord : TEXCOORD;
 };
 
@@ -28,7 +24,7 @@ struct HSPerPatchOutput
 #define NUM_INPUT_CONTROL_POINTS 12
 #define NUM_OUTPUT_CONTROL_POINTS 4
 #define MIN_DISTANCE 0.0f
-#define MAX_DISTANCE 400.0f
+#define MAX_DISTANCE 256.0f
 #define MIN_MAX_DIFFERENCE_INVERTED (1.0f / (MAX_DISTANCE - MIN_DISTANCE))
 #define MIN_LOD 1.0f
 #define MAX_LOD 5.0f
@@ -134,8 +130,6 @@ HSOutput main(in const InputPatch<HSInput, NUM_INPUT_CONTROL_POINTS> inputPatch,
 	HSOutput hsOutput = (HSOutput)0;
 
     hsOutput.mPositionW = inputPatch[outputControlPointID].mPositionW;
-	hsOutput.mNormalW = inputPatch[outputControlPointID].mNormalW;
-    hsOutput.mTangentW = inputPatch[outputControlPointID].mTangentW;
     hsOutput.mTexCoord = inputPatch[outputControlPointID].mTexCoord;
 
 	return hsOutput;

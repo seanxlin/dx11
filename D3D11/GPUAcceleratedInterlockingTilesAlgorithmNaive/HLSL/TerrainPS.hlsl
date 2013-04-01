@@ -14,12 +14,10 @@ struct PSInput
 	float4 mPositionH : SV_POSITION;
     float3 mPositionW : POSITION;
     float3 mNormalW : NORMAL;
-    float3 mTangentW : TANGENT;
     float2 mTexCoord : TEXCOORD;
 };
 
 Texture2D gDiffuseMap : register(t0);
-Texture2D gNormalMap : register(t1);
 
 float4 main(in PSInput psInput) : SV_TARGET
 {
@@ -28,10 +26,6 @@ float4 main(in PSInput psInput) : SV_TARGET
 
     // Compute vector from pixel position to eye.
 	const float3 toEyeW = normalize(gEyePositionW - psInput.mPositionW);
-        
-    // Normal mapping
-    const float3 normalMapSample = gNormalMap.Sample(gSamplerState, psInput.mTexCoord).rgb;
-	const float3 bumpedNormalW = normalSampleToWorldSpace(normalMapSample, psInput.mNormalW, psInput.mTangentW);
 
     // Sample texture
     float4 texColor = gDiffuseMap.Sample(gSamplerState, psInput.mTexCoord);
@@ -51,7 +45,7 @@ float4 main(in PSInput psInput) : SV_TARGET
     {
         computeDirectionalLight(gMaterial, 
                                 gDirectionalLight[i], 
-                                bumpedNormalW, 
+                                psInput.mNormalW, 
                                 toEyeW, 
                                 ambientContribution, 
                                 diffuseContribution, 
