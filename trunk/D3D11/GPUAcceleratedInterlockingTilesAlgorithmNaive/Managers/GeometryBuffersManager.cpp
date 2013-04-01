@@ -30,24 +30,24 @@ namespace
 
 namespace Managers
 {
-    GeometryBuffersManager::IndexedBufferInfo* GeometryBuffersManager::mFloorBufferInfo = nullptr;
+    GeometryBuffersManager::IndexedBufferInfo* GeometryBuffersManager::mTerrainBufferInfo = nullptr;
 
     void GeometryBuffersManager::initAll(ID3D11Device& device)
     {
-        buildFloorBuffers(device);
+        buildTerrainBuffers(device);
     }
 
     void GeometryBuffersManager::destroyAll()
     {
-        mFloorBufferInfo->mVertexBuffer->Release();
-        mFloorBufferInfo->mIndexBuffer->Release();
-        delete mFloorBufferInfo;
+        mTerrainBufferInfo->mVertexBuffer->Release();
+        mTerrainBufferInfo->mIndexBuffer->Release();
+        delete mTerrainBufferInfo;
     }
     
-    void GeometryBuffersManager::buildFloorBuffers(ID3D11Device& device)
+    void GeometryBuffersManager::buildTerrainBuffers(ID3D11Device& device)
     {
         // Create IndexedBufferInfo for floor
-        mFloorBufferInfo = new IndexedBufferInfo();
+        mTerrainBufferInfo = new IndexedBufferInfo();
 
         // 
         // Calculate vertices and indices
@@ -57,13 +57,13 @@ namespace Managers
         Geometry::GeometryGenerator::createGridForInterlockingTiles(256.0f, 256.0f, 16, 16, grid);
 
         // Cache base vertex location
-        mFloorBufferInfo->mBaseVertexLocation = 0;
+        mTerrainBufferInfo->mBaseVertexLocation = 0;
 
         // Cache the index count
-        mFloorBufferInfo->mIndexCount = static_cast<uint32_t> (grid.mIndices.size());
+        mTerrainBufferInfo->mIndexCount = static_cast<uint32_t> (grid.mIndices.size());
 
         // Cache the starting index
-        mFloorBufferInfo->mStartIndexLocation = 0; 
+        mTerrainBufferInfo->mStartIndexLocation = 0; 
 
         // Compute the total number of vertices
         const uint32_t totalVertexCount = static_cast<uint32_t> (grid.mVertices.size());
@@ -71,18 +71,24 @@ namespace Managers
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        vertexBufferDesc.ByteWidth = sizeof(Geometry::GeometryGenerator::Vertex) * totalVertexCount;
+        vertexBufferDesc.ByteWidth = sizeof(Vertex) * totalVertexCount;
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;
 
         D3D11_SUBRESOURCE_DATA initData;
-        initData.pSysMem = &grid.mVertices[0];
-        HRESULT result = device.CreateBuffer(&vertexBufferDesc, &initData, &mFloorBufferInfo->mVertexBuffer);
+        std::vector<Vertex> vertices;
+        vertices.reserve(totalVertexCount);
+        for (size_t vertexIndex = 0; vertexIndex < totalVertexCount; ++vertexIndex)
+        {
+            vertices.push_back(Vertex(grid.mVertices[vertexIndex].mPosition, grid.mVertices[vertexIndex].mTexCoord));
+        }
+        initData.pSysMem = &vertices[0];
+        HRESULT result = device.CreateBuffer(&vertexBufferDesc, &initData, &mTerrainBufferInfo->mVertexBuffer);
         DebugUtils::DxErrorChecker(result);
 
         // Fill and Create index buffer
-        const uint32_t totalIndexCount = mFloorBufferInfo->mIndexCount;
+        const uint32_t totalIndexCount = mTerrainBufferInfo->mIndexCount;
 
         D3D11_BUFFER_DESC indexBufferDesc;
         indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -92,7 +98,7 @@ namespace Managers
         indexBufferDesc.MiscFlags = 0;
 
         initData.pSysMem = &grid.mIndices[0];
-        result = device.CreateBuffer(&indexBufferDesc, &initData, &mFloorBufferInfo->mIndexBuffer);
+        result = device.CreateBuffer(&indexBufferDesc, &initData, &mTerrainBufferInfo->mIndexBuffer);
         DebugUtils::DxErrorChecker(result);
     }
 }

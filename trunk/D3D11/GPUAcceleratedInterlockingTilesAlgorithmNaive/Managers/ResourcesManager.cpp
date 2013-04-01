@@ -106,7 +106,6 @@ namespace
 namespace Managers
 {
     ID3D11ShaderResourceView* ResourcesManager::mTerrainDiffuseMapSRV = nullptr;
-    ID3D11ShaderResourceView* ResourcesManager::mFloorNormalMapSRV = nullptr;
 
     ID3D11ShaderResourceView* ResourcesManager::mHeightMapSRV = nullptr;
     
@@ -114,13 +113,11 @@ namespace Managers
     {
         ID3D11Resource* texture = nullptr;
 
-        // Create diffuse and normal maps
+        // Diffuse map
         HRESULT result = CreateDDSTextureFromFile(&device, L"Resources/Textures/brick.dds", &texture, &mTerrainDiffuseMapSRV);
         DebugUtils::DxErrorChecker(result);  
-        
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/brickNormal.dds", &texture, &mFloorNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);  
 
+        // Height map
         result = CreateDDSTextureFromFile(&device, L"Resources/Textures/terrainHeightMap.dds", &texture, &mHeightMapSRV);
         DebugUtils::DxErrorChecker(result);
 
@@ -130,7 +127,6 @@ namespace Managers
     void ResourcesManager::destroyAll()
     {
         mTerrainDiffuseMapSRV->Release();
-        mFloorNormalMapSRV->Release();
 
         mHeightMapSRV->Release();
     }

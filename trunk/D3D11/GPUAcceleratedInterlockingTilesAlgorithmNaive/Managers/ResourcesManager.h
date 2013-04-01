@@ -15,7 +15,6 @@ namespace Managers
         static void destroyAll();
 
         static ID3D11ShaderResourceView* mTerrainDiffuseMapSRV;
-        static ID3D11ShaderResourceView* mFloorNormalMapSRV;
 
         static ID3D11ShaderResourceView* mHeightMapSRV;
 

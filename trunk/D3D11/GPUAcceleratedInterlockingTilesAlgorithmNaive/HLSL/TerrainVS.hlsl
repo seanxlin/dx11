@@ -1,22 +1,18 @@
 cbuffer cbPerFrame : register(b0)
 {
 	float4x4 gWorld;
-	float4x4 gWorldInverseTranspose;
+    float4x4 gTextureScale;
 };
 
 struct VSInput
 {
 	float3 mPositionL : POSITION;
-	float3 mNormalL : NORMAL;
-    float3 mTangentL : TANGENT;
     float2 mTexCoord : TEXCOORD;
 };
 
 struct VSOutput
 {
     float3 mPositionW : POSITION;
-    float3 mNormalW : NORMAL;
-    float3 mTangentW : TANGENT;
     float2 mTexCoord : TEXCOORD;
 };
 
@@ -26,16 +22,11 @@ VSOutput main(in const VSInput vsInput)
 	
 	// Transform to world space.
     const float4 vertexPositionL = float4(vsInput.mPositionL, 1.0f);
-	vsOutput.mPositionW = mul(vertexPositionL, gWorld).xyz;
-
-    const float3x3 reducedWorldInverseTranspose = (float3x3)gWorldInverseTranspose; 
-	vsOutput.mNormalW = mul(vsInput.mNormalL, reducedWorldInverseTranspose);
-
-    const float3x3 reducedWorld = (float3x3)gWorld;
-    vsOutput.mTangentW = mul(vsInput.mTangentL, reducedWorld);		
+	vsOutput.mPositionW = mul(vertexPositionL, gWorld).xyz;		
 
     // Output vertex attributes for interpolation across triangle.
-	vsOutput.mTexCoord = vsInput.mTexCoord;
+    const float4 extendedTexCoord = float4(vsInput.mTexCoord, 0.0f, 1.0f);
+	vsOutput.mTexCoord = mul(extendedTexCoord, gTextureScale).xy;
 	
 	return vsOutput;
 }

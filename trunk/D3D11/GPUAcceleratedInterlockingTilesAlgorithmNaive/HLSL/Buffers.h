@@ -12,7 +12,7 @@ namespace Shaders
     struct GridVSPerFrameBuffer
     {
         DirectX::XMFLOAT4X4 mWorld;
-        DirectX::XMFLOAT4X4 mWorldInverseTranspose;
+        DirectX::XMFLOAT4X4 mTextureScale;
     };
 
     //
@@ -28,7 +28,10 @@ namespace Shaders
     //
     struct GridDSPerFrameBuffer
     {
+        DirectX::XMFLOAT4X4 mWorldInverseTranspose;
         DirectX::XMFLOAT4X4 mViewProjection;
+        float mHeightMapWidthHeight[2];
+        float mPad;
     };
 
     //

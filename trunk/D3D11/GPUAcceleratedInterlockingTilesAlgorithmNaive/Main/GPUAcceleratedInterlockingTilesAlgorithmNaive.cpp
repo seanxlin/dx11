@@ -24,9 +24,13 @@ namespace Framework
         mLastMousePosition.x = 0;
         mLastMousePosition.y = 0;
 
-        // Shapes world matrices
-        DirectX::XMMATRIX translation = DirectX::XMMatrixIdentity();
+        // Terrain world matrix
+        const DirectX::XMMATRIX translation = DirectX::XMMatrixIdentity();
         DirectX::XMStoreFloat4x4(&mWorldMatrix, translation);
+
+        // Texture scale matrix
+        const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(2.0f, 2.0f, 0.0f);
+        DirectX::XMStoreFloat4x4(&mTextureScaleMatrix, scale);
 
         // Directional lights.
         mDirectionalLight[0].mAmbient = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -161,13 +165,13 @@ namespace Framework
         mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST);
 
         // Vertex Buffer
-        ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mVertexBuffer;
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mTerrainBufferInfo->mVertexBuffer;
+        uint32_t stride = sizeof(Managers::GeometryBuffersManager::Vertex);
         uint32_t offset = 0;
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
         // Index Buffer
-        ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexBuffer;
+        ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mTerrainBufferInfo->mIndexBuffer;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
         //
@@ -179,11 +183,10 @@ namespace Framework
         mImmediateContext->VSSetShader(vertexShader, nullptr, 0);
 
         // Per Frame Constant Buffer
-        DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mWorldMatrix);
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
-
+        const DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mWorldMatrix);
+        const DirectX::XMMATRIX textureScale = DirectX::XMLoadFloat4x4(&mTextureScaleMatrix);
         DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
-        DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
+        DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mTextureScale, DirectX::XMMatrixTranspose(textureScale));
         mGridVSPerObjectBuffer.applyChanges(*mImmediateContext);
 
         // Set Constant Buffers
@@ -216,7 +219,11 @@ namespace Framework
 
         // Per Frame Constant Buffer
         const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
+        mGridDSPerFrameBuffer.mData.mHeightMapWidthHeight[0] = 0.1f * 512.0f;
+        mGridDSPerFrameBuffer.mData.mHeightMapWidthHeight[1] = 0.1f * 512.0f;
         mGridDSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set Constant Buffers
@@ -249,8 +256,8 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
                 
         // Resources
-        ID3D11ShaderResourceView * const pixelShaderResources[] = { Managers::ResourcesManager::mTerrainDiffuseMapSRV, Managers::ResourcesManager::mFloorNormalMapSRV };
-        mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
+        ID3D11ShaderResourceView * const pixelShaderResources[] = { Managers::ResourcesManager::mTerrainDiffuseMapSRV};
+        mImmediateContext->PSSetShaderResources(0, 1, pixelShaderResources);
 
         // Sampler state
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
@@ -258,9 +265,9 @@ namespace Framework
         //
         // Draw
         // 
-        const uint32_t baseVertexLocation = Managers::GeometryBuffersManager::mFloorBufferInfo->mBaseVertexLocation;
-        const uint32_t startIndexLocation = Managers::GeometryBuffersManager::mFloorBufferInfo->mStartIndexLocation;
-        const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;
+        const uint32_t baseVertexLocation = Managers::GeometryBuffersManager::mTerrainBufferInfo->mBaseVertexLocation;
+        const uint32_t startIndexLocation = Managers::GeometryBuffersManager::mTerrainBufferInfo->mStartIndexLocation;
+        const uint32_t indexCount = Managers::GeometryBuffersManager::mTerrainBufferInfo->mIndexCount;
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }    
 }
