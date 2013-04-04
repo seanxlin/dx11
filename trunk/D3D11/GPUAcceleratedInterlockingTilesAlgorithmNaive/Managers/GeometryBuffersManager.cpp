@@ -54,7 +54,7 @@ namespace Managers
         // Cache vertex offset, index count and offset
         //
         Geometry::GeometryGenerator::MeshData grid;
-        Geometry::GeometryGenerator::createGridForInterlockingTiles(256.0f, 256.0f, 16, 16, grid);
+        Geometry::GeometryGenerator::createGridForInterlockingTiles(512, 512, 32, 32, grid);
 
         // Cache base vertex location
         mTerrainBufferInfo->mBaseVertexLocation = 0;

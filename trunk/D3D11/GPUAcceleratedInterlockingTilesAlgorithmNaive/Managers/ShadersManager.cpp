@@ -58,6 +58,7 @@ namespace Managers
     ID3D11PixelShader* ShadersManager::mTerrainPS = nullptr;
     ID3D11HullShader* ShadersManager::mTerrainHS = nullptr;
     ID3D11DomainShader* ShadersManager::mTerrainDS = nullptr;
+    ID3D11ComputeShader* ShadersManager::mTerrainCS = nullptr;
     
     void ShadersManager::initAll(ID3D11Device& device)
     {
@@ -84,6 +85,11 @@ namespace Managers
         computeShaderByteCode(L"HLSL/TerrainDS.cso", shaderByteCode);        
         result = device.CreateDomainShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainDS);
         DebugUtils::DxErrorChecker(result);
+
+        // Compute shader
+        computeShaderByteCode(L"HLSL/TerrainCS.cso", shaderByteCode);        
+        result = device.CreateComputeShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mTerrainCS);
+        DebugUtils::DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()
@@ -93,5 +99,6 @@ namespace Managers
         mTerrainPS->Release();
         mTerrainHS->Release();
         mTerrainDS->Release();
+        mTerrainCS->Release();
     }
 }

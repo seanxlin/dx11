@@ -29,19 +29,19 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mWorldMatrix, translation);
 
         // Texture scale matrix
-        const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(2.0f, 2.0f, 0.0f);
+        const DirectX::XMMATRIX scale = DirectX::XMMatrixScaling(1.0f, 1.0f, 0.0f);
         DirectX::XMStoreFloat4x4(&mTextureScaleMatrix, scale);
 
         // Directional lights.
-        mDirectionalLight[0].mAmbient = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-        mDirectionalLight[0].mDiffuse = DirectX::XMFLOAT4(0.7f, 0.7f, 0.6f, 1.0f);
+        mDirectionalLight[0].mAmbient = DirectX::XMFLOAT4(0.3f, 0.3f, 0.3f, 1.0f);
+        mDirectionalLight[0].mDiffuse = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
         mDirectionalLight[0].mSpecular = DirectX::XMFLOAT4(0.8f, 0.8f, 0.7f, 1.0f);
-        mDirectionalLight[0].mDirection = DirectX::XMFLOAT3(0.707f, 0.0f, 0.707f);
+        mDirectionalLight[0].mDirection = DirectX::XMFLOAT3(0.707f, -0.707f, 0.0f);
 
         mDirectionalLight[1].mAmbient = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
-        mDirectionalLight[1].mDiffuse = DirectX::XMFLOAT4(0.40f, 0.40f, 0.40f, 1.0f);
+        mDirectionalLight[1].mDiffuse = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
         mDirectionalLight[1].mSpecular = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
-        mDirectionalLight[1].mDirection = DirectX::XMFLOAT3(0.0f, -0.707f, 0.707f);
+        mDirectionalLight[1].mDirection = DirectX::XMFLOAT3(0.57735f, -0.57735f, 0.57735f);
 
         mDirectionalLight[2].mAmbient = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
         mDirectionalLight[2].mDiffuse = DirectX::XMFLOAT4(0.2f, 0.2f, 0.2f, 1.0f);
@@ -49,9 +49,9 @@ namespace Framework
         mDirectionalLight[2].mDirection = DirectX::XMFLOAT3(-0.57735f, -0.57735f, -0.57735f);
 
         // Initialize material
-        mTerrainMaterial.mAmbient  = DirectX::XMFLOAT4(0.8f, 0.8f, 0.8f, 1.0f);
+        mTerrainMaterial.mAmbient  = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
         mTerrainMaterial.mDiffuse  = DirectX::XMFLOAT4(1.0f, 1.0f, 1.0f, 1.0f);
-        mTerrainMaterial.mSpecular = DirectX::XMFLOAT4(0.4f, 0.4f, 0.4f, 16.0f);
+        mTerrainMaterial.mSpecular = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 64.0f);
         mTerrainMaterial.mReflect  = DirectX::XMFLOAT4(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
@@ -222,8 +222,9 @@ namespace Framework
         const DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
-        mGridDSPerFrameBuffer.mData.mHeightMapWidthHeight[0] = 0.1f * 512.0f;
-        mGridDSPerFrameBuffer.mData.mHeightMapWidthHeight[1] = 0.1f * 512.0f;
+        const float heightMapTexelSize = 1.0f / 512.0f;
+        mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[0] = heightMapTexelSize;
+        mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[1] = heightMapTexelSize;
         mGridDSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set Constant Buffers
@@ -249,6 +250,9 @@ namespace Framework
         memcpy(&mGridPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mGridPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
         mGridPSPerFrameBuffer.mData.mMaterial = mTerrainMaterial;
+        mGridPSPerFrameBuffer.mData.mTexelCellSpaceU = heightMapTexelSize;
+        mGridPSPerFrameBuffer.mData.mTexelCellSpaceV = heightMapTexelSize;
+        mGridPSPerFrameBuffer.mData.mWorldCellSpace = 0.5f;
         mGridPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set constant buffers
@@ -256,8 +260,12 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
                 
         // Resources
-        ID3D11ShaderResourceView * const pixelShaderResources[] = { Managers::ResourcesManager::mTerrainDiffuseMapSRV};
-        mImmediateContext->PSSetShaderResources(0, 1, pixelShaderResources);
+        ID3D11ShaderResourceView * const pixelShaderResources[] = 
+        { 
+            Managers::ResourcesManager::mTerrainDiffuseMapSRV,
+            Managers::ResourcesManager::mHeightMapSRV
+        };
+        mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
 
         // Sampler state
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
