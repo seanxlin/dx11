@@ -30,7 +30,7 @@ namespace Shaders
     {
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
         DirectX::XMFLOAT4X4 mViewProjection;
-        float mHeightMapWidthHeight[2];
+        float mHeightMapTexelWidthHeight[2];
         float mPad;
     };
 
@@ -41,7 +41,11 @@ namespace Shaders
     {
         Utils::DirectionalLight mDirectionalLight[3];
         DirectX::XMFLOAT3 mEyePositionW;
-        float mPad;
+        float mPad1;
         Utils::Material mMaterial;
+        float mTexelCellSpaceU;
+        float mTexelCellSpaceV;
+        float mWorldCellSpace;
+        float mPad2;
     };
 }

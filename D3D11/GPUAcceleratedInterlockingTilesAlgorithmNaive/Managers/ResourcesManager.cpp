@@ -1,11 +1,13 @@
 #include "ResourcesManager.h"
 
 #include <cassert>
+#include <fstream>
 #include <D3D11.h>
 #include <vector>
 
 #include <DDSTextureLoader.h>
 #include <DxErrorChecker.h>
+#include <HeightMap.h>
 
 namespace
 {
@@ -28,8 +30,10 @@ namespace
         {
             ID3D11ShaderResourceView* shaderResourceView =  nullptr;
             ID3D11Resource* resource =  nullptr;
-            HRESULT result = CreateDDSTextureFromFile(&device, filenames[i].c_str(), 
-                reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), &shaderResourceView);
+            HRESULT result = CreateDDSTextureFromFile(&device, 
+                                                      filenames[i].c_str(),
+                                                      reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), 
+                                                      &shaderResourceView);
             DebugUtils::DxErrorChecker(result);
 
             shaderResourceView->Release();
@@ -74,9 +78,20 @@ namespace
             // for each mipmap level...
             for(uint32_t mipLevel = 0; mipLevel < textureElementDesc.MipLevels; ++mipLevel)
             {
-                const uint32_t subResourceIndex = D3D11CalcSubresource(mipLevel, 0, textureElementDesc.MipLevels);
-                const uint32_t destinationSubresource = D3D11CalcSubresource(mipLevel, texElement, textureElementDesc.MipLevels);
-                context.CopySubresourceRegion(textureArray, static_cast<uint32_t> (destinationSubresource), 0, 0, 0, sourceTextures[texElement], subResourceIndex, nullptr);
+                const uint32_t subResourceIndex = D3D11CalcSubresource(mipLevel, 
+                                                                       0, 
+                                                                       textureElementDesc.MipLevels);
+                const uint32_t destinationSubresource = D3D11CalcSubresource(mipLevel, 
+                                                                             texElement, 
+                                                                             textureElementDesc.MipLevels);
+                context.CopySubresourceRegion(textureArray, 
+                                              static_cast<uint32_t> (destinationSubresource), 
+                                              0, 
+                                              0, 
+                                              0, 
+                                              sourceTextures[texElement], 
+                                              subResourceIndex, 
+                                              nullptr);
             }
         }	
 
@@ -114,20 +129,32 @@ namespace Managers
         ID3D11Resource* texture = nullptr;
 
         // Diffuse map
-        HRESULT result = CreateDDSTextureFromFile(&device, L"Resources/Textures/brick.dds", &texture, &mTerrainDiffuseMapSRV);
+        HRESULT result = CreateDDSTextureFromFile(&device, 
+                                                  L"Resources/Textures/stone.dds", 
+                                                  &texture, 
+                                                  &mTerrainDiffuseMapSRV);
         DebugUtils::DxErrorChecker(result);  
 
-        // Height map
-        result = CreateDDSTextureFromFile(&device, L"Resources/Textures/terrainHeightMap.dds", &texture, &mHeightMapSRV);
-        DebugUtils::DxErrorChecker(result);
-
         texture->Release();
+
+        // Height map
+        Utils::HeightMap heightMap;
+        const uint32_t heightMapDimension = 512;
+        const float heightMapScaleFactor = 50.0f;
+        Utils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw", 
+                                        heightMapDimension, 
+                                        heightMapScaleFactor, 
+                                        heightMap);
+        Utils::applyNeighborsFilter(heightMap, heightMapDimension);
+        mHeightMapSRV = Utils::buildHeightMapSRV(device, 
+                                                 heightMap, 
+                                                 heightMapDimension, 
+                                                 D3D11_BIND_SHADER_RESOURCE);
     }
     
     void ResourcesManager::destroyAll()
     {
         mTerrainDiffuseMapSRV->Release();
-
         mHeightMapSRV->Release();
     }
 }

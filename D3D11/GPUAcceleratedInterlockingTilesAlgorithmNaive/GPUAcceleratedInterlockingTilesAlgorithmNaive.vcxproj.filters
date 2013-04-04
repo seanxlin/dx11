@@ -57,6 +57,9 @@
     <ClCompile Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.cpp">
       <Filter>Main</Filter>
     </ClCompile>
+    <ClCompile Include="..\Common\HeightMap.cpp">
+      <Filter>Common</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Camera.h">
@@ -107,6 +110,9 @@
     <ClInclude Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.h">
       <Filter>Main</Filter>
     </ClInclude>
+    <ClInclude Include="..\Common\HeightMap.h">
+      <Filter>Common</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Lights.hlsli">
@@ -124,6 +130,9 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\TerrainDS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\TerrainCS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>
