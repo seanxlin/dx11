@@ -44,7 +44,7 @@ namespace Framework
 
         void updateInstancedBuffer();
 
-        Utils::Camera mCamera;
+        Camera mCamera;
 
         Utils::DirectionalLight mDirectionalLight[3];
 
@@ -169,7 +169,7 @@ namespace Framework
     {
         D3DApplication::onResize();
 
-        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
+        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void InstancingApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)

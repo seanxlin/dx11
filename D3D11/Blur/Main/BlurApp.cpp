@@ -16,16 +16,16 @@ namespace Framework
         // Control the camera.
         //
         if (GetAsyncKeyState('W') & 0x8000)
-            Utils::CameraUtils::walk(50.0f * dt, mCamera);
+            CameraUtils::walk(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            Utils::CameraUtils::walk(-50.0f * dt, mCamera);
+            CameraUtils::walk(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            Utils::CameraUtils::strafe(-50.0f * dt, mCamera);
+            CameraUtils::strafe(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            Utils::CameraUtils::strafe(50.0f * dt, mCamera);
+            CameraUtils::strafe(50.0f * dt, mCamera);
     }
 
     void BlurApp::drawScene()
@@ -39,7 +39,7 @@ namespace Framework
         mImmediateContext->ClearRenderTargetView(Managers::ResourcesManager::mOffscreenRTV, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        Utils::CameraUtils::updateViewMatrix(mCamera);
+        CameraUtils::updateViewMatrix(mCamera);
 
         //
         // Draw the scene to the offscreen texture
@@ -78,8 +78,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.35f * static_cast<float>(x - mLastMousePos.x));
             const float dy = DirectX::XMConvertToRadians(0.35f * static_cast<float>(y - mLastMousePos.y));
 
-            Utils::CameraUtils::pitch(dy, mCamera);
-            Utils::CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::pitch(dy, mCamera);
+            CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -89,7 +89,7 @@ namespace Framework
     void BlurApp::drawLand()
     {
         // Compute view * projection matrix
-        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
+        const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
 
         // Update per frame constant buffers for land and billboards
         mLandPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
