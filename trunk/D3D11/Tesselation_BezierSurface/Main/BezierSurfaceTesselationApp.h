@@ -48,9 +48,9 @@ namespace Framework
         DirectionalLight mDirectionalLight;
 
         Material mSandMaterial;
-        Shaders::ConstantBuffer<Shaders::BezierSurfaceDSPerFrameBuffer> mBezierSurfaceDSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::BezierSurfaceHSPerFrameBuffer> mBezierSurfaceHSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::BezierSurfacePSPerFrameBuffer> mBezierSurfacePSPerFrameBuffer;
+        ConstantBuffer<Shaders::BezierSurfaceDSPerFrameBuffer> mBezierSurfaceDSPerFrameBuffer;
+        ConstantBuffer<Shaders::BezierSurfaceHSPerFrameBuffer> mBezierSurfaceHSPerFrameBuffer;
+        ConstantBuffer<Shaders::BezierSurfacePSPerFrameBuffer> mBezierSurfacePSPerFrameBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mBezierSurfaceWorld;
@@ -112,9 +112,9 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mBezierSurfaceDSPerFrameBuffer.initialize(*mDevice);
-        mBezierSurfaceHSPerFrameBuffer.initialize(*mDevice);
-        mBezierSurfacePSPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mBezierSurfaceDSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mBezierSurfaceHSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mBezierSurfacePSPerFrameBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

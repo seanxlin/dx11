@@ -119,7 +119,7 @@ namespace Framework
         mImmediateContext->IASetIndexBuffer(mIndexBuffer, DXGI_FORMAT_R32_UINT, 0);
         
         // Set constant buffers
-        ID3D11Buffer* constantBuffer[] = { &mPerFrameBuffer.buffer(), &mPerObjectBuffer.buffer() };
+        ID3D11Buffer* constantBuffer[] = { mPerFrameBuffer.mBuffer, mPerObjectBuffer.mBuffer };
         mImmediateContext->VSSetConstantBuffers(0, 2, constantBuffer);
         mImmediateContext->PSSetConstantBuffers(0, 2, constantBuffer);
 
@@ -133,7 +133,7 @@ namespace Framework
         mPerFrameBuffer.mData.mPointLight = mPointLight;
         mPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
-        mPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerFrameBuffer);
 
         //////////////////////////////////////////////////////////////////////////
         // Draw land
@@ -165,7 +165,7 @@ namespace Framework
         mPerObjectBuffer.mData.mMaterial = mLandMaterial;
 
         // Apply buffer changes and draw.
-        mPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
         //////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace Framework
         mPerObjectBuffer.mData.mMaterial = mWavesMaterial;
 
         // Apply buffer changes and draw.
-        mPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 
         // Present results

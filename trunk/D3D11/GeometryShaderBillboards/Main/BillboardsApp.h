@@ -53,9 +53,9 @@ namespace Framework
         Material mSandMaterial;
         Material mPalmMaterial;
 
-        Shaders::ConstantBuffer<Shaders::CommonPerFrameBuffer> mCommonPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::BillboardsPerObjectBuffer> mBillboardsPerObjectBuffer;
+        ConstantBuffer<Shaders::CommonPerFrameBuffer> mCommonPerFrameBuffer;
+        ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;
+        ConstantBuffer<Shaders::BillboardsPerObjectBuffer> mBillboardsPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -137,9 +137,9 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
         
-        mCommonPerFrameBuffer.initialize(*mDevice);
-        mLandPerObjectBuffer.initialize(*mDevice);
-        mBillboardsPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mCommonPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mLandPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mBillboardsPerObjectBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

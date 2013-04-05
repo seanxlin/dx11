@@ -80,8 +80,8 @@ namespace Framework
 
         ID3D11SamplerState* mSamplerState;
 
-        Shaders::ConstantBuffer<Shaders::PerFrameBuffer> mPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
+        ConstantBuffer<Shaders::PerFrameBuffer> mPerFrameBuffer;
+        ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -204,8 +204,8 @@ namespace Framework
 
         buildGeometryBuffers();
         buildShaders();       
-        mPerFrameBuffer.initialize(*mDevice);
-        mPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mPerObjectBuffer);
         buildSamplerStates();
         loadTextures();
 

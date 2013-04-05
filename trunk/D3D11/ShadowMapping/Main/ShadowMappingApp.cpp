@@ -96,7 +96,7 @@ namespace Framework
         //
         // Set constant buffers
         //
-        ID3D11Buffer* pixelShaderBuffers[] = { &mCommonPSPerFrameBuffer.buffer(), &mCommonPSPerObjectBuffer.buffer() };
+        ID3D11Buffer* pixelShaderBuffers[] = { mCommonPSPerFrameBuffer.mBuffer, mCommonPSPerObjectBuffer.mBuffer };
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         //
@@ -104,10 +104,10 @@ namespace Framework
         //
         memcpy(&mCommonPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mCommonPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        mCommonPSPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mCommonPSPerFrameBuffer);
 
         mCommonPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
-        mCommonPSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mCommonPSPerObjectBuffer);
         
         //
         // Set sampler states
@@ -155,9 +155,9 @@ namespace Framework
         texTransform = DirectX::XMLoadFloat4x4(&mShadowTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mShadowTransform, DirectX::XMMatrixTranspose(texTransform));
         
-        mShapesVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
 
-        ID3D11Buffer* vertexShaderBuffers = &mShapesVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = mShapesVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
@@ -221,9 +221,9 @@ namespace Framework
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mShadowMapVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
 
-        mShadowMapVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mShadowMapVSPerObjectBuffer);
 
-        ID3D11Buffer* vertexShaderBuffers = &mShadowMapVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = mShadowMapVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
@@ -291,9 +291,9 @@ namespace Framework
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mFloorShadowMapVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
 
-        mFloorShadowMapVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mFloorShadowMapVSPerObjectBuffer);
 
-        ID3D11Buffer* vertexShaderBuffers = &mFloorShadowMapVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = mFloorShadowMapVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //
@@ -361,9 +361,9 @@ namespace Framework
         texTransform = DirectX::XMLoadFloat4x4(&mShadowTransform);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mShadowTransform, DirectX::XMMatrixTranspose(texTransform));
 
-        mFloorVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mFloorVSPerObjectBuffer);
 
-        ID3D11Buffer* vertexShaderBuffers = &mFloorVSPerObjectBuffer.buffer();
+        ID3D11Buffer* vertexShaderBuffers = mFloorVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
 
         //

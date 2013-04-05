@@ -51,9 +51,9 @@ namespace Framework
         Material mFloorMaterial;
         Material mShapesMaterial;
 
-        Shaders::ConstantBuffer<Shaders::ShapesPSPerFrameBuffer> mShapesPSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::ShapesPSPerObjectBuffer> mShapesPSPerObjectBuffer;
+        ConstantBuffer<Shaders::ShapesPSPerFrameBuffer> mShapesPSPerFrameBuffer;
+        ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
+        ConstantBuffer<Shaders::ShapesPSPerObjectBuffer> mShapesPSPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mFloorWorld;
@@ -138,9 +138,9 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mShapesPSPerFrameBuffer.initialize(*mDevice);
-        mShapesVSPerObjectBuffer.initialize(*mDevice);
-        mShapesPSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesPSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mShapesPSPerObjectBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

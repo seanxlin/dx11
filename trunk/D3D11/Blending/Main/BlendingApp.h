@@ -93,9 +93,9 @@ namespace Framework
         ID3D11SamplerState* mSamplerState;
         ID3D11BlendState* mTransparentBS;
 
-        Shaders::ConstantBuffer<Shaders::ImmutableBuffer> mImmutableBuffer;
-        Shaders::ConstantBuffer<Shaders::PerFrameBuffer> mPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
+        ConstantBuffer<Shaders::ImmutableBuffer> mImmutableBuffer;
+        ConstantBuffer<Shaders::PerFrameBuffer> mPerFrameBuffer;
+        ConstantBuffer<Shaders::PerObjectBuffer> mPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -232,14 +232,14 @@ namespace Framework
         buildShaders();       
 
         // Initialize immutable constant buffer
-        mImmutableBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mImmutableBuffer);
         mImmutableBuffer.mData.mFogStart = 15.0f;
         mImmutableBuffer.mData.mFogRange = 175.0f;
         DirectX::XMStoreFloat4(&mImmutableBuffer.mData.mFogColor, DirectX::Colors::Silver);
-        mImmutableBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mImmutableBuffer);
 
-        mPerFrameBuffer.initialize(*mDevice);
-        mPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mPerObjectBuffer);
         buildSamplerStates();
         buildBlendStates();
         loadTextures();

@@ -54,7 +54,7 @@ namespace Framework
         ID3D11VertexShader* mVertexShader;
         ID3D11PixelShader* mPixelShader;
 
-        Shaders::ConstantBuffer<Shaders::PerObjectBuffer> mPerFrameBuffer;
+        ConstantBuffer<Shaders::PerObjectBuffer> mPerFrameBuffer;
 
         ID3D11InputLayout* mInputLayout;
 
@@ -110,7 +110,7 @@ namespace Framework
 
         buildGeometryBuffers();
         buildShaders();            
-        mPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mPerFrameBuffer);
 
         return true;
     }
