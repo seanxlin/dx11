@@ -70,7 +70,7 @@ namespace Framework
     {
         MSG msg = {0};
 
-        mTimer.reset();
+        Utils::TimerUtils::reset(mTimer);
 
         while (msg.message != WM_QUIT)
         {
@@ -83,12 +83,12 @@ namespace Framework
             // Otherwise, do animation/game stuff.
             else
             {	
-                mTimer.tick();
+                Utils::TimerUtils::tick(mTimer);
 
                 if ( !mIsPaused )
                 {
                     calculateFrameStats();
-                    updateScene(mTimer.deltaTime());	
+                    updateScene(static_cast<float> (mTimer.mDeltaTime));	
                     drawScene();
                 }
                 else
@@ -198,12 +198,12 @@ namespace Framework
             if (LOWORD(wParam) == WA_INACTIVE)
             {
                 mIsPaused = true;
-                mTimer.stop();
+                Utils::TimerUtils::stop(mTimer);
             }
             else
             {
                 mIsPaused = false;
-                mTimer.start();
+                Utils::TimerUtils::start(mTimer);
             }
 
             return 0;
@@ -269,7 +269,7 @@ namespace Framework
         case WM_ENTERSIZEMOVE:
             mIsPaused = true;
             mIsResizing  = true;
-            mTimer.stop();
+            Utils::TimerUtils::stop(mTimer);
             return 0;
 
             // WM_EXITSIZEMOVE is sent when the user releases the resize bars.
@@ -277,7 +277,7 @@ namespace Framework
         case WM_EXITSIZEMOVE:
             mIsPaused = false;
             mIsResizing  = false;
-            mTimer.start();
+            Utils::TimerUtils::start(mTimer);
             onResize();
             return 0;
 
@@ -474,7 +474,7 @@ namespace Framework
         ++frameCounter;
 
         // Compute averages over one second period.
-        if( (mTimer.inGameTime() - timeElapsed) >= 1.0f )
+        if( (Utils::TimerUtils::inGameTime(mTimer) - timeElapsed) >= 1.0f )
         {
             const float fps = static_cast<float> (frameCounter); // fps = frameCnt / 1
             const float mspf = 1000.0f / fps;

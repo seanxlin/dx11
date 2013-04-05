@@ -5,27 +5,24 @@
 
 namespace Utils
 {
-    class Timer
+    struct Timer
     {
-    public:
-        inline Timer();
+        Timer()
+            : mLastStartTime(0)
+            , mInPauseTime(0)
+            , mPreviousTickTime(0)
+            , mCurrentTickTime(0)
+            , mSecondsPerCount(0.0)
+            , mDeltaTime(-1.0)
+            , mIsStopped(false)
+        {
+            // Get the frequency of the high-resolution performance counter, if one exists. 
+            // The frequency cannot change while the system is running.
+            uint64_t countsPerSec;
+            QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *> (&countsPerSec));
+            mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
+        }
 
-        inline float inGameTime() const; // in seconds
-        inline float deltaTime() const; // in seconds
-
-        // Call before message loop.
-        void reset(); 
-
-        // Call when unpaused.
-        void start(); 
-
-        // Call when paused.
-        void stop();  
-
-        // Call every frame.
-        void tick();  
-
-    private:
         uint64_t mLastStartTime;
         uint64_t mInPauseTime;
         uint64_t mLastStopTime;
@@ -38,48 +35,22 @@ namespace Utils
         bool mIsStopped;
     };
 
-    inline Timer::Timer()
-        : mLastStartTime(0)
-        , mInPauseTime(0)
-        , mPreviousTickTime(0)
-        , mCurrentTickTime(0)
-        , mSecondsPerCount(0.0)
-        , mDeltaTime(-1.0)
-        , mIsStopped(false)
+    namespace TimerUtils
     {
-        // Get the frequency of the high-resolution performance counter, if one exists. 
-        // The frequency cannot change while the system is running.
-        uint64_t countsPerSec;
-        QueryPerformanceFrequency( reinterpret_cast<LARGE_INTEGER *> (&countsPerSec) );
-        mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
-    }
+        // Returns the total time elapsed since reset() was called, 
+        // NOT counting any time when the clock is stopped.
+        float inGameTime(const Timer& timer);
 
-    // Returns the total time elapsed since reset() was called, NOT counting any
-    // time when the clock is stopped.
-    float Timer::inGameTime() const
-    {
-        // IF we are stopped, do not count the time that has passed since we stopped.
-        //
-        // ----*---------------*------------------------------*------> time
-        // mLastStartTime  mLastStopTime                mCurrentTickTime
-        //
-        // ELSE:
-        // The distance mCurrentTickTime - mLastStartTime includes paused time,
-        // which we do not want to count. To correct this, we can subtract 
-        // the paused time from mCurrentTickTime:  
-        //
-        //  (mCurrentTickTime - mInPauseTime) - mLastStartTime 
-        //
-        //                     |<---mInPauseTime-->|
-        // ----*---------------*-------------------*-------------*------> time
-        //  mLastStartTime  mLastStopTime       newStartTime  mCurrentTickTime
+        // Call before message loop.
+        void reset(Timer& timer); 
 
-        return (mIsStopped) ? static_cast<float> ( (mLastStopTime - mLastStartTime) * mSecondsPerCount )
-            : static_cast<float> ( (mCurrentTickTime - mInPauseTime - mLastStartTime) * mSecondsPerCount );
-    }
+        // Call when unpaused.
+        void start(Timer& timer); 
 
-    float Timer::deltaTime() const
-    {
-        return static_cast<float> (mDeltaTime);
-    }
+        // Call when paused.
+        void stop(Timer& timer);  
+
+        // Call every frame.
+        void tick(Timer& timer); 
+    }    
 }

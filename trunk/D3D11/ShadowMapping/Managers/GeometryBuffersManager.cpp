@@ -98,13 +98,13 @@ namespace Managers
         const float height = 50.0f;
         const uint32_t sliceCount = 200;
         const uint32_t stackCount = 100;
-        Geometry::GeometryGenerator::MeshData cylinder;
+        Geometry::MeshData cylinder;
         Geometry::GeometryGenerator::createCylinder(bottomRadius, topRadius, height, sliceCount, stackCount, cylinder);
 
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        vertexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(Geometry::GeometryGenerator::Vertex) * cylinder.mVertices.size());
+        vertexBufferDesc.ByteWidth = static_cast<uint32_t> (sizeof(Geometry::VertexData) * cylinder.mVertices.size());
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;
@@ -145,7 +145,7 @@ namespace Managers
         // Calculate vertices and indices
         // Cache vertex offset, index count and offset
         //
-        Geometry::GeometryGenerator::MeshData grid;
+        Geometry::MeshData grid;
         Geometry::GeometryGenerator::createGrid(400.0f, 400.0f, 100, 100, grid);
 
         // Cache base vertex location
@@ -163,7 +163,7 @@ namespace Managers
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
-        vertexBufferDesc.ByteWidth = sizeof(Geometry::GeometryGenerator::Vertex) * totalVertexCount;
+        vertexBufferDesc.ByteWidth = sizeof(Geometry::VertexData) * totalVertexCount;
         vertexBufferDesc.BindFlags = D3D11_BIND_VERTEX_BUFFER;
         vertexBufferDesc.CPUAccessFlags = 0;
         vertexBufferDesc.MiscFlags = 0;

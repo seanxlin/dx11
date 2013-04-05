@@ -16,16 +16,16 @@ namespace Framework
         // Control the camera.
         //
         if (GetAsyncKeyState('W') & 0x8000)
-            mCamera.walk(50.0f * dt);
+            Utils::CameraUtils::walk(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            mCamera.walk(-50.0f * dt);
+            Utils::CameraUtils::walk(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            mCamera.strafe(-50.0f * dt);
+            Utils::CameraUtils::strafe(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            mCamera.strafe(50.0f * dt);
+            Utils::CameraUtils::strafe(50.0f * dt, mCamera);
 
         mRotationAmmount += 0.25f * dt;
     }
@@ -36,7 +36,7 @@ namespace Framework
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        mCamera.updateViewMatrix();
+        Utils::CameraUtils::updateViewMatrix(mCamera);
        
         drawLand();
         drawSphere();
@@ -55,8 +55,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePos.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
-            mCamera.pitch(dy);
-            mCamera.rotateY(dx);
+            Utils::CameraUtils::pitch(dy, mCamera);
+            Utils::CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -66,7 +66,7 @@ namespace Framework
     void StaticCubeMappingApp::drawSphere()
     {
         // Compute view * projection matrix
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
 
         // Useful info
         ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mSphereBufferInfo->mVertexBuffer;
@@ -80,7 +80,7 @@ namespace Framework
 
         // Update per frame constant buffers
         mSpherePSPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
-        mSpherePSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mSpherePSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mSpherePSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set pixel shader per object buffer
@@ -142,7 +142,7 @@ namespace Framework
     void StaticCubeMappingApp::drawLand()
     {
         // Compute view * projection matrix
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
 
         // Useful info
         ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mLandBufferInfo->mVertexBuffer;
@@ -156,7 +156,7 @@ namespace Framework
 
         // Update per frame constant buffers for land and billboards
         mLandPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
-        mLandPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mLandPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mLandPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set input layout and primitive topology.
@@ -218,11 +218,11 @@ namespace Framework
     void StaticCubeMappingApp::drawSky()
     {
         // center Sky about eye in world space
-        const DirectX::XMFLOAT3 eyePosition = mCamera.position();
+        const DirectX::XMFLOAT3 eyePosition = mCamera.mPosition;
         DirectX::XMMATRIX skyTranslation = DirectX::XMMatrixTranslation(eyePosition.x, eyePosition.y, eyePosition.z);
 
         // Update per frame buffer
-        const DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(skyTranslation, mCamera.viewProjection());
+        const DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(skyTranslation, Utils::CameraUtils::computeViewProjectionMatrix(mCamera));
         DirectX::XMStoreFloat4x4(&mSkyPerFrameBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
         mSkyPerFrameBuffer.applyChanges(*mImmediateContext);
         ID3D11Buffer* vertexShaderPerFrameBuffer = &mSkyPerFrameBuffer.buffer();

@@ -58,7 +58,7 @@ namespace Framework
         // Every quarter second, generate a random wave.
         //
         static float baseTime = 0.0f;
-        if ((mTimer.inGameTime() - baseTime) >= 0.25f)
+        if ((Utils::TimerUtils::inGameTime(mTimer) - baseTime) >= 0.25f)
         {
             baseTime += 0.25f;
 
@@ -92,8 +92,8 @@ namespace Framework
         //
 
         // Circle light over the land surface.
-        mPointLight.mPosition.x = 70.0f * cosf(0.2f * mTimer.inGameTime());
-        mPointLight.mPosition.z = 70.0f * sinf(0.2f * mTimer.inGameTime());
+        mPointLight.mPosition.x = 70.0f * cosf(0.2f * Utils::TimerUtils::inGameTime(mTimer));
+        mPointLight.mPosition.z = 70.0f * sinf(0.2f * Utils::TimerUtils::inGameTime(mTimer));
         mPointLight.mPosition.y = Utils::MathHelper::computeMax(height(mPointLight.mPosition.x, 
             mPointLight.mPosition.z), -3.0f) + 10.0f;
 
@@ -244,7 +244,7 @@ namespace Framework
         // Calculate vertices and indices for the land.
         // Cache vertex offset, index count and offset
         //
-        Geometry::GeometryGenerator::MeshData grid;
+        Geometry::MeshData grid;
         Geometry::GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
 
         // Cache the index count

@@ -15,16 +15,16 @@ namespace Framework
         // Control the camera.
         //
         if (GetAsyncKeyState('W') & 0x8000)
-            mCamera.walk(50.0f * dt);
+            Utils::CameraUtils::walk(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            mCamera.walk(-50.0f * dt);
+            Utils::CameraUtils::walk(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            mCamera.strafe(-50.0f * dt);
+            Utils::CameraUtils::strafe(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            mCamera.strafe(50.0f * dt);
+            Utils::CameraUtils::strafe(50.0f * dt, mCamera);
 
         mRotationAmmount += 0.25f * dt;
         
@@ -37,7 +37,7 @@ namespace Framework
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        mCamera.updateViewMatrix();
+        Utils::CameraUtils::updateViewMatrix(mCamera);
 
         setShapesGeneralSettings();
        
@@ -57,8 +57,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePos.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
-            mCamera.pitch(dy);
-            mCamera.rotateY(dx);
+            Utils::CameraUtils::pitch(dy, mCamera);
+            Utils::CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -79,7 +79,7 @@ namespace Framework
         // Update common buffers
         //
         memcpy(&mCommonPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
-        mCommonPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mCommonPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mCommonPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         mCommonPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
@@ -134,7 +134,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexCount;        
 
-        UINT stride[2] = {sizeof(Geometry::GeometryGenerator::Vertex), sizeof(Managers::GeometryBuffersManager::InstancedData)};
+        UINT stride[2] = {sizeof(Geometry::VertexData), sizeof(Managers::GeometryBuffersManager::InstancedData)};
         UINT offset[2] = {0, 0};
         ID3D11Buffer* vertexBuffers[2] = {shapesVertexBuffer, instancedVertexBuffer};
         mImmediateContext->IASetVertexBuffers(0, 2, vertexBuffers, stride, offset);
@@ -143,7 +143,7 @@ namespace Framework
         //
         // Update constant buffers
         //
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
@@ -190,7 +190,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;        
 
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        uint32_t stride = sizeof(Geometry::VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
@@ -202,7 +202,7 @@ namespace Framework
         DirectX::XMMATRIX world = DirectX::XMMatrixRotationRollPitchYawFromVector(DirectX::XMLoadFloat3(&rotation)) * DirectX::XMLoadFloat4x4(&mFloorWorld);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
 
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMMATRIX worldViewProjection = world * viewProjection;
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 

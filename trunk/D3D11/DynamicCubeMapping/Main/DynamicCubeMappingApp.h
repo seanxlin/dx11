@@ -85,7 +85,7 @@ namespace Framework
     {
         mMainWindowCaption = L"Dynamic Cube Mapping Demo";
 
-        mCamera.setPosition(0.0f, 2.0f, -15.0f);
+        mCamera.mPosition = DirectX::XMFLOAT3(0.0f, 2.0f, -15.0f);
 
         buildCubeFaceCamera(0.0f, 2.0f, 0.0f);
 
@@ -161,7 +161,7 @@ namespace Framework
     {
         D3DApplication::onResize();
 
-        mCamera.setLens(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f);
+        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void DynamicCubeMappingApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)

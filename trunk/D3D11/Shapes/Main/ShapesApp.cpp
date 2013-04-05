@@ -117,10 +117,10 @@ namespace Framework
 
     void ShapesApp::buildGeometryBuffers()
     {
-        Geometry::GeometryGenerator::MeshData box;
-        Geometry::GeometryGenerator::MeshData grid;
-        Geometry::GeometryGenerator::MeshData sphere;
-        Geometry::GeometryGenerator::MeshData cylinder;
+        Geometry::MeshData box;
+        Geometry::MeshData grid;
+        Geometry::MeshData sphere;
+        Geometry::MeshData cylinder;
 
         Geometry::GeometryGenerator::createBox(1.0f, 1.0f, 1.0f, box);
         Geometry::GeometryGenerator::createGrid(20.0f, 30.0f, 60, 40, grid);

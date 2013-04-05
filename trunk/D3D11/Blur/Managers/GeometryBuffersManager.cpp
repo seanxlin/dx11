@@ -63,10 +63,10 @@ namespace Managers
         // Calculate vertices and indices
         // Cache vertex offset, index count and offset
         //
-        Geometry::GeometryGenerator::MeshData grid;
+        Geometry::MeshData grid;
         Geometry::GeometryGenerator::createGrid(200.0f, 200.0f, 50, 50, grid);
 
-        Geometry::GeometryGenerator::MeshData quad;
+        Geometry::MeshData quad;
         Geometry::GeometryGenerator::createFullscreenQuad(quad);
 
         // Cache base vertex location
