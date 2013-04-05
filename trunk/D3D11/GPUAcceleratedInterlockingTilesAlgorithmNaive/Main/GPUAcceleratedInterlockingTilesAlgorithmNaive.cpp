@@ -211,7 +211,7 @@ namespace Framework
 
         // Per Frame Constant Buffer
         const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
-        const DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        const DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         const float heightMapTexelSize = 1.0f / 512.0f;

@@ -46,7 +46,7 @@ namespace Framework
 
             const uint32_t randomRowIndex = 5 + rand() % 190;
             const uint32_t randomColumnIndex = 5 + rand() % 190;
-            const float randomMagnitude = Utils::MathHelper::randomFloat(1.0f, 2.0f);
+            const float randomMagnitude = MathHelper::randomFloat(1.0f, 2.0f);
 
             mWaves.disturb(randomRowIndex, randomColumnIndex, randomMagnitude);
         }
@@ -136,7 +136,7 @@ namespace Framework
             mPhi += dy;
 
             // Restrict the angle mPhi.
-            mPhi = Utils::MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
+            mPhi = MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
         }
         else if( (btnState & MK_RBUTTON) != 0 )
         {
@@ -148,7 +148,7 @@ namespace Framework
             mRadius += dx - dy;
 
             // Restrict the radius.
-            mRadius = Utils::MathHelper::clamp(mRadius, 50.0f, 500.0f);
+            mRadius = MathHelper::clamp(mRadius, 50.0f, 500.0f);
         }
 
         mLastMousePos.x = x;

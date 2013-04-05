@@ -142,8 +142,8 @@ namespace Managers
 
         for (uint32_t i = 0; i < treeCount; ++i)
         {
-            const float x = Utils::MathHelper::randomFloat(-100.0f, 100.0f);
-            const float z = Utils::MathHelper::randomFloat(-100.0f, 100.0f);
+            const float x = MathHelper::randomFloat(-100.0f, 100.0f);
+            const float z = MathHelper::randomFloat(-100.0f, 100.0f);
             
             // Move tree slightly above land height.
             const float y = height(x, z) + 12.0f;

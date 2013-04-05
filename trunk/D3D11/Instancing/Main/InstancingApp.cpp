@@ -206,7 +206,7 @@ namespace Framework
         DirectX::XMMATRIX worldViewProjection = world * viewProjection;
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);

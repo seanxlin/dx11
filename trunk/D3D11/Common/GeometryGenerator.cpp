@@ -411,7 +411,7 @@ namespace Geometry
                     DirectX::XMStoreFloat3(&meshData.mVertices[i].mPosition, position);
 
                     // Derive texture coordinates from spherical coordinates.
-                    const float theta = Utils::MathHelper::angleFromXY(
+                    const float theta = MathHelper::angleFromXY(
                         meshData.mVertices[i].mPosition.x, 
                         meshData.mVertices[i].mPosition.z);
 
@@ -647,20 +647,20 @@ namespace Geometry
                     meshData.mIndices[k + 3] = (x + 1) + (z + 1) * vexterPerColumn;
 
                     // 4-5 are +z
-                    meshData.mIndices[k + 4] = Utils::MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
-                    meshData.mIndices[k + 5] = Utils::MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 4] = MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 5] = MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 2, 0, numRows) * vexterPerColumn;
 
                     // 6-7 are +x
-                    meshData.mIndices[k + 6] = Utils::MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
-                    meshData.mIndices[k + 7] = Utils::MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 6] = MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 7] = MathHelper::clamp<uint32_t>(x + 2, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
 
                     // 8-9 are -z
-                    meshData.mIndices[k + 8] = Utils::MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
-                    meshData.mIndices[k + 9] = Utils::MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 8] = MathHelper::clamp<uint32_t>(x + 0, 0, numColumns) + MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 9] = MathHelper::clamp<uint32_t>(x + 1, 0, numColumns) + MathHelper::clamp<uint32_t>(z - 1, 0, numRows) * vexterPerColumn;
 
                     // 10-11 are -x
-                    meshData.mIndices[k + 10] = Utils::MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
-                    meshData.mIndices[k + 11] = Utils::MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + Utils::MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 10] = MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 0, 0, numRows) * vexterPerColumn;
+                    meshData.mIndices[k + 11] = MathHelper::clamp<uint32_t>(x - 1, 0, numColumns) + MathHelper::clamp<uint32_t>(z + 1, 0, numRows) * vexterPerColumn;
 
                     k += controlPointsPerQuad; // 12 control points per quad
                 }
