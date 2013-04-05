@@ -70,7 +70,7 @@ namespace Framework
     {
         MSG msg = {0};
 
-        Utils::TimerUtils::reset(mTimer);
+        TimerUtils::reset(mTimer);
 
         while (msg.message != WM_QUIT)
         {
@@ -83,7 +83,7 @@ namespace Framework
             // Otherwise, do animation/game stuff.
             else
             {	
-                Utils::TimerUtils::tick(mTimer);
+                TimerUtils::tick(mTimer);
 
                 if ( !mIsPaused )
                 {
@@ -198,12 +198,12 @@ namespace Framework
             if (LOWORD(wParam) == WA_INACTIVE)
             {
                 mIsPaused = true;
-                Utils::TimerUtils::stop(mTimer);
+                TimerUtils::stop(mTimer);
             }
             else
             {
                 mIsPaused = false;
-                Utils::TimerUtils::start(mTimer);
+                TimerUtils::start(mTimer);
             }
 
             return 0;
@@ -269,7 +269,7 @@ namespace Framework
         case WM_ENTERSIZEMOVE:
             mIsPaused = true;
             mIsResizing  = true;
-            Utils::TimerUtils::stop(mTimer);
+            TimerUtils::stop(mTimer);
             return 0;
 
             // WM_EXITSIZEMOVE is sent when the user releases the resize bars.
@@ -277,7 +277,7 @@ namespace Framework
         case WM_EXITSIZEMOVE:
             mIsPaused = false;
             mIsResizing  = false;
-            Utils::TimerUtils::start(mTimer);
+            TimerUtils::start(mTimer);
             onResize();
             return 0;
 
@@ -474,7 +474,7 @@ namespace Framework
         ++frameCounter;
 
         // Compute averages over one second period.
-        if( (Utils::TimerUtils::inGameTime(mTimer) - timeElapsed) >= 1.0f )
+        if( (TimerUtils::inGameTime(mTimer) - timeElapsed) >= 1.0f )
         {
             const float fps = static_cast<float> (frameCounter); // fps = frameCnt / 1
             const float mspf = 1000.0f / fps;

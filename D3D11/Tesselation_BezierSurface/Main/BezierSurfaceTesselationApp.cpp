@@ -155,7 +155,7 @@ namespace Framework
 
 
         // Update in game time
-        mBezierSurfaceDSPerFrameBuffer.mData.mInGameTime = Utils::TimerUtils::inGameTime(mTimer);
+        mBezierSurfaceDSPerFrameBuffer.mData.mInGameTime = TimerUtils::inGameTime(mTimer);
 
         // Update tesselation factor
         mBezierSurfaceHSPerFrameBuffer.mData.mTesselationFactor = mTesselationFactor;
