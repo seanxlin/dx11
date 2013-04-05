@@ -48,7 +48,7 @@ namespace Framework
 
         void buildOffscreenViews();
 
-        Utils::Camera mCamera;
+        Camera mCamera;
 
         Framework::BlurFilter mBlurFilter;
 
@@ -143,7 +143,7 @@ namespace Framework
         buildOffscreenViews();
         mBlurFilter.init(mDevice, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
+        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void BlurApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)

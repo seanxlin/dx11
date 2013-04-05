@@ -90,16 +90,16 @@ namespace Framework
         //
         const float offset = 50.0f;
         if (GetAsyncKeyState('W') & 0x8000)
-            Utils::CameraUtils::walk(offset * dt, mCamera);
+            CameraUtils::walk(offset * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            Utils::CameraUtils::walk(-offset * dt, mCamera);
+            CameraUtils::walk(-offset * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            Utils::CameraUtils::strafe(-offset * dt, mCamera);
+            CameraUtils::strafe(-offset * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            Utils::CameraUtils::strafe(offset * dt, mCamera);
+            CameraUtils::strafe(offset * dt, mCamera);
 
         if (GetAsyncKeyState('T') & 0x8000) 
         {
@@ -118,7 +118,7 @@ namespace Framework
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         mImmediateContext->RSSetState(mWireframeMode ? Managers::PipelineStatesManager::mWireframeRS : nullptr);
 
-        Utils::CameraUtils::updateViewMatrix(mCamera);
+        CameraUtils::updateViewMatrix(mCamera);
        
         drawGrid();
 
@@ -135,8 +135,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePosition.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePosition.y));
 
-            Utils::CameraUtils::pitch(dy, mCamera);
-            Utils::CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::pitch(dy, mCamera);
+            CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePosition.x = x;
@@ -210,7 +210,7 @@ namespace Framework
         mImmediateContext->DSSetShader(domainShader, nullptr, 0);
 
         // Per Frame Constant Buffer
-        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
+        const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
         const DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));

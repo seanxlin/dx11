@@ -43,13 +43,13 @@ namespace Framework
     private:       
         void buildCubeFaceCamera(const float x, const float y, const float z);
 
-        void drawScene(Utils::Camera& camera, const bool isSphereDrawable);
-        void drawLand(Utils::Camera& camera);
-        void drawSphere(Utils::Camera& camera);
-        void drawSky(Utils::Camera& camera);
+        void drawScene(Camera& camera, const bool isSphereDrawable);
+        void drawLand(Camera& camera);
+        void drawSphere(Camera& camera);
+        void drawSky(Camera& camera);
 
-        Utils::Camera mCamera;
-        Utils::Camera mCubeMapCamera[6];
+        Camera mCamera;
+        Camera mCubeMapCamera[6];
 
         Utils::DirectionalLight mDirectionalLight;
 
@@ -161,7 +161,7 @@ namespace Framework
     {
         D3DApplication::onResize();
 
-        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
+        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void DynamicCubeMappingApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)

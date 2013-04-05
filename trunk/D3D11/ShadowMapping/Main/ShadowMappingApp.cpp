@@ -15,16 +15,16 @@ namespace Framework
         // Control the camera.
         //
         if (GetAsyncKeyState('W') & 0x8000)
-            Utils::CameraUtils::walk(50.0f * dt, mCamera);
+            CameraUtils::walk(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            Utils::CameraUtils::walk(-50.0f * dt, mCamera);
+            CameraUtils::walk(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            Utils::CameraUtils::strafe(-50.0f * dt, mCamera);
+            CameraUtils::strafe(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            Utils::CameraUtils::strafe(50.0f * dt, mCamera);
+            CameraUtils::strafe(50.0f * dt, mCamera);
 
         //
         // Animate the lights (and hence shadows).
@@ -61,7 +61,7 @@ namespace Framework
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        Utils::CameraUtils::updateViewMatrix(mCamera);
+        CameraUtils::updateViewMatrix(mCamera);
 
         setShapesGeneralSettings();
        
@@ -81,8 +81,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePos.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
-            Utils::CameraUtils::pitch(dy, mCamera);
-            Utils::CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::pitch(dy, mCamera);
+            CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -146,7 +146,7 @@ namespace Framework
         //
         // Update constant buffers
         //
-        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
+        const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
@@ -348,7 +348,7 @@ namespace Framework
         DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&mFloorWorld);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
 
-        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
+        const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMMATRIX worldViewProjection = world * viewProjection;
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
