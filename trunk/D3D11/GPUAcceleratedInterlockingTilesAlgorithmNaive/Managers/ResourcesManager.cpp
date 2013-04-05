@@ -118,21 +118,22 @@ namespace
     }
 }
 
-namespace Managers
-{
-    ID3D11ShaderResourceView* ResourcesManager::mTerrainDiffuseMapSRV = nullptr;
-
-    ID3D11ShaderResourceView* ResourcesManager::mHeightMapSRV = nullptr;
-    
-    void ResourcesManager::initAll(ID3D11Device& device, ID3D11DeviceContext& context)
+namespace ShaderResourcesUtils
+{    
+    void initAll(ID3D11Device& device, 
+                 ID3D11DeviceContext& context, 
+                 ShaderResources& shaderResources)
     {
+        assert(shaderResources.mTerrainDiffuseMapSRV == nullptr);
+        assert(shaderResources.mHeightMapSRV == nullptr);
+
         ID3D11Resource* texture = nullptr;
 
         // Diffuse map
         HRESULT result = CreateDDSTextureFromFile(&device, 
                                                   L"Resources/Textures/stone.dds", 
                                                   &texture, 
-                                                  &mTerrainDiffuseMapSRV);
+                                                  &shaderResources.mTerrainDiffuseMapSRV);
         DxErrorChecker(result);  
 
         texture->Release();
@@ -145,14 +146,17 @@ namespace Managers
                                                  heightMapScaleFactor, 
                                                  heightMap);
         HeightMapUtils::applyNeighborsFilter(heightMap);
-        mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(device, 
-                                                 heightMap,  
-                                                 D3D11_BIND_SHADER_RESOURCE);
+        shaderResources.mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(device, 
+                                                                          heightMap,  
+                                                                          D3D11_BIND_SHADER_RESOURCE);
     }
     
-    void ResourcesManager::destroyAll()
+    void destroyAll(ShaderResources& shaderResources)
     {
-        mTerrainDiffuseMapSRV->Release();
-        mHeightMapSRV->Release();
+        assert(shaderResources.mTerrainDiffuseMapSRV);
+        assert(shaderResources.mHeightMapSRV);
+
+        shaderResources.mTerrainDiffuseMapSRV->Release();
+        shaderResources.mHeightMapSRV->Release();
     }
 }

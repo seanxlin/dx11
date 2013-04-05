@@ -5,13 +5,13 @@
 
 #include <DxErrorChecker.h>
 
-namespace Managers
+namespace PipelineStatesUtils
 {
-    ID3D11SamplerState* PipelineStatesManager::mLinearSS =  nullptr;
-    ID3D11RasterizerState* PipelineStatesManager::mWireframeRS = nullptr;
-
-    void PipelineStatesManager::initAll(ID3D11Device& device)
+    void initAll(ID3D11Device& device, PipelineStates& pipelineStates)
     {
+        assert(pipelineStates.mLinearSS == nullptr);
+        assert(pipelineStates.mWireframeRS == nullptr);
+
         //
         // Anisotropic sampler state
         //
@@ -31,7 +31,7 @@ namespace Managers
         samplerDesc.MinLOD = 0.0f; // FLT_MIN 
         samplerDesc.MaxLOD = D3D11_FLOAT32_MAX; // FLT_MAX
 
-        HRESULT result = device.CreateSamplerState(&samplerDesc, &mLinearSS);
+        HRESULT result = device.CreateSamplerState(&samplerDesc, &pipelineStates.mLinearSS);
         DxErrorChecker(result);
 
         //
@@ -44,13 +44,16 @@ namespace Managers
         wireframeDesc.FrontCounterClockwise = false;
         wireframeDesc.DepthClipEnable = true;
 
-        result = device.CreateRasterizerState(&wireframeDesc, &mWireframeRS);
+        result = device.CreateRasterizerState(&wireframeDesc, &pipelineStates.mWireframeRS);
         DxErrorChecker(result);
     }
 
-    void PipelineStatesManager::destroyAll()
+    void destroyAll(PipelineStates& pipelineStates)
     {
-        mLinearSS->Release();
-        mWireframeRS->Release();
+        assert(pipelineStates.mLinearSS);
+        assert(pipelineStates.mWireframeRS);
+
+        pipelineStates.mLinearSS->Release();
+        pipelineStates.mWireframeRS->Release();
     }
 }

@@ -4,21 +4,23 @@ struct ID3D11Device;
 struct ID3D11RasterizerState;
 struct ID3D11SamplerState;
 
-namespace Managers
+struct PipelineStates
 {
-    class PipelineStatesManager
+    PipelineStates()
+        : mLinearSS(nullptr)
+        , mWireframeRS(nullptr)
     {
-    public:
-        static void initAll(ID3D11Device& device);
-        static void destroyAll();
 
-        static ID3D11SamplerState* mLinearSS;
-        static ID3D11RasterizerState* mWireframeRS;
+    }
 
-    private:
-        PipelineStatesManager();
-        ~PipelineStatesManager();
-        PipelineStatesManager(const PipelineStatesManager& oipelineStatesManager);
-        const PipelineStatesManager& operator=(const PipelineStatesManager& pipelineStatesManager);
-    };
+    ID3D11SamplerState* mLinearSS;
+    ID3D11RasterizerState* mWireframeRS;
+};
+
+static PipelineStates gPipelineStates;
+
+namespace PipelineStatesUtils
+{
+    void initAll(ID3D11Device& device, PipelineStates& pipelineStates);
+    void destroyAll(PipelineStates& pipelineStates);
 }
