@@ -137,7 +137,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexCount;        
 
-        UINT stride[2] = {sizeof(Geometry::VertexData), sizeof(Managers::GeometryBuffersManager::InstancedData)};
+        UINT stride[2] = {sizeof(VertexData), sizeof(Managers::GeometryBuffersManager::InstancedData)};
         UINT offset[2] = {0, 0};
         ID3D11Buffer* vertexBuffers[2] = {shapesVertexBuffer, instancedVertexBuffer};
         mImmediateContext->IASetVertexBuffers(0, 2, vertexBuffers, stride, offset);
@@ -207,7 +207,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mCylinderBufferInfo->mIndexCount;        
 
-        UINT stride[2] = {sizeof(Geometry::VertexData), sizeof(Managers::GeometryBuffersManager::InstancedData)};
+        UINT stride[2] = {sizeof(VertexData), sizeof(Managers::GeometryBuffersManager::InstancedData)};
         UINT offset[2] = {0, 0};
         ID3D11Buffer* vertexBuffers[2] = {shapesVertexBuffer, instancedVertexBuffer};
         mImmediateContext->IASetVertexBuffers(0, 2, vertexBuffers, stride, offset);
@@ -274,7 +274,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;        
 
-        UINT stride[1] = {sizeof(Geometry::VertexData)};
+        UINT stride[1] = {sizeof(VertexData)};
         UINT offset[1] = {0};
         ID3D11Buffer* vertexBuffers[1] = {shapesVertexBuffer};
         mImmediateContext->IASetVertexBuffers(0, 1, vertexBuffers, stride, offset);
@@ -337,7 +337,7 @@ namespace Framework
         ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexBuffer;        
         const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;        
 
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);

@@ -117,15 +117,15 @@ namespace Framework
 
     void ShapesApp::buildGeometryBuffers()
     {
-        Geometry::MeshData box;
-        Geometry::MeshData grid;
-        Geometry::MeshData sphere;
-        Geometry::MeshData cylinder;
+        MeshData box;
+        MeshData grid;
+        MeshData sphere;
+        MeshData cylinder;
 
-        Geometry::GeometryGenerator::createBox(1.0f, 1.0f, 1.0f, box);
-        Geometry::GeometryGenerator::createGrid(20.0f, 30.0f, 60, 40, grid);
-        Geometry::GeometryGenerator::createSphere(0.5f, 20, 20, sphere);
-        Geometry::GeometryGenerator::createCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
+        GeometryGenerator::createBox(1.0f, 1.0f, 1.0f, box);
+        GeometryGenerator::createGrid(20.0f, 30.0f, 60, 40, grid);
+        GeometryGenerator::createSphere(0.5f, 20, 20, sphere);
+        GeometryGenerator::createCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
 
         // Cache the vertex offsets to each object in the concatenated vertex buffer.
         mBoxVertexOffset = 0;

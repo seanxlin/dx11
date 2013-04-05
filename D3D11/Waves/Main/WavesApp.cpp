@@ -161,8 +161,8 @@ namespace Framework
         // Calculate vertices and indices for the land.
         // Cache vertex offset, index count and offset
         //
-        Geometry::MeshData grid;
-        Geometry::GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
+        MeshData grid;
+        GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
 
         // Cache the index count
         mLandIndexCount = static_cast<uint32_t> (grid.mIndices.size());

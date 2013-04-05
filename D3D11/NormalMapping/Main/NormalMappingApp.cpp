@@ -111,7 +111,7 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -165,7 +165,7 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -219,7 +219,7 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -273,7 +273,7 @@ namespace Framework
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 

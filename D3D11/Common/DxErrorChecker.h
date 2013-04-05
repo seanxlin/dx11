@@ -81,7 +81,6 @@ __forceinline void DxErrorChecker(const HRESULT result)
         DXTRACE_ERR_MSGBOX(0, result); 		
 }
 
-
 #ifdef __cplusplus
 }
 #endif //__cplusplus
