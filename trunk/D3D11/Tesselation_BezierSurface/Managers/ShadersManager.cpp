@@ -49,7 +49,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 1, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -72,22 +72,22 @@ namespace Managers
         computeShaderByteCode(L"HLSL/BezierSurfaceVS.cso", shaderByteCode);
         buildBezierSurfaceVertexLayout(device, shaderByteCode, mBezierSurfaceIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBezierSurfaceVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Pixel shader
         computeShaderByteCode(L"HLSL/BezierSurfacePS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBezierSurfacePS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Hull shader
         computeShaderByteCode(L"HLSL/BezierSurfaceHS.cso", shaderByteCode);        
         result = device->CreateHullShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBezierSurfaceHS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Domain Shader
         computeShaderByteCode(L"HLSL/BezierSurfaceDS.cso", shaderByteCode);        
         result = device->CreateDomainShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBezierSurfaceDS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()

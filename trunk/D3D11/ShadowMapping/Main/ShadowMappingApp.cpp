@@ -70,7 +70,7 @@ namespace Framework
 
         // Present results
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void ShadowMappingApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)

@@ -85,7 +85,7 @@ namespace Managers
         }
         initData.pSysMem = &vertices[0];
         HRESULT result = device.CreateBuffer(&vertexBufferDesc, &initData, &mTerrainBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Fill and Create index buffer
         const uint32_t totalIndexCount = mTerrainBufferInfo->mIndexCount;
@@ -99,6 +99,6 @@ namespace Managers
 
         initData.pSysMem = &grid.mIndices[0];
         result = device.CreateBuffer(&indexBufferDesc, &initData, &mTerrainBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

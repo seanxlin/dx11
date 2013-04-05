@@ -125,7 +125,7 @@ namespace Managers
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = &landVertices[0];
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mLandBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         vertexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
         vertexBufferDesc.ByteWidth = sizeof(Geometry::CommonVertex) * totalScreenQuadVertexCount;
@@ -135,7 +135,7 @@ namespace Managers
 
         initData.pSysMem = &screenQuadVertices[0];
         result = device->CreateBuffer(&vertexBufferDesc, &initData, &mScreenQuadBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Create index buffer
@@ -158,6 +158,6 @@ namespace Managers
         initData.pSysMem = &indices[0];
         result = device->CreateBuffer(&indexBufferDesc, &initData, &mLandBufferInfo->mIndexBuffer);
         mScreenQuadBufferInfo->mIndexBuffer = mLandBufferInfo->mIndexBuffer;
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

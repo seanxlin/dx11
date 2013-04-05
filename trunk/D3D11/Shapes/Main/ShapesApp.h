@@ -220,7 +220,7 @@ namespace Framework
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 2, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     inline void ShapesApp::buildRasterizerState()
@@ -233,6 +233,6 @@ namespace Framework
         wireframeDesc.DepthClipEnable = true;
 
         HRESULT result = mDevice->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

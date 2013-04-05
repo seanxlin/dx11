@@ -35,7 +35,7 @@ namespace Utils
 
         ID3D11Texture2D* depthMap = nullptr;
         HRESULT result = device.CreateTexture2D(&textureDescription, 0, &depthMap);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
         depthStencilViewDesc.Flags = 0;
@@ -43,7 +43,7 @@ namespace Utils
         depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         depthStencilViewDesc.Texture2D.MipSlice = 0;
         result = device.CreateDepthStencilView(depthMap, &depthStencilViewDesc, &mDepthMapDSV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
         shaderResourceViewDesc.Format = DXGI_FORMAT_R24_UNORM_X8_TYPELESS;
@@ -51,7 +51,7 @@ namespace Utils
         shaderResourceViewDesc.Texture2D.MipLevels = textureDescription.MipLevels;
         shaderResourceViewDesc.Texture2D.MostDetailedMip = 0;
         result = device.CreateShaderResourceView(depthMap, &shaderResourceViewDesc, &mDepthMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // View saves a reference to the texture so we can release our reference.
         depthMap->Release();

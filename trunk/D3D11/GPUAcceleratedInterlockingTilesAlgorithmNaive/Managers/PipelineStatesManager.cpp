@@ -32,7 +32,7 @@ namespace Managers
         samplerDesc.MaxLOD = D3D11_FLOAT32_MAX; // FLT_MAX
 
         HRESULT result = device.CreateSamplerState(&samplerDesc, &mLinearSS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Wireframe rasterizer state
@@ -45,7 +45,7 @@ namespace Managers
         wireframeDesc.DepthClipEnable = true;
 
         result = device.CreateRasterizerState(&wireframeDesc, &mWireframeRS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void PipelineStatesManager::destroyAll()

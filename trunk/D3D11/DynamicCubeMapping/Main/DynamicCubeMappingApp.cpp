@@ -70,7 +70,7 @@ namespace Framework
 
         // Present results
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void DynamicCubeMappingApp::drawScene(Camera& camera, const bool isSphereDrawable)

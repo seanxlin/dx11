@@ -37,7 +37,7 @@ namespace Managers
         samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MAX
 
         HRESULT result = device->CreateSamplerState(&samplerDesc, &mAnisotropicSS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Wireframe rasterizer state
@@ -50,7 +50,7 @@ namespace Managers
         wireframeDesc.DepthClipEnable = true;
 
         result = device->CreateRasterizerState(&wireframeDesc, &mWireframeRS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // NoCullRS
@@ -63,7 +63,7 @@ namespace Managers
         noCullDesc.DepthClipEnable = true;
 
         result = device->CreateRasterizerState(&noCullDesc, &mNoCullRS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // LessEqual depth stencil state
@@ -86,7 +86,7 @@ namespace Managers
         depthStencilDesc.BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
 
         result = device->CreateDepthStencilState(&depthStencilDesc, &mLessEqualDSS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // AlphaToCoverageBS
@@ -98,7 +98,7 @@ namespace Managers
         alphaToCoverageDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
         result = device->CreateBlendState(&alphaToCoverageDesc, &mAlphaToCoverageBS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // TransparentBS
@@ -117,7 +117,7 @@ namespace Managers
         transparentDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
         result = device->CreateBlendState(&transparentDesc, &mTransparentBS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void PipelineStatesManager::destroyAll()

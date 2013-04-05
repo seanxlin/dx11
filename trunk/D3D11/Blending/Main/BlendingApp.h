@@ -283,7 +283,7 @@ namespace Framework
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 3, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     inline void BlendingApp::buildSamplerStates()
@@ -304,7 +304,7 @@ namespace Framework
         samplerDesc.MaxLOD = 3.402823466e+38F; // FLT_MIN 
 
         HRESULT result = mDevice->CreateSamplerState(&samplerDesc, &mSamplerState);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     inline void BlendingApp::buildBlendStates()
@@ -323,7 +323,7 @@ namespace Framework
         transparentDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
         HRESULT result = mDevice->CreateBlendState(&transparentDesc, &mTransparentBS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     inline void BlendingApp::loadTextures()
@@ -332,12 +332,12 @@ namespace Framework
 
         // Create grass texture shader resource view
         HRESULT result = CreateDDSTextureFromFile(mDevice, L"Resources/Textures/grass.dds", &texture, &mGrassTextureSRV);
-        DebugUtils::DxErrorChecker(result);        
+        DxErrorChecker(result);        
         texture->Release();
 
         // Create water texture shader resource view.
         result = CreateDDSTextureFromFile(mDevice, L"Resources/Textures/water1.dds", &texture, &mWaterTextureSRV);
-        DebugUtils::DxErrorChecker(result);        
+        DxErrorChecker(result);        
         texture->Release();
     }
 }

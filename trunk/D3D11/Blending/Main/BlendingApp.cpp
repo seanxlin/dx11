@@ -74,7 +74,7 @@ namespace Framework
         //
         D3D11_MAPPED_SUBRESOURCE mappedData;
         const HRESULT result = mImmediateContext->Map(mWavesVertexBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &mappedData);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         Geometry::Vertex* vertex = reinterpret_cast<Geometry::Vertex*> (mappedData.pData);
         for(uint32_t i = 0; i < mWaves.vertices(); ++i)
@@ -263,7 +263,7 @@ namespace Framework
 
         // Present results
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void BlendingApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
@@ -360,7 +360,7 @@ namespace Framework
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = &vertices[0];
         HRESULT result = mDevice->CreateBuffer(&vertexBufferDesc, &initData, &mLandVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Create waves vertex buffer
         // Note that we allocate space only, as
@@ -371,7 +371,7 @@ namespace Framework
         vertexBufferDesc.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
         vertexBufferDesc.MiscFlags = 0;
         result = mDevice->CreateBuffer(&vertexBufferDesc, 0, &mWavesVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
 
         //
@@ -433,7 +433,7 @@ namespace Framework
         buildVertexLayout(compiledShader);
 
         HRESULT result = mDevice->CreateVertexShader(&compiledShader[0], size, nullptr, &mVertexShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
         
         fin.open("HLSL/LightingPixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -444,7 +444,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mLightingPixelShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         fin.open("HLSL/LightingTexturingPixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -455,7 +455,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mLightingTexturingPixelShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         fin.open("HLSL/LightingTexturingFogPixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -466,7 +466,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mLightingTexturingFogPixelShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Bind vertex shader to the rendering pipeline
         mImmediateContext->VSSetShader(mVertexShader, nullptr, 0);

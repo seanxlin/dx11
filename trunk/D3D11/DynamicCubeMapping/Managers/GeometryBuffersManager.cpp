@@ -112,7 +112,7 @@ namespace Managers
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = &landVertices[0];
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mLandBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
 
         // Fill and Create index buffer
@@ -130,7 +130,7 @@ namespace Managers
 
         initData.pSysMem = &indices[0];
         result = device->CreateBuffer(&indexBufferDesc, &initData, &mLandBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void GeometryBuffersManager::buildSkyBuffers(ID3D11Device* device)
@@ -165,7 +165,7 @@ namespace Managers
         initData.pSysMem = &vertices[0];
 
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mSkyBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Set index count
         mSkyBufferInfo->mIndexCount = static_cast<uint32_t> (sphere.mIndices.size());
@@ -185,7 +185,7 @@ namespace Managers
         initData.pSysMem = &indices[0];
 
         result = device->CreateBuffer(&ibd, &initData, &mSkyBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void GeometryBuffersManager::buildSphereBuffers(ID3D11Device* device)
@@ -224,7 +224,7 @@ namespace Managers
         initData.pSysMem = &vertices[0];
 
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mSphereBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Set index count
         mSphereBufferInfo->mIndexCount = static_cast<uint32_t> (sphere.mIndices.size());
@@ -244,6 +244,6 @@ namespace Managers
         initData.pSysMem = &indices[0];
 
         result = device->CreateBuffer(&ibd, &initData, &mSphereBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

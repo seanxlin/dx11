@@ -29,7 +29,7 @@ namespace
             ID3D11Resource* resource =  nullptr;
             HRESULT result = CreateDDSTextureFromFile(device, filenames[i].c_str(), 
                 reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), &shaderResourceView);
-            DebugUtils::DxErrorChecker(result);
+            DxErrorChecker(result);
 
             shaderResourceView->Release();
         }
@@ -57,7 +57,7 @@ namespace
 
         ID3D11Texture2D* textureArray = 0;
         HRESULT result = device->CreateTexture2D(&textureArrayDesc, 0, &textureArray);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_TEXTURE2D_DESC textureElementDesc2;
         textureArray->GetDesc(&textureElementDesc2);
@@ -90,7 +90,7 @@ namespace
 
         ID3D11ShaderResourceView* textureArraySRV = 0;
         result = device->CreateShaderResourceView(textureArray, &viewDesc, &textureArraySRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Cleanup--we only need the resource view.
         textureArray->Release();
@@ -120,15 +120,15 @@ namespace Managers
 
         // Create grass texture shader resource view
         HRESULT result = CreateDDSTextureFromFile(device, L"Resources/Textures/sand.dds", &texture, &mSandSRV);
-        DebugUtils::DxErrorChecker(result);  
+        DxErrorChecker(result);  
 
         // Create sky cube map shader resource view
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/desertcube1024.dds", &texture, &mSkyCubeMapSRV);
-        DebugUtils::DxErrorChecker(result);  
+        DxErrorChecker(result);  
 
         // Create sphere diffuse map texture
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/stone.dds", &texture, &mSphereDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         texture->Release();
 
@@ -171,7 +171,7 @@ namespace Managers
 
         ID3D11Texture2D* cubeTex = nullptr;
         HRESULT result = device->CreateTexture2D(&texDesc, 0, &cubeTex);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Create a render target view to each cube map face 
@@ -187,7 +187,7 @@ namespace Managers
         {
             renderTargetViewDesc.Texture2DArray.FirstArraySlice = static_cast<uint32_t> (i);
             result = device->CreateRenderTargetView(cubeTex, &renderTargetViewDesc, &mDynamicCubeMapRTV[i]);
-            DebugUtils::DxErrorChecker(result);
+            DxErrorChecker(result);
         }
 
         // Create a shader resource view to the cube map.
@@ -198,7 +198,7 @@ namespace Managers
         shaderResourceViewDesc.TextureCube.MipLevels = -1;
 
         result = device->CreateShaderResourceView(cubeTex, &shaderResourceViewDesc, &mDynamicCubeMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         cubeTex->Release();
 
@@ -219,7 +219,7 @@ namespace Managers
 
         ID3D11Texture2D* depthTex = 0;
         result = device->CreateTexture2D(&depthTexDesc, 0, &depthTex);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Create the depth stencil view for the entire cube
         D3D11_DEPTH_STENCIL_VIEW_DESC dsvDesc;
@@ -228,7 +228,7 @@ namespace Managers
         dsvDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         dsvDesc.Texture2D.MipSlice = 0;
         result = device->CreateDepthStencilView(depthTex, &dsvDesc, &mDynamicCubeMapDSV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         depthTex->Release();
     }
