@@ -168,7 +168,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mBoxBufferInfo->mIndexCount;        
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -212,7 +212,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mSphereBufferInfo->mIndexCount;    
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -258,7 +258,7 @@ namespace Framework
         //
         // Set vertex and index buffers
         //
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
@@ -300,7 +300,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::VertexData);
+        uint32_t stride = sizeof(VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 

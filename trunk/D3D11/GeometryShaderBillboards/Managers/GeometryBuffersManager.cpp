@@ -58,8 +58,8 @@ namespace Managers
         // Calculate vertices and indices for the land.
         // Cache vertex offset, index count and offset
         //
-        Geometry::MeshData grid;
-        Geometry::GeometryGenerator::createGrid(200.0f, 200.0f, 50, 50, grid);
+        MeshData grid;
+        GeometryGenerator::createGrid(200.0f, 200.0f, 50, 50, grid);
 
         // Cache base vertex location
         mLandBufferInfo->mBaseVertexLocation = 0;

@@ -1,6 +1,5 @@
 //***************************************************************************************
-// Defines a static class for procedurally generating the geometry of 
-// common mathematical objects.
+// Generate shapes procedurally
 //
 // All triangles are generated "outward" facing.  If you want "inward" 
 // facing triangles (for example, if you want to place the camera inside
@@ -16,115 +15,112 @@
 #include <DirectXMath.h>
 #include <vector>
 
-namespace Geometry
+struct BoundingSphere
 {
-    struct BoundingSphere
+    BoundingSphere() 
+        : mCenter(0.0f, 0.0f, 0.0f)
+        , mRadius(0.0f) 
     {
-        BoundingSphere() 
-            : mCenter(0.0f, 0.0f, 0.0f)
-            , mRadius(0.0f) 
-        {
 
-        }
+    }
 
-        DirectX::XMFLOAT3 mCenter;
-        float mRadius;
-    };
+    DirectX::XMFLOAT3 mCenter;
+    float mRadius;
+};
 
-    struct VertexData
+struct VertexData
+{
+    VertexData() { }
+
+    VertexData(const DirectX::XMFLOAT3& position, 
+               const DirectX::XMFLOAT3& normal, 
+               const DirectX::XMFLOAT3& tangentU, 
+               const DirectX::XMFLOAT2& texCoord)
+        : mPosition(position)
+        , mNormal(normal)
+        , mTangentU(tangentU)
+        , mTexCoord(texCoord)
     {
-        VertexData() { }
+    }
 
-        VertexData(const DirectX::XMFLOAT3& position, 
-                   const DirectX::XMFLOAT3& normal, 
-                   const DirectX::XMFLOAT3& tangentU, 
-                   const DirectX::XMFLOAT2& texCoord)
-            : mPosition(position)
-            , mNormal(normal)
-            , mTangentU(tangentU)
-            , mTexCoord(texCoord)
-        {
-        }
-
-        VertexData(const float positionX, 
-                   const float positionY, 
-                   const float positionZ,
-                   const float normalX, 
-                   const float normalY, 
-                   const float normalZ,
-                   const float tangentUx, 
-                   const float tangentUy, 
-                   const float tangentUz,
-                   const float texCoordU, 
-                   const float texCoordV)
-            : mPosition(positionX, positionY, positionZ)
-            , mNormal(normalX, normalY, normalZ)
-            , mTangentU(tangentUx, tangentUy, tangentUz)
-            , mTexCoord(texCoordU, texCoordV)
-        {
-        }
-
-        DirectX::XMFLOAT3 mPosition;
-        DirectX::XMFLOAT3 mNormal;
-        DirectX::XMFLOAT3 mTangentU;
-        DirectX::XMFLOAT2 mTexCoord;
-    };
-
-    struct MeshData
+    VertexData(const float positionX, 
+               const float positionY, 
+               const float positionZ,
+               const float normalX, 
+               const float normalY, 
+               const float normalZ,
+               const float tangentUx, 
+               const float tangentUy, 
+               const float tangentUz,
+               const float texCoordU, 
+               const float texCoordV)
+        : mPosition(positionX, positionY, positionZ)
+        , mNormal(normalX, normalY, normalZ)
+        , mTangentU(tangentUx, tangentUy, tangentUz)
+        , mTexCoord(texCoordU, texCoordV)
     {
-        std::vector<VertexData> mVertices;
-        std::vector<uint32_t> mIndices;
-    };
+    }
 
-    namespace GeometryGenerator
-    {
-        // Creates a box centered at the origin with the given dimensions.
-        void createBox(const float width, 
-                       const float height, 
-                       const float depth, 
-                       MeshData& meshData);
+    DirectX::XMFLOAT3 mPosition;
+    DirectX::XMFLOAT3 mNormal;
+    DirectX::XMFLOAT3 mTangentU;
+    DirectX::XMFLOAT2 mTexCoord;
+};
 
-        // Creates a sphere centered at the origin with the given radius.  The
-        // slices and stacks parameters control the degree of tessellation.
-        void createSphere(const float radius, 
-                          const uint32_t sliceCount, 
-                          const uint32_t stackCount, 
-                          MeshData& meshData);
+struct MeshData
+{
+    std::vector<VertexData> mVertices;
+    std::vector<uint32_t> mIndices;
+};
 
-        // Creates a geosphere centered at the origin with the given radius.  
-        // The depth controls the level of tessellation.
-        void createGeosphere(const float radius, 
-                             const uint32_t numSubdivisions, 
-                             MeshData& meshData);
+namespace GeometryGenerator
+{
+    // Creates a box centered at the origin with the given dimensions.
+    void createBox(const float width, 
+                   const float height, 
+                   const float depth, 
+                   MeshData& meshData);
 
-        // Creates a cylinder parallel to the y-axis, and centered about the origin.  
-        // The bottom and top radius can vary to form various cone shapes rather than true
-        // cylinders.  The slices and stacks parameters control the degree of tessellation.
-        void createCylinder(const float bottomRadius, 
-                            const float topRadius, 
-                            const float height, 
-                            const uint32_t sliceCount, 
-                            const uint32_t stackCount, 
-                            MeshData& meshData);
+    // Creates a sphere centered at the origin with the given radius.  The
+    // slices and stacks parameters control the degree of tessellation.
+    void createSphere(const float radius, 
+                      const uint32_t sliceCount, 
+                      const uint32_t stackCount, 
+                      MeshData& meshData);
 
-        // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
-        // at the origin with the specified width and depth.
-        void createGrid(const float width, 
-                        const float depth, 
-                        const uint32_t numRows, 
-                        const uint32_t numColumns, 
+    // Creates a geosphere centered at the origin with the given radius.  
+    // The depth controls the level of tessellation.
+    void createGeosphere(const float radius, 
+                         const uint32_t numSubdivisions, 
+                         MeshData& meshData);
+
+    // Creates a cylinder parallel to the y-axis, and centered about the origin.  
+    // The bottom and top radius can vary to form various cone shapes rather than true
+    // cylinders.  The slices and stacks parameters control the degree of tessellation.
+    void createCylinder(const float bottomRadius, 
+                        const float topRadius, 
+                        const float height, 
+                        const uint32_t sliceCount, 
+                        const uint32_t stackCount, 
                         MeshData& meshData);
 
-        // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
-        // at the origin with the specified width and depth.
-        void createGridForInterlockingTiles(const float width, 
-                                            const float depth, 
-                                            const uint32_t numRows, 
-                                            const uint32_t numColumns, 
-                                            MeshData& meshData);
+    // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
+    // at the origin with the specified width and depth.
+    void createGrid(const float width, 
+                    const float depth, 
+                    const uint32_t numRows, 
+                    const uint32_t numColumns, 
+                    MeshData& meshData);
 
-        // Creates a quad covering the screen in NDC coordinates.  This is useful for
-        // postprocessing effects.
-        void createFullscreenQuad(MeshData& meshData);
-    }
+    // Creates an mxn grid in the xz-plane with numRows rows and numRows columns, centered
+    // at the origin with the specified width and depth.
+    void createGridForInterlockingTiles(const float width, 
+                                        const float depth, 
+                                        const uint32_t numRows, 
+                                        const uint32_t numColumns, 
+                                        MeshData& meshData);
+
+    // Creates a quad covering the screen in NDC coordinates.  This is useful for
+    // postprocessing effects.
+    void createFullscreenQuad(MeshData& meshData);
 }
