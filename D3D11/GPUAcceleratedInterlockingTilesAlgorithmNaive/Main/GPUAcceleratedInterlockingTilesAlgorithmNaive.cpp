@@ -19,7 +19,7 @@ namespace Framework
     {
         mMainWindowCaption = L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo";
 
-        mCamera.setPosition(0.0f, 2.0f, -15.0f);
+        mCamera.mPosition = DirectX::XMFLOAT3(0.0f, 2.0f, -15.0f);
 
         mLastMousePosition.x = 0;
         mLastMousePosition.y = 0;
@@ -90,24 +90,16 @@ namespace Framework
         //
         const float offset = 50.0f;
         if (GetAsyncKeyState('W') & 0x8000)
-        {
-            mCamera.walk(offset * dt);
-        }
+            Utils::CameraUtils::walk(offset * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-        {
-            mCamera.walk(-offset * dt);
-        }
+            Utils::CameraUtils::walk(-offset * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-        {
-            mCamera.strafe(-offset * dt);
-        }
+            Utils::CameraUtils::strafe(-offset * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-        {
-            mCamera.strafe(offset * dt);
-        }
+            Utils::CameraUtils::strafe(offset * dt, mCamera);
 
         if (GetAsyncKeyState('T') & 0x8000) 
         {
@@ -126,7 +118,7 @@ namespace Framework
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         mImmediateContext->RSSetState(mWireframeMode ? Managers::PipelineStatesManager::mWireframeRS : nullptr);
 
-        mCamera.updateViewMatrix();
+        Utils::CameraUtils::updateViewMatrix(mCamera);
        
         drawGrid();
 
@@ -143,8 +135,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePosition.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePosition.y));
 
-            mCamera.pitch(dy);
-            mCamera.rotateY(dx);
+            Utils::CameraUtils::pitch(dy, mCamera);
+            Utils::CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePosition.x = x;
@@ -202,7 +194,7 @@ namespace Framework
         mImmediateContext->HSSetShader(hullShader, nullptr, 0);
 
         // Per Frame Constant Buffer
-        mGridHSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mGridHSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mGridHSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         // Set Constant Buffers
@@ -218,7 +210,7 @@ namespace Framework
         mImmediateContext->DSSetShader(domainShader, nullptr, 0);
 
         // Per Frame Constant Buffer
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
         const DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
         DirectX::XMStoreFloat4x4(&mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
@@ -248,7 +240,7 @@ namespace Framework
 
         // Per Frame Constant Buffer
         memcpy(&mGridPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
-        mGridPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mGridPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mGridPSPerFrameBuffer.mData.mMaterial = mTerrainMaterial;
         mGridPSPerFrameBuffer.mData.mTexelCellSpaceU = heightMapTexelSize;
         mGridPSPerFrameBuffer.mData.mTexelCellSpaceV = heightMapTexelSize;

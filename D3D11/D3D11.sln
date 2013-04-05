@@ -37,8 +37,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShadowMapping", "ShadowMapp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingTilesAlgorithmNaive", "GPUAcceleratedInterlockingTilesAlgorithmNaive\GPUAcceleratedInterlockingTilesAlgorithmNaive.vcxproj", "{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingTilesAlgorithmComputeShader", "GPUAcceleratedInterlockingTilesAlgorithmComputeShader\GPUAcceleratedInterlockingTilesAlgorithmComputeShader.vcxproj", "{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -265,18 +263,6 @@ Global
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|Win32.Build.0 = Release|Win32
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|x64.ActiveCfg = Release|x64
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|x64.Build.0 = Release|x64
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|Mixed Platforms.Build.0 = Debug|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|Win32.ActiveCfg = Debug|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|Win32.Build.0 = Debug|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|x64.ActiveCfg = Debug|x64
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Debug|x64.Build.0 = Debug|x64
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|Mixed Platforms.ActiveCfg = Release|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|Mixed Platforms.Build.0 = Release|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|Win32.ActiveCfg = Release|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|Win32.Build.0 = Release|Win32
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|x64.ActiveCfg = Release|x64
-		{B614A8B9-C8FF-47B2-9DF0-A4D0B99463BA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

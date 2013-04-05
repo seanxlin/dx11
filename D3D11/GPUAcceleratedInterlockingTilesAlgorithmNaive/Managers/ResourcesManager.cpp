@@ -141,12 +141,12 @@ namespace Managers
         Utils::HeightMap heightMap;
         const uint32_t heightMapDimension = 512;
         const float heightMapScaleFactor = 50.0f;
-        Utils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw", 
+        Utils::HeightMapUtils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw", 
                                         heightMapDimension, 
                                         heightMapScaleFactor, 
                                         heightMap);
-        Utils::applyNeighborsFilter(heightMap, heightMapDimension);
-        mHeightMapSRV = Utils::buildHeightMapSRV(device, 
+        Utils::HeightMapUtils::applyNeighborsFilter(heightMap, heightMapDimension);
+        mHeightMapSRV = Utils::HeightMapUtils::buildHeightMapSRV(device, 
                                                  heightMap, 
                                                  heightMapDimension, 
                                                  D3D11_BIND_SHADER_RESOURCE);

@@ -22,16 +22,16 @@ namespace Framework
         // Control the camera.
         //
         if (GetAsyncKeyState('W') & 0x8000)
-            mCamera.walk(50.0f * dt);
+            Utils::CameraUtils::walk(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('S') & 0x8000)
-            mCamera.walk(-50.0f * dt);
+            Utils::CameraUtils::walk(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('A') & 0x8000)
-            mCamera.strafe(-50.0f * dt);
+            Utils::CameraUtils::strafe(-50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('D') & 0x8000)
-            mCamera.strafe(50.0f * dt);
+            Utils::CameraUtils::strafe(50.0f * dt, mCamera);
 
         if (GetAsyncKeyState('G') & 0x8000)
             mTesselationFactor = (gMaxTessellationFactor < mTesselationFactor + gTessellationOffset) ? gMaxTessellationFactor : mTesselationFactor + gTessellationOffset;
@@ -66,7 +66,7 @@ namespace Framework
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
-        mCamera.updateViewMatrix();
+        Utils::CameraUtils::updateViewMatrix(mCamera);
 
         setShapesGeneralSettings();
        
@@ -88,8 +88,8 @@ namespace Framework
             const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mLastMousePos.x));
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
-            mCamera.pitch(dy);
-            mCamera.rotateY(dx);
+            Utils::CameraUtils::pitch(dy, mCamera);
+            Utils::CameraUtils::rotateY(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -116,13 +116,13 @@ namespace Framework
         mShapesHSPerFrameBuffer.mData.mTessellationFactor = mTesselationFactor;
         mShapesHSPerFrameBuffer.applyChanges(*mImmediateContext);
 
-        const DirectX::XMMATRIX viewProjection = mCamera.viewProjection();
+        const DirectX::XMMATRIX viewProjection = Utils::CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMStoreFloat4x4(&mShapesDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
-        mShapesDSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mShapesDSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mShapesDSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         memcpy(&mShapesPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
-        mShapesPSPerFrameBuffer.mData.mEyePositionW = mCamera.position();
+        mShapesPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
         mShapesPSPerFrameBuffer.applyChanges(*mImmediateContext);
 
         mShapesPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
@@ -168,7 +168,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mBoxBufferInfo->mIndexCount;        
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        uint32_t stride = sizeof(Geometry::VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -212,7 +212,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mSphereBufferInfo->mIndexCount;    
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        uint32_t stride = sizeof(Geometry::VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
@@ -258,7 +258,7 @@ namespace Framework
         //
         // Set vertex and index buffers
         //
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        uint32_t stride = sizeof(Geometry::VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
@@ -300,7 +300,7 @@ namespace Framework
         const uint32_t indexCount = Managers::GeometryBuffersManager::mFloorBufferInfo->mIndexCount;
 
         // Update index buffer
-        uint32_t stride = sizeof(Geometry::GeometryGenerator::Vertex);
+        uint32_t stride = sizeof(Geometry::VertexData);
         uint32_t offset = 0;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 

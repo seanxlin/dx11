@@ -89,7 +89,7 @@ namespace Framework
 
     void HillApp::buildGeometryBuffers()
     {
-        Geometry::GeometryGenerator::MeshData grid;
+        Geometry::MeshData grid;
         Geometry::GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
 
         mGridIndexCount = grid.mIndices.size();

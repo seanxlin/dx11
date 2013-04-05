@@ -62,7 +62,7 @@ namespace Framework
     {
         D3DApplication::onResize();
 
-        mCamera.setLens(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 2048.0f);
+        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)

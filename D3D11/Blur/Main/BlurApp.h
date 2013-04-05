@@ -75,7 +75,7 @@ namespace Framework
     {
         mMainWindowCaption = L"Blur Demo";
 
-        mCamera.setPosition(0.0f, 2.0f, -15.0f);
+        mCamera.mPosition = DirectX::XMFLOAT3(0.0f, 2.0f, -15.0f);
 
         mLastMousePos.x = 0;
         mLastMousePos.y = 0;
@@ -143,7 +143,7 @@ namespace Framework
         buildOffscreenViews();
         mBlurFilter.init(mDevice, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
 
-        mCamera.setLens(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f);
+        Utils::CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
     }
 
     inline void BlurApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
