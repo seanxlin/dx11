@@ -51,10 +51,10 @@ namespace Framework
         Camera mCamera;
         Camera mCubeMapCamera[6];
 
-        Utils::DirectionalLight mDirectionalLight;
+        DirectionalLight mDirectionalLight;
 
-        Utils::Material mSandMaterial;
-        Utils::Material mSphereMaterial;
+        Material mSandMaterial;
+        Material mSphereMaterial;
 
         Shaders::ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::LandVSPerObjectBuffer> mLandVSPerObjectBuffer;

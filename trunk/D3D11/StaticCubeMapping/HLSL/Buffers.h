@@ -8,7 +8,7 @@ namespace Shaders
 {
     struct LandPerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight;
+        DirectionalLight mDirectionalLight;
         DirectX::XMFLOAT3 mEyePositionW;
     };
 
@@ -22,7 +22,7 @@ namespace Shaders
 
     struct LandPSPerObjectBuffer
     {
-        Utils::Material mMaterial;
+        Material mMaterial;
     };
 
     struct SkyPerFrameBuffer
@@ -40,12 +40,12 @@ namespace Shaders
 
     struct SpherePSPerObjectBuffer
     {
-        Utils::Material mMaterial;
+        Material mMaterial;
     };
 
     struct SpherePSPerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight;
+        DirectionalLight mDirectionalLight;
         DirectX::XMFLOAT3 mEyePositionW;
     };
 }

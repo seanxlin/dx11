@@ -39,10 +39,10 @@ namespace Shaders
     //
     struct GridPSPerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight[3];
+        DirectionalLight mDirectionalLight[3];
         DirectX::XMFLOAT3 mEyePositionW;
         float mPad1;
-        Utils::Material mMaterial;
+        Material mMaterial;
         float mTexelCellSpaceU;
         float mTexelCellSpaceV;
         float mWorldCellSpace;

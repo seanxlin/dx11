@@ -45,9 +45,9 @@ namespace Framework
 
         Camera mCamera;
 
-        Utils::DirectionalLight mDirectionalLight;
+        DirectionalLight mDirectionalLight;
 
-        Utils::Material mSandMaterial;
+        Material mSandMaterial;
         Shaders::ConstantBuffer<Shaders::BezierSurfaceDSPerFrameBuffer> mBezierSurfaceDSPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::BezierSurfaceHSPerFrameBuffer> mBezierSurfaceHSPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::BezierSurfacePSPerFrameBuffer> mBezierSurfacePSPerFrameBuffer;

@@ -47,11 +47,11 @@ namespace Framework
         void drawBillboards(DirectX::CXMMATRIX viewProjection);
         void drawLand(DirectX::CXMMATRIX viewProjection);
 
-        Utils::DirectionalLight mDirectionalLight;
-        Utils::SpotLight mSpotLight;
+        DirectionalLight mDirectionalLight;
+        SpotLight mSpotLight;
 
-        Utils::Material mSandMaterial;
-        Utils::Material mPalmMaterial;
+        Material mSandMaterial;
+        Material mPalmMaterial;
 
         Shaders::ConstantBuffer<Shaders::CommonPerFrameBuffer> mCommonPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;

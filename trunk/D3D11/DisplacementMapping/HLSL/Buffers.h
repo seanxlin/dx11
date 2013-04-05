@@ -26,12 +26,12 @@ namespace Shaders
 
     struct ShapesPSPerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight[3];
+        DirectionalLight mDirectionalLight[3];
         DirectX::XMFLOAT3 mEyePositionW;
     };
 
     struct ShapesPSPerObjectBuffer
     {
-        Utils::Material mMaterial;
+        Material mMaterial;
     };
 }
