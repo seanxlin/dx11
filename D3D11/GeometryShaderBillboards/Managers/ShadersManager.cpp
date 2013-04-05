@@ -49,7 +49,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 3, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void buildBillboardsInputLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
@@ -69,7 +69,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 2, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -99,30 +99,30 @@ namespace Managers
         computeShaderByteCode(L"HLSL/LandVS.cso", shaderByteCode);
         buildLandVertexLayout(device, shaderByteCode, mLandIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/BillboardsVS.cso", shaderByteCode);
         buildBillboardsInputLayout(device, shaderByteCode, mBillboardsIL);
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBillboardsVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Geometry shaders
         //
         computeShaderByteCode(L"HLSL/BillboardsGS.cso", shaderByteCode);
         result = device->CreateGeometryShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBillboardsGS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/LandPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/BillboardsPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mBillboardsPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()

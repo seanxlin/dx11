@@ -25,12 +25,14 @@ namespace MathHelper
         return DirectX::XMMatrixTranspose(DirectX::XMMatrixInverse(&determinant, matrix)); 
     }
 
-    float height(const float x, const float z)
+    float height(const float x, 
+                 const float z)
     {
         return 0.3f * (z * sinf(0.1f * x) + x * cosf(0.1f * z));
     }
 
-    float angleFromXY(const float x, const float y)
+    float angleFromXY(const float x, 
+                      const float y)
     {
         float theta = 0.0f;
 

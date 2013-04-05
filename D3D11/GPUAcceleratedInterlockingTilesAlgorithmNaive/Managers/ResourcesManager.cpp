@@ -34,7 +34,7 @@ namespace
                                                       filenames[i].c_str(),
                                                       reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), 
                                                       &shaderResourceView);
-            DebugUtils::DxErrorChecker(result);
+            DxErrorChecker(result);
 
             shaderResourceView->Release();
         }
@@ -62,7 +62,7 @@ namespace
 
         ID3D11Texture2D* textureArray = 0;
         HRESULT result = device.CreateTexture2D(&textureArrayDesc, 0, &textureArray);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_TEXTURE2D_DESC textureElementDesc2;
         textureArray->GetDesc(&textureElementDesc2);
@@ -106,7 +106,7 @@ namespace
 
         ID3D11ShaderResourceView* textureArraySRV = 0;
         result = device.CreateShaderResourceView(textureArray, &viewDesc, &textureArraySRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Cleanup--we only need the resource view.
         textureArray->Release();
@@ -133,22 +133,20 @@ namespace Managers
                                                   L"Resources/Textures/stone.dds", 
                                                   &texture, 
                                                   &mTerrainDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);  
+        DxErrorChecker(result);  
 
         texture->Release();
 
         // Height map
-        Utils::HeightMap heightMap;
         const uint32_t heightMapDimension = 512;
+        HeightMap heightMap(heightMapDimension);
         const float heightMapScaleFactor = 50.0f;
-        Utils::HeightMapUtils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw", 
-                                        heightMapDimension, 
-                                        heightMapScaleFactor, 
-                                        heightMap);
-        Utils::HeightMapUtils::applyNeighborsFilter(heightMap, heightMapDimension);
-        mHeightMapSRV = Utils::HeightMapUtils::buildHeightMapSRV(device, 
-                                                 heightMap, 
-                                                 heightMapDimension, 
+        HeightMapUtils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw",
+                                                 heightMapScaleFactor, 
+                                                 heightMap);
+        HeightMapUtils::applyNeighborsFilter(heightMap);
+        mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(device, 
+                                                 heightMap,  
                                                  D3D11_BIND_SHADER_RESOURCE);
     }
     

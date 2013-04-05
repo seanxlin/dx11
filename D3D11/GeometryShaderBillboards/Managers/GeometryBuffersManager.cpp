@@ -106,7 +106,7 @@ namespace Managers
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = &vertices[0];
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mLandBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Create land index buffer
@@ -127,7 +127,7 @@ namespace Managers
 
         initData.pSysMem = &indices[0];
         result = device->CreateBuffer(&indexBufferDesc, &initData, &mLandBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void GeometryBuffersManager::buildBillboardsBuffers(ID3D11Device* device)
@@ -164,6 +164,6 @@ namespace Managers
         const HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, 
             &mBillboardsBufferInfo->mVertexBuffer);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

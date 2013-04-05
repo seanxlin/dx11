@@ -50,7 +50,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 4, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -74,14 +74,14 @@ namespace Managers
         computeShaderByteCode(L"HLSL/ShapesVS.cso", shaderByteCode);
         buildShapesVertexLayout(device, shaderByteCode, mShapesIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/ShapesPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()

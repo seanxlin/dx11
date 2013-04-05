@@ -29,7 +29,7 @@ namespace
             ID3D11Resource* resource =  nullptr;
             HRESULT result = CreateDDSTextureFromFile(device, filenames[i].c_str(), 
                 reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), &shaderResourceView);
-            DebugUtils::DxErrorChecker(result);
+            DxErrorChecker(result);
 
             shaderResourceView->Release();
         }
@@ -57,7 +57,7 @@ namespace
 
         ID3D11Texture2D* textureArray = 0;
         HRESULT result = device->CreateTexture2D(&textureArrayDesc, 0, &textureArray);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_TEXTURE2D_DESC textureElementDesc2;
         textureArray->GetDesc(&textureElementDesc2);
@@ -90,7 +90,7 @@ namespace
 
         ID3D11ShaderResourceView* textureArraySRV = 0;
         result = device->CreateShaderResourceView(textureArray, &viewDesc, &textureArraySRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Cleanup--we only need the resource view.
         textureArray->Release();
@@ -125,28 +125,28 @@ namespace Managers
 
         // Create diffuse and normal maps
         HRESULT result = CreateDDSTextureFromFile(device, L"Resources/Textures/wood1.dds", &texture, &mFloorDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);  
+        DxErrorChecker(result);  
         
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/wood1Normal.dds", &texture, &mFloorNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);  
+        DxErrorChecker(result);  
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/brick.dds", &texture, &mCylinderDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/brickNormal.dds", &texture, &mCylinderNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/rock.dds", &texture, &mSpheresDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/rockNormal.dds", &texture, &mSpheresNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/redRock.dds", &texture, &mBoxDiffuseMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = CreateDDSTextureFromFile(device, L"Resources/Textures/redRockNormal.dds", &texture, &mBoxNormalMapSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         texture->Release();
     }

@@ -167,6 +167,6 @@ namespace Framework
         const HRESULT result = mDevice->CreateInputLayout(vertexDesc, 2, &compiledShader[0], 
             compiledShader.size(), &mInputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

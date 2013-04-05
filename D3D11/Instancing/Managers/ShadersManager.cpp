@@ -55,7 +55,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 9, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void buildFloorVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
@@ -77,7 +77,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 4, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -105,23 +105,23 @@ namespace Managers
         computeShaderByteCode(L"HLSL/ShapesVS.cso", shaderByteCode);
         buildShapesVertexLayout(device, shaderByteCode, mShapesIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/FloorVS.cso", shaderByteCode);
         buildFloorVertexLayout(device, shaderByteCode, mFloorIL);
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/ShapesPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mShapesPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/FloorPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mFloorPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()

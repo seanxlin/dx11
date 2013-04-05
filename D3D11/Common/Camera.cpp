@@ -21,10 +21,10 @@ namespace
 namespace CameraUtils
 {
     void setFrustrum(const float fieldOfViewY, 
-        const float aspect, 
-        const float nearPlaneZ, 
-        const float farPlaneZ,
-        Camera& camera)
+                     const float aspect, 
+                     const float nearPlaneZ, 
+                     const float farPlaneZ,
+                     Camera& camera)
     {
         // Cache lens properties
         camera.mFovY = fieldOfViewY;
@@ -96,9 +96,9 @@ namespace CameraUtils
     }
 
     void lookAt(const DirectX::XMFLOAT3& position, 
-        const DirectX::XMFLOAT3& target, 
-        const DirectX::XMFLOAT3& up,
-        Camera& camera)
+                const DirectX::XMFLOAT3& target, 
+                const DirectX::XMFLOAT3& up,
+                Camera& camera)
     {
         const DirectX::XMVECTOR positionVec = DirectX::XMLoadFloat3(&position);
         const DirectX::XMVECTOR targetVec = DirectX::XMLoadFloat3(&target);
@@ -114,8 +114,8 @@ namespace CameraUtils
         DirectX::XMStoreFloat3(&camera.mUp, upVec);
     }
 
-    void strafe(const float distance,
-        Camera& camera)
+    void strafe(const float distance, 
+                Camera& camera)
     {
         // mPosition += distance * mRight
         const DirectX::XMVECTOR s = DirectX::XMVectorReplicate(distance);
@@ -124,8 +124,8 @@ namespace CameraUtils
         DirectX::XMStoreFloat3(&camera.mPosition, DirectX::XMVectorMultiplyAdd(s, r, p));
     }
 
-    void walk(const float distance,
-        Camera& camera)
+    void walk(const float distance, 
+              Camera& camera)
     {
         // mPosition += distance * mLook
         const DirectX::XMVECTOR distanceVector = DirectX::XMVectorReplicate(distance);
@@ -135,7 +135,7 @@ namespace CameraUtils
     }
 
     void pitch(const float angle,
-        Camera& camera)
+               Camera& camera)
     {
         // Rotate up and look vector about the right vector.
         const  DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationAxis(DirectX::XMLoadFloat3(&camera.mRight), angle);
@@ -145,7 +145,7 @@ namespace CameraUtils
     }
 
     void rotateY(const float angle,
-        Camera& camera)
+                 Camera& camera)
     {
         // Rotate the basis vectors about the world y-axis.
         const DirectX::XMMATRIX rotationMatrix = DirectX::XMMatrixRotationY(angle);

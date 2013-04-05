@@ -49,7 +49,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 3, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void buildSphereVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
@@ -70,7 +70,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 3, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void buildSkyVertexLayout(ID3D11Device * const device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
@@ -89,7 +89,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 1, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -120,32 +120,32 @@ namespace Managers
         computeShaderByteCode(L"HLSL/LandVS.cso", shaderByteCode);
         buildLandVertexLayout(device, shaderByteCode, mLandIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/SphereVS.cso", shaderByteCode);
         buildSphereVertexLayout(device, shaderByteCode, mSphereIL);
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mSphereVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/SkyVS.cso", shaderByteCode);
         buildSkyVertexLayout(device, shaderByteCode, mSkyIL);
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mSkyVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/LandPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/SpherePS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mSpherePS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/SkyPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mSkyPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()

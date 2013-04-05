@@ -100,6 +100,6 @@ namespace Managers
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = vertices;
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mBezierSurfaceBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

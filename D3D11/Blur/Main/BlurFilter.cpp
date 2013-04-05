@@ -46,7 +46,7 @@ namespace Framework
 
         ID3D11Texture2D* blurredTex = nullptr;
         HRESULT result = device->CreateTexture2D(&blurredTexDesc, 0, &blurredTex);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc;
         srvDesc.Format = format;

@@ -60,7 +60,7 @@ namespace Framework
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
 
         HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     inline void InitD3DApp::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y) {}

@@ -67,7 +67,7 @@ namespace Framework
 
         // Present results
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void BlurApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
@@ -235,18 +235,18 @@ namespace Framework
 
         ID3D11Texture2D* offscreenTex = nullptr;
         HRESULT result = mDevice->CreateTexture2D(&texture2DDesc, nullptr, &offscreenTex);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Null description means to create a view to all mipmap levels using 
         // the format the texture was created with.
         result = mDevice->CreateShaderResourceView(offscreenTex, nullptr, &Managers::ResourcesManager::mOffscreenSRV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = mDevice->CreateRenderTargetView(offscreenTex, nullptr, &Managers::ResourcesManager::mOffscreenRTV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         result = mDevice->CreateUnorderedAccessView(offscreenTex, nullptr, &Managers::ResourcesManager::mOffscreenUAV);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // View saves a reference to the texture so we can release our reference.
         offscreenTex->Release();

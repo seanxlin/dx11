@@ -80,7 +80,7 @@ namespace Framework
         }
 
         const HRESULT result = mSwapChain->Present(0, 0);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void ShapesApp::onMouseMove(WPARAM btnState,  const int32_t x, const int32_t y)
@@ -227,7 +227,7 @@ namespace Framework
         buildVertexLayout(compiledShader);
 
         HRESULT result = mDevice->CreateVertexShader(&compiledShader[0], size, nullptr, &mVertexShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
         
         fin.open("HLSL/PixelShader.cso", std::ios::binary); 
         fin.seekg(0, std::ios_base::end); 
@@ -238,7 +238,7 @@ namespace Framework
         fin.close();     
 
         result = mDevice->CreatePixelShader(&compiledShader[0], size, nullptr, &mPixelShader);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Bind shaders to the rendering pipeline
         mImmediateContext->VSSetShader(mVertexShader, nullptr, 0);

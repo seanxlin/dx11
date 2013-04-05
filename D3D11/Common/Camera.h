@@ -49,23 +49,27 @@ struct Camera
 namespace CameraUtils
 {
     void setFrustrum(const float fieldOfViewY, 
-        const float aspect, 
-        const float nearPlaneZ, 
-        const float farPlaneZ,
-        Camera& camera);
+                     const float aspect, 
+                     const float nearPlaneZ, 
+                     const float farPlaneZ,
+                     Camera& camera);
 
     void lookAt(const DirectX::XMFLOAT3& position, 
-        const DirectX::XMFLOAT3& target, 
-        const DirectX::XMFLOAT3& up,
-        Camera& camera);
+                const DirectX::XMFLOAT3& target, 
+                const DirectX::XMFLOAT3& up,
+                Camera& camera);
 
-    void strafe(const float distance, Camera& camera);
+    void strafe(const float distance, 
+                Camera& camera);
 
-    void walk(const float distance, Camera& camera);
+    void walk(const float distance, 
+              Camera& camera);
 
-    void pitch(const float angle, Camera& camera);
+    void pitch(const float angle, 
+               Camera& camera);
 
-    void rotateY(const float angle, Camera& camera);
+    void rotateY(const float angle, 
+                 Camera& camera);
 
     void updateViewMatrix(Camera& camera);
 

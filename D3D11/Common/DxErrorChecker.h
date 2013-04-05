@@ -73,16 +73,14 @@ HRESULT WINAPI DXTraceW( __in_z const char* strFile, __in DWORD dwLine, __in HRE
 #define DXTRACE_ERR_MSGBOX(str,hr)    (hr)
 #endif
 
-namespace DebugUtils
-{
-    __forceinline void DxErrorChecker(const HRESULT result)                                    
-    {                                          
+__forceinline void DxErrorChecker(const HRESULT result)                                    
+{                                          
 #if defined(DEBUG) || defined(_DEBUG)
-        if (result < 0) 
+    if (result < 0) 
 #endif
-            DXTRACE_ERR_MSGBOX(0, result); 		
-    }
+        DXTRACE_ERR_MSGBOX(0, result); 		
 }
+
 
 #ifdef __cplusplus
 }

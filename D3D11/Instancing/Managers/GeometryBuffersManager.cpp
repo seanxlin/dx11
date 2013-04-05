@@ -59,7 +59,7 @@ namespace Managers
         vertexBufferDesc.StructureByteStride = 0;
 
         const HRESULT result = device->CreateBuffer(&vertexBufferDesc, 0, &mInstancedBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void GeometryBuffersManager::buildCylinderBuffers(ID3D11Device * const device)
@@ -93,7 +93,7 @@ namespace Managers
         initData.pSysMem = &cylinder.mVertices[0];
 
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mCylinderBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Set index count
         mCylinderBufferInfo->mIndexCount = static_cast<uint32_t> (cylinder.mIndices.size());
@@ -110,7 +110,7 @@ namespace Managers
         initData.pSysMem = &cylinder.mIndices[0];
 
         result = device->CreateBuffer(&ibd, &initData, &mCylinderBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 
     void GeometryBuffersManager::buildFloorBuffers(ID3D11Device * const device)
@@ -150,7 +150,7 @@ namespace Managers
         D3D11_SUBRESOURCE_DATA initData;
         initData.pSysMem = &grid.mVertices[0];
         HRESULT result = device->CreateBuffer(&vertexBufferDesc, &initData, &mFloorBufferInfo->mVertexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         // Fill and Create index buffer
         const uint32_t totalIndexCount = mFloorBufferInfo->mIndexCount;
@@ -164,6 +164,6 @@ namespace Managers
 
         initData.pSysMem = &grid.mIndices[0];
         result = device->CreateBuffer(&indexBufferDesc, &initData, &mFloorBufferInfo->mIndexBuffer);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }

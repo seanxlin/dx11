@@ -49,7 +49,7 @@ namespace
         const HRESULT result = device->CreateInputLayout(vertexDesc, 3, &shaderByteCode[0], 
             shaderByteCode.size(), &inputLayout);
 
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
 }
 
@@ -79,34 +79,34 @@ namespace Managers
         computeShaderByteCode(L"HLSL/LandVS.cso", shaderByteCode);
         buildCommonVertexLayout(device, shaderByteCode, mCommonIL);
         HRESULT result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
         
         computeShaderByteCode(L"HLSL/ScreenQuadVS.cso", shaderByteCode);
         buildCommonVertexLayout(device, shaderByteCode, mScreenQuadIL);
         result = device->CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mScreenQuadVS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Pixel shaders
         //
         computeShaderByteCode(L"HLSL/LandPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mLandPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/ScreenQuadPS.cso", shaderByteCode);        
         result = device->CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mScreenQuadPS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         //
         // Compute shaders
         //
         computeShaderByteCode(L"HLSL/HorizontalBlurCS.cso", shaderByteCode);        
         result = device->CreateComputeShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mHorizontalBlurCS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
 
         computeShaderByteCode(L"HLSL/VerticalBlurCS.cso", shaderByteCode);        
         result = device->CreateComputeShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &mVerticalBlurCS);
-        DebugUtils::DxErrorChecker(result);
+        DxErrorChecker(result);
     }
     
     void ShadersManager::destroyAll()
