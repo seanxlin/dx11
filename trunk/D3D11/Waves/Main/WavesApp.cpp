@@ -40,7 +40,7 @@ namespace Framework
         // Every quarter second, generate a random wave.
         //
         static float baseTime = 0.0f;
-        if ((Utils::TimerUtils::inGameTime(mTimer) - baseTime) >= 0.25f)
+        if ((TimerUtils::inGameTime(mTimer) - baseTime) >= 0.25f)
         {
             baseTime += 0.25f;
 

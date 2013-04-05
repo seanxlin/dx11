@@ -45,7 +45,7 @@ namespace Framework
         HINSTANCE mAppInstance;
         HWND mMainWindow;
 
-        Utils::Timer mTimer;
+        Timer mTimer;
 
         ID3D11Device* mDevice;
         ID3D11DeviceContext* mImmediateContext;

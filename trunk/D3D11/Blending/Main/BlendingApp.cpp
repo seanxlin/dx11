@@ -56,7 +56,7 @@ namespace Framework
         // Every quarter second, generate a random wave.
         //
         static float baseTime = 0.0f;
-        if ((Utils::TimerUtils::inGameTime(mTimer) - baseTime) >= 0.25f)
+        if ((TimerUtils::inGameTime(mTimer) - baseTime) >= 0.25f)
         {
             baseTime += 0.25f;
 
@@ -94,8 +94,8 @@ namespace Framework
         //
 
         // Circle light over the land surface.
-        mPointLight.mPosition.x = 70.0f * cosf(0.2f * Utils::TimerUtils::inGameTime(mTimer));
-        mPointLight.mPosition.z = 70.0f * sinf(0.2f * Utils::TimerUtils::inGameTime(mTimer));
+        mPointLight.mPosition.x = 70.0f * cosf(0.2f * TimerUtils::inGameTime(mTimer));
+        mPointLight.mPosition.z = 70.0f * sinf(0.2f * TimerUtils::inGameTime(mTimer));
         mPointLight.mPosition.y = Utils::MathHelper::computeMax(height(mPointLight.mPosition.x, 
             mPointLight.mPosition.z), -3.0f) + 10.0f;
 
