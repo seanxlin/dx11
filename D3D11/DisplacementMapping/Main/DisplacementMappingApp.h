@@ -51,14 +51,14 @@ namespace Framework
         Material mFloorMaterial;
         Material mShapesMaterial;
         
-        Shaders::ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
+        ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
         
-        Shaders::ConstantBuffer<Shaders::ShapesHSPerFrameBuffer> mShapesHSPerFrameBuffer;
+        ConstantBuffer<Shaders::ShapesHSPerFrameBuffer> mShapesHSPerFrameBuffer;
         
-        Shaders::ConstantBuffer<Shaders::ShapesDSPerFrameBuffer> mShapesDSPerFrameBuffer;
+        ConstantBuffer<Shaders::ShapesDSPerFrameBuffer> mShapesDSPerFrameBuffer;
 
-        Shaders::ConstantBuffer<Shaders::ShapesPSPerFrameBuffer> mShapesPSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::ShapesPSPerObjectBuffer> mShapesPSPerObjectBuffer;
+        ConstantBuffer<Shaders::ShapesPSPerFrameBuffer> mShapesPSPerFrameBuffer;
+        ConstantBuffer<Shaders::ShapesPSPerObjectBuffer> mShapesPSPerObjectBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mFloorWorld;
@@ -149,14 +149,14 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
         
-        mShapesVSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesVSPerObjectBuffer);
 
-        mShapesHSPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesHSPerFrameBuffer);
 
-        mShapesDSPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesDSPerFrameBuffer);
         
-        mShapesPSPerFrameBuffer.initialize(*mDevice);
-        mShapesPSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesPSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mShapesPSPerObjectBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

@@ -52,13 +52,13 @@ namespace Framework
         Material mSandMaterial;
         Material mSphereMaterial;
 
-        Shaders::ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::LandVSPerObjectBuffer> mLandVSPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::LandPSPerObjectBuffer> mLandPSPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::SphereVSPerObjectBuffer> mSphereVSPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::SpherePSPerObjectBuffer> mSpherePSPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::SpherePSPerFrameBuffer> mSpherePSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::SkyPerFrameBuffer> mSkyPerFrameBuffer;
+        ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
+        ConstantBuffer<Shaders::LandVSPerObjectBuffer> mLandVSPerObjectBuffer;
+        ConstantBuffer<Shaders::LandPSPerObjectBuffer> mLandPSPerObjectBuffer;
+        ConstantBuffer<Shaders::SphereVSPerObjectBuffer> mSphereVSPerObjectBuffer;
+        ConstantBuffer<Shaders::SpherePSPerObjectBuffer> mSpherePSPerObjectBuffer;
+        ConstantBuffer<Shaders::SpherePSPerFrameBuffer> mSpherePSPerFrameBuffer;
+        ConstantBuffer<Shaders::SkyPerFrameBuffer> mSkyPerFrameBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -125,13 +125,13 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mLandPerFrameBuffer.initialize(*mDevice);
-        mLandVSPerObjectBuffer.initialize(*mDevice);
-        mLandPSPerObjectBuffer.initialize(*mDevice);
-        mSphereVSPerObjectBuffer.initialize(*mDevice);
-        mSpherePSPerObjectBuffer.initialize(*mDevice);
-        mSpherePSPerFrameBuffer.initialize(*mDevice);
-        mSkyPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mLandPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mLandVSPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mLandPSPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mSphereVSPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mSpherePSPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mSpherePSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mSkyPerFrameBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

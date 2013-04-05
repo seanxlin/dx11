@@ -23,7 +23,7 @@ namespace Framework
         mImmediateContext->IASetVertexBuffers(0, 1, &mBoxVertexBuffer, &stride, &offset);
         mImmediateContext->IASetIndexBuffer(mBoxIndexBuffer, DXGI_FORMAT_R16_UINT, 0);
 
-        ID3D11Buffer* constantBuffer = &mPerFrameBuffer.buffer();
+        ID3D11Buffer* constantBuffer = mPerFrameBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &constantBuffer);
 
         // Update per frame buffer
@@ -35,7 +35,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerFrameBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        mPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerFrameBuffer);
 
         // Draw box 
         mImmediateContext->DrawIndexed(36, 0, 0);

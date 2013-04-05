@@ -95,7 +95,7 @@ namespace Framework
         mLandPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mLandPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mLandPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        mLandPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerFrameBuffer);
 
         // Set input layout and primitive topology.
         mImmediateContext->IASetInputLayout(Managers::ShadersManager::mCommonIL);
@@ -109,8 +109,8 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         // Set constant buffers
-        ID3D11Buffer* pixelShaderBuffers[] = { &mLandPerFrameBuffer.buffer(), &mLandPerObjectBuffer.buffer() };
-        ID3D11Buffer* vertexShaderBuffers = &mLandPerObjectBuffer.buffer();
+        ID3D11Buffer* pixelShaderBuffers[] = { mLandPerFrameBuffer.mBuffer, mLandPerObjectBuffer.mBuffer };
+        ID3D11Buffer* vertexShaderBuffers = mLandPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
         mImmediateContext->PSSetConstantBuffers(0, 2, pixelShaderBuffers);
 
@@ -154,7 +154,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
         // Apply buffer changes and draw.
-        mLandPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerObjectBuffer);
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }
 
@@ -172,7 +172,7 @@ namespace Framework
         mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
 
         // Set constant buffers
-        ID3D11Buffer* pixelShaderBuffers = &mScreenQuadVSPerFrameBuffer.buffer();
+        ID3D11Buffer* pixelShaderBuffers = mScreenQuadVSPerFrameBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &pixelShaderBuffers);
 
         // Get needed info about geometry buffers.
@@ -195,7 +195,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mWorldInverseTranspose, identity);
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mWorldViewProjection, identity);
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mTexTransform, identity);
-        mScreenQuadVSPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mScreenQuadVSPerFrameBuffer);
 
         // Set texture
         //ID3D11ShaderResourceView* blurredOuputSRV = mBlurFilter.blurredOutput();

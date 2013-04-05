@@ -69,10 +69,10 @@ namespace Framework
             return false;
 
         assert(mDevice);
-        mGridPSPerFrameBuffer.initialize(*mDevice);
-        mGridHSPerFrameBuffer.initialize(*mDevice);
-        mGridDSPerFrameBuffer.initialize(*mDevice);
-        mGridVSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mGridPSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mGridHSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mGridDSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mGridVSPerObjectBuffer);
         
         assert(mImmediateContext);
         Managers::ShadersManager::initAll(*mDevice);   
@@ -179,10 +179,10 @@ namespace Framework
         const DirectX::XMMATRIX textureScale = DirectX::XMLoadFloat4x4(&mTextureScaleMatrix);
         DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
         DirectX::XMStoreFloat4x4(&mGridVSPerObjectBuffer.mData.mTextureScale, DirectX::XMMatrixTranspose(textureScale));
-        mGridVSPerObjectBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mGridVSPerObjectBuffer);
 
         // Set Constant Buffers
-        ID3D11Buffer* const vertexShaderBuffers[] = { &mGridVSPerObjectBuffer.buffer() };
+        ID3D11Buffer* const vertexShaderBuffers[] = { mGridVSPerObjectBuffer.mBuffer };
         mImmediateContext->VSSetConstantBuffers(0, 1, vertexShaderBuffers);
 
         //
@@ -195,10 +195,10 @@ namespace Framework
 
         // Per Frame Constant Buffer
         mGridHSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        mGridHSPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mGridHSPerFrameBuffer);
 
         // Set Constant Buffers
-        ID3D11Buffer* const hullShaderBuffers = { &mGridHSPerFrameBuffer.buffer() };
+        ID3D11Buffer* const hullShaderBuffers = { mGridHSPerFrameBuffer.mBuffer };
         mImmediateContext->HSSetConstantBuffers(0, 1, &hullShaderBuffers);
 
         //
@@ -217,10 +217,10 @@ namespace Framework
         const float heightMapTexelSize = 1.0f / 512.0f;
         mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[0] = heightMapTexelSize;
         mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[1] = heightMapTexelSize;
-        mGridDSPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mGridDSPerFrameBuffer);
 
         // Set Constant Buffers
-        ID3D11Buffer* const domainShaderBuffers = { &mGridDSPerFrameBuffer.buffer() };
+        ID3D11Buffer* const domainShaderBuffers = { mGridDSPerFrameBuffer.mBuffer };
         mImmediateContext->DSSetConstantBuffers(0, 1, &domainShaderBuffers);
 
         // Resources
@@ -245,10 +245,10 @@ namespace Framework
         mGridPSPerFrameBuffer.mData.mTexelCellSpaceU = heightMapTexelSize;
         mGridPSPerFrameBuffer.mData.mTexelCellSpaceV = heightMapTexelSize;
         mGridPSPerFrameBuffer.mData.mWorldCellSpace = 0.5f;
-        mGridPSPerFrameBuffer.applyChanges(*mImmediateContext);
+        ConstantBufferUtils::applyChanges(*mImmediateContext, mGridPSPerFrameBuffer);
 
         // Set constant buffers
-        ID3D11Buffer * const pixelShaderBuffers[] = { &mGridPSPerFrameBuffer.buffer() };
+        ID3D11Buffer * const pixelShaderBuffers[] = { mGridPSPerFrameBuffer.mBuffer };
         mImmediateContext->PSSetConstantBuffers(0, 1, pixelShaderBuffers);
                 
         // Resources

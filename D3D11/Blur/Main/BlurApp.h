@@ -57,9 +57,9 @@ namespace Framework
 
         Material mSandMaterial;
 
-        Shaders::ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;
-        Shaders::ConstantBuffer<Shaders::ScreenQuadVSPerFrameBuffer> mScreenQuadVSPerFrameBuffer;
+        ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
+        ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;
+        ConstantBuffer<Shaders::ScreenQuadVSPerFrameBuffer> mScreenQuadVSPerFrameBuffer;
 
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mLandWorld;
@@ -122,9 +122,9 @@ namespace Framework
 
         mBlurFilter.init(mDevice, mClientWidth, mClientHeight, DXGI_FORMAT_R8G8B8A8_UNORM);
         
-        mLandPerFrameBuffer.initialize(*mDevice);
-        mLandPerObjectBuffer.initialize(*mDevice);
-        mScreenQuadVSPerFrameBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mLandPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mLandPerObjectBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mScreenQuadVSPerFrameBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);

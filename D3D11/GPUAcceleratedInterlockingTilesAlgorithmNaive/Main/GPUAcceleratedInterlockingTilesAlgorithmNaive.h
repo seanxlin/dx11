@@ -41,13 +41,13 @@ namespace Framework
 
         Material mTerrainMaterial;
         
-        Shaders::ConstantBuffer<Shaders::GridVSPerFrameBuffer> mGridVSPerObjectBuffer;
+        ConstantBuffer<Shaders::GridVSPerFrameBuffer> mGridVSPerObjectBuffer;
 
-        Shaders::ConstantBuffer<Shaders::GridHSPerFrameBuffer> mGridHSPerFrameBuffer;
+        ConstantBuffer<Shaders::GridHSPerFrameBuffer> mGridHSPerFrameBuffer;
 
-        Shaders::ConstantBuffer<Shaders::GridDSPerFrameBuffer> mGridDSPerFrameBuffer;
+        ConstantBuffer<Shaders::GridDSPerFrameBuffer> mGridDSPerFrameBuffer;
 
-        Shaders::ConstantBuffer<Shaders::GridPSPerFrameBuffer> mGridPSPerFrameBuffer;
+        ConstantBuffer<Shaders::GridPSPerFrameBuffer> mGridPSPerFrameBuffer;
         
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mWorldMatrix;

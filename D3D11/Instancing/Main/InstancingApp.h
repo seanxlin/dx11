@@ -51,12 +51,12 @@ namespace Framework
         Material mFloorMaterial;
         Material mShapesMaterial;
 
-        Shaders::ConstantBuffer<Shaders::FloorVSPerObjectBuffer> mFloorVSPerObjectBuffer;
+        ConstantBuffer<Shaders::FloorVSPerObjectBuffer> mFloorVSPerObjectBuffer;
 
-        Shaders::ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
+        ConstantBuffer<Shaders::ShapesVSPerObjectBuffer> mShapesVSPerObjectBuffer;
 
-        Shaders::ConstantBuffer<Shaders::CommonPSPerFrameBuffer> mCommonPSPerFrameBuffer;
-        Shaders::ConstantBuffer<Shaders::CommonPSPerObjectBuffer> mCommonPSPerObjectBuffer;
+        ConstantBuffer<Shaders::CommonPSPerFrameBuffer> mCommonPSPerFrameBuffer;
+        ConstantBuffer<Shaders::CommonPSPerObjectBuffer> mCommonPSPerObjectBuffer;
         
         // Define transformations from local spaces to world space.
         DirectX::XMFLOAT4X4 mFloorWorld;
@@ -150,12 +150,12 @@ namespace Framework
         if(!D3DApplication::init())
             return false;
 
-        mFloorVSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mFloorVSPerObjectBuffer);
         
-        mShapesVSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mShapesVSPerObjectBuffer);
 
-        mCommonPSPerFrameBuffer.initialize(*mDevice);
-        mCommonPSPerObjectBuffer.initialize(*mDevice);
+        ConstantBufferUtils::initialize(*mDevice, mCommonPSPerFrameBuffer);
+        ConstantBufferUtils::initialize(*mDevice, mCommonPSPerObjectBuffer);
         
         Managers::ShadersManager::initAll(mDevice);   
         Managers::ResourcesManager::initAll(mDevice, mImmediateContext);
