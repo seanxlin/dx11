@@ -62,7 +62,7 @@ namespace Framework
 
             const uint32_t randomRowIndex = 5 + rand() % 190;
             const uint32_t randomColumnIndex = 5 + rand() % 190;
-            const float randomMagnitude = Utils::MathHelper::randomFloat(1.0f, 2.0f);
+            const float randomMagnitude = MathHelper::randomFloat(1.0f, 2.0f);
 
             mWaves.disturb(randomRowIndex, randomColumnIndex, randomMagnitude);
         }
@@ -96,7 +96,7 @@ namespace Framework
         // Circle light over the land surface.
         mPointLight.mPosition.x = 70.0f * cosf(0.2f * TimerUtils::inGameTime(mTimer));
         mPointLight.mPosition.z = 70.0f * sinf(0.2f * TimerUtils::inGameTime(mTimer));
-        mPointLight.mPosition.y = Utils::MathHelper::computeMax(height(mPointLight.mPosition.x, 
+        mPointLight.mPosition.y = MathHelper::computeMax(height(mPointLight.mPosition.x, 
             mPointLight.mPosition.z), -3.0f) + 10.0f;
 
         // The spotlight takes on the camera position and is aimed in the
@@ -201,7 +201,7 @@ namespace Framework
             DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldInverseTranspose,
             DirectX::XMMatrixTranspose(worldInverseTranspose));
 
@@ -240,7 +240,7 @@ namespace Framework
             DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldInverseTranspose,
             DirectX::XMMatrixTranspose(worldInverseTranspose));
 
@@ -279,7 +279,7 @@ namespace Framework
             mPhi += dy;
 
             // Restrict the angle mPhi.
-            mPhi = Utils::MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
+            mPhi = MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
         }
         else if( (btnState & MK_RBUTTON) != 0 )
         {
@@ -291,7 +291,7 @@ namespace Framework
             mRadius += dx - dy;
 
             // Restrict the radius.
-            mRadius = Utils::MathHelper::clamp(mRadius, 50.0f, 500.0f);
+            mRadius = MathHelper::clamp(mRadius, 50.0f, 500.0f);
         }
 
         mLastMousePos.x = x;

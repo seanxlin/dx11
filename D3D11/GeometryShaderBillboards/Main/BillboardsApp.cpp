@@ -91,7 +91,7 @@ namespace Framework
             mPhi += dy;
 
             // Restrict the angle mPhi.
-            mPhi = Utils::MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
+            mPhi = MathHelper::clamp(mPhi, 0.1f, DirectX::XM_PI - 0.1f);
         }
         else if( (btnState & MK_RBUTTON) != 0 )
         {
@@ -103,7 +103,7 @@ namespace Framework
             mRadius += dx - dy;
 
             // Restrict the radius.
-            mRadius = Utils::MathHelper::clamp(mRadius, 50.0f, 500.0f);
+            mRadius = MathHelper::clamp(mRadius, 50.0f, 500.0f);
         }
 
         mLastMousePos.x = x;
@@ -207,7 +207,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mLandPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mLandPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         // Update texture transform matrix.

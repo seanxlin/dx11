@@ -132,7 +132,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         // Update texture transform matrix.
@@ -186,7 +186,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         // Update texture transform matrix.
@@ -240,7 +240,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         // Update texture transform matrix.
@@ -293,7 +293,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
 
         // Update world inverse transpose matrix
-        DirectX::XMMATRIX worldInverseTranspose = Utils::MathHelper::inverseTranspose(world);
+        DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
 
         // Update texture transform matrix.
