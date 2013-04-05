@@ -6,22 +6,26 @@ struct ID3D11ShaderResourceView;
 struct ID3D11UnorderedAccessView;
 struct ID3D11RenderTargetView;
 
-namespace Managers
+struct ShaderResources
 {
-    class ResourcesManager
+    ShaderResources()
+        : mTerrainDiffuseMapSRV(nullptr)
+        , mHeightMapSRV(nullptr)
     {
-    public:
-        static void initAll(ID3D11Device& device, ID3D11DeviceContext& context);
-        static void destroyAll();
 
-        static ID3D11ShaderResourceView* mTerrainDiffuseMapSRV;
+    }
 
-        static ID3D11ShaderResourceView* mHeightMapSRV;
+    ID3D11ShaderResourceView* mTerrainDiffuseMapSRV;
+    ID3D11ShaderResourceView* mHeightMapSRV;
+};
 
-    private:
-        ResourcesManager();
-        ~ResourcesManager();
-        ResourcesManager(const ResourcesManager& resourcesManager);
-        const ResourcesManager& operator=(const ResourcesManager& resourcesManager);
-    };
+static ShaderResources gShaderResources;
+
+namespace ShaderResourcesUtils
+{
+    void initAll(ID3D11Device& device, 
+                 ID3D11DeviceContext& context, 
+                 ShaderResources& shaderResources);
+
+    void destroyAll(ShaderResources& shaderResources);
 }

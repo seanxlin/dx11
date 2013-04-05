@@ -8,46 +8,12 @@
 
 namespace 
 {
-    DirectX::XMFLOAT3 normal(const float x, const float z)
+    void buildTerrainBuffers(ID3D11Device& device, GeometryBuffers& geometryBuffers)
     {
-        // n = (-df/dx, 1, -df/dz)
-        const float normalX = -0.03f * z * cosf(0.1f * x) - 0.3f * cosf(0.1f * z);
-        const float normalY = 1.0f;
-        const float normalZ = -0.3f * sinf(0.1f * x) + 0.03f * x * sinf(0.1f * z);
-        DirectX::XMFLOAT3 normal(normalX, normalY, normalZ);
+        assert(geometryBuffers.mBufferInfo == nullptr);
 
-        DirectX::XMVECTOR unitNormal = DirectX::XMVector3Normalize(DirectX::XMLoadFloat3(&normal));
-        DirectX::XMStoreFloat3(&normal, unitNormal);
-
-        return normal;
-    }
-
-    float height(const float x, const float z)
-    {
-        return 0.3f * (0.3f * z * sinf(0.1f * x) + 0.5f * x * cosf(0.1f * z));
-    }
-}
-
-namespace Managers
-{
-    GeometryBuffersManager::IndexedBufferInfo* GeometryBuffersManager::mTerrainBufferInfo = nullptr;
-
-    void GeometryBuffersManager::initAll(ID3D11Device& device)
-    {
-        buildTerrainBuffers(device);
-    }
-
-    void GeometryBuffersManager::destroyAll()
-    {
-        mTerrainBufferInfo->mVertexBuffer->Release();
-        mTerrainBufferInfo->mIndexBuffer->Release();
-        delete mTerrainBufferInfo;
-    }
-    
-    void GeometryBuffersManager::buildTerrainBuffers(ID3D11Device& device)
-    {
         // Create IndexedBufferInfo for floor
-        mTerrainBufferInfo = new IndexedBufferInfo();
+        geometryBuffers.mBufferInfo = new IndexedBufferInfo();
 
         // 
         // Calculate vertices and indices
@@ -57,13 +23,13 @@ namespace Managers
         GeometryGenerator::createGridForInterlockingTiles(512, 512, 32, 32, grid);
 
         // Cache base vertex location
-        mTerrainBufferInfo->mBaseVertexLocation = 0;
+        geometryBuffers.mBufferInfo->mBaseVertexLocation = 0;
 
         // Cache the index count
-        mTerrainBufferInfo->mIndexCount = static_cast<uint32_t> (grid.mIndices.size());
+        geometryBuffers.mBufferInfo->mIndexCount = static_cast<uint32_t> (grid.mIndices.size());
 
         // Cache the starting index
-        mTerrainBufferInfo->mStartIndexLocation = 0; 
+        geometryBuffers.mBufferInfo->mStartIndexLocation = 0; 
 
         // Compute the total number of vertices
         const uint32_t totalVertexCount = static_cast<uint32_t> (grid.mVertices.size());
@@ -84,11 +50,13 @@ namespace Managers
             vertices.push_back(Vertex(grid.mVertices[vertexIndex].mPosition, grid.mVertices[vertexIndex].mTexCoord));
         }
         initData.pSysMem = &vertices[0];
-        HRESULT result = device.CreateBuffer(&vertexBufferDesc, &initData, &mTerrainBufferInfo->mVertexBuffer);
+        HRESULT result = device.CreateBuffer(&vertexBufferDesc, 
+                                             &initData, 
+                                             &geometryBuffers.mBufferInfo->mVertexBuffer);
         DxErrorChecker(result);
 
         // Fill and Create index buffer
-        const uint32_t totalIndexCount = mTerrainBufferInfo->mIndexCount;
+        const uint32_t totalIndexCount = geometryBuffers.mBufferInfo->mIndexCount;
 
         D3D11_BUFFER_DESC indexBufferDesc;
         indexBufferDesc.Usage = D3D11_USAGE_IMMUTABLE;
@@ -98,7 +66,26 @@ namespace Managers
         indexBufferDesc.MiscFlags = 0;
 
         initData.pSysMem = &grid.mIndices[0];
-        result = device.CreateBuffer(&indexBufferDesc, &initData, &mTerrainBufferInfo->mIndexBuffer);
+        result = device.CreateBuffer(&indexBufferDesc, 
+                                     &initData, 
+                                     &geometryBuffers.mBufferInfo->mIndexBuffer);
         DxErrorChecker(result);
+    }
+}
+
+namespace GeometryBuffersUtils
+{   
+    void initAll(ID3D11Device& device, GeometryBuffers& geometryBuffers)
+    {
+        buildTerrainBuffers(device, geometryBuffers);
+    }
+
+    void destroyAll(GeometryBuffers& geometryBuffers)
+    {
+        assert(geometryBuffers.mBufferInfo);
+
+        geometryBuffers.mBufferInfo->mVertexBuffer->Release();
+        geometryBuffers.mBufferInfo->mIndexBuffer->Release();
+        delete geometryBuffers.mBufferInfo;
     }
 }

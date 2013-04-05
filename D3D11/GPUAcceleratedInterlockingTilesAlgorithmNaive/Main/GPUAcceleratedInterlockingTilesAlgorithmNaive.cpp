@@ -57,10 +57,10 @@ namespace Framework
 
     GPUAcceleratedInterlockingTilesAlgorithmNaive::~GPUAcceleratedInterlockingTilesAlgorithmNaive()
     {
-        Managers::ResourcesManager::destroyAll();
-        Managers::ShadersManager::destroyAll();
-        Managers::PipelineStatesManager::destroyAll();
-        Managers::GeometryBuffersManager::destroyAll();
+        ShaderResourcesUtils::destroyAll(gShaderResources);
+        ShadersUtils::destroyAll(gShaders);
+        PipelineStatesUtils::destroyAll(gPipelineStates);
+        GeometryBuffersUtils::destroyAll(gGeometryBuffers);
     }
 
     bool GPUAcceleratedInterlockingTilesAlgorithmNaive::init()
@@ -75,10 +75,12 @@ namespace Framework
         ConstantBufferUtils::initialize(*mDevice, mGridVSPerObjectBuffer);
         
         assert(mImmediateContext);
-        Managers::ShadersManager::initAll(*mDevice);   
-        Managers::ResourcesManager::initAll(*mDevice, *mImmediateContext);
-        Managers::PipelineStatesManager::initAll(*mDevice);
-        Managers::GeometryBuffersManager::initAll(*mDevice);
+        ShadersUtils::initAll(*mDevice, gShaders);   
+        ShaderResourcesUtils::initAll(*mDevice, 
+                                      *mImmediateContext, 
+                                      gShaderResources);
+        PipelineStatesUtils::initAll(*mDevice, gPipelineStates);
+        GeometryBuffersUtils::initAll(*mDevice, gGeometryBuffers);
 
         return true;
     }
@@ -116,7 +118,7 @@ namespace Framework
     {
         mImmediateContext->ClearRenderTargetView(mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Silver));
         mImmediateContext->ClearDepthStencilView(mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-        mImmediateContext->RSSetState(mWireframeMode ? Managers::PipelineStatesManager::mWireframeRS : nullptr);
+        mImmediateContext->RSSetState(mWireframeMode ? gPipelineStates.mWireframeRS : nullptr);
 
         CameraUtils::updateViewMatrix(mCamera);
        
@@ -150,20 +152,20 @@ namespace Framework
         //
 
         // Input Layout 
-        ID3D11InputLayout * const inputLayout = Managers::ShadersManager::mTerrainIL;
+        ID3D11InputLayout * const inputLayout = gShaders.mTerrainIL;
         mImmediateContext->IASetInputLayout(inputLayout);
 
         // Primitive Topology
         mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST);
 
         // Vertex Buffer
-        ID3D11Buffer* vertexBuffer = Managers::GeometryBuffersManager::mTerrainBufferInfo->mVertexBuffer;
-        uint32_t stride = sizeof(Managers::GeometryBuffersManager::Vertex);
+        ID3D11Buffer* vertexBuffer = gGeometryBuffers.mBufferInfo->mVertexBuffer;
+        uint32_t stride = sizeof(Vertex);
         uint32_t offset = 0;
         mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
         // Index Buffer
-        ID3D11Buffer* indexBuffer = Managers::GeometryBuffersManager::mTerrainBufferInfo->mIndexBuffer;
+        ID3D11Buffer* indexBuffer = gGeometryBuffers.mBufferInfo->mIndexBuffer;
         mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
         //
@@ -171,7 +173,7 @@ namespace Framework
         //
         
         // Shader
-        ID3D11VertexShader * const vertexShader = Managers::ShadersManager::mTerrainVS;
+        ID3D11VertexShader * const vertexShader = gShaders.mTerrainVS;
         mImmediateContext->VSSetShader(vertexShader, nullptr, 0);
 
         // Per Frame Constant Buffer
@@ -190,7 +192,7 @@ namespace Framework
         //
 
         // Shader
-        ID3D11HullShader * const hullShader = Managers::ShadersManager::mTerrainHS;
+        ID3D11HullShader * const hullShader = gShaders.mTerrainHS;
         mImmediateContext->HSSetShader(hullShader, nullptr, 0);
 
         // Per Frame Constant Buffer
@@ -206,7 +208,7 @@ namespace Framework
         //
 
         // Shader
-        ID3D11DomainShader * const domainShader = Managers::ShadersManager::mTerrainDS;
+        ID3D11DomainShader * const domainShader = gShaders.mTerrainDS;
         mImmediateContext->DSSetShader(domainShader, nullptr, 0);
 
         // Per Frame Constant Buffer
@@ -224,18 +226,18 @@ namespace Framework
         mImmediateContext->DSSetConstantBuffers(0, 1, &domainShaderBuffers);
 
         // Resources
-        ID3D11ShaderResourceView * const domainShaderResources[] = { Managers::ResourcesManager::mHeightMapSRV };
+        ID3D11ShaderResourceView * const domainShaderResources[] = { gShaderResources.mHeightMapSRV };
         mImmediateContext->DSSetShaderResources(0, 1, domainShaderResources);
 
         // Sampler state
-        mImmediateContext->DSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
+        mImmediateContext->DSSetSamplers(0, 1, &gPipelineStates.mLinearSS);
 
         //
         // Pixel Shader Stage
         //
 
         // Shader
-        ID3D11PixelShader* const pixelShader = Managers::ShadersManager::mTerrainPS;
+        ID3D11PixelShader* const pixelShader = gShaders.mTerrainPS;
         mImmediateContext->PSSetShader(pixelShader, nullptr, 0);
 
         // Per Frame Constant Buffer
@@ -254,20 +256,20 @@ namespace Framework
         // Resources
         ID3D11ShaderResourceView * const pixelShaderResources[] = 
         { 
-            Managers::ResourcesManager::mTerrainDiffuseMapSRV,
-            Managers::ResourcesManager::mHeightMapSRV
+            gShaderResources.mTerrainDiffuseMapSRV,
+            gShaderResources.mHeightMapSRV
         };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
 
         // Sampler state
-        mImmediateContext->PSSetSamplers(0, 1, &Managers::PipelineStatesManager::mLinearSS);
+        mImmediateContext->PSSetSamplers(0, 1, &gPipelineStates.mLinearSS);
 
         //
         // Draw
         // 
-        const uint32_t baseVertexLocation = Managers::GeometryBuffersManager::mTerrainBufferInfo->mBaseVertexLocation;
-        const uint32_t startIndexLocation = Managers::GeometryBuffersManager::mTerrainBufferInfo->mStartIndexLocation;
-        const uint32_t indexCount = Managers::GeometryBuffersManager::mTerrainBufferInfo->mIndexCount;
+        const uint32_t baseVertexLocation = gGeometryBuffers.mBufferInfo->mBaseVertexLocation;
+        const uint32_t startIndexLocation = gGeometryBuffers.mBufferInfo->mStartIndexLocation;
+        const uint32_t indexCount = gGeometryBuffers.mBufferInfo->mIndexCount;
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }    
 }
