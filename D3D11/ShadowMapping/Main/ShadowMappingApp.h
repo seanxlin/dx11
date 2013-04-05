@@ -51,10 +51,10 @@ namespace Framework
 
         Camera mCamera;
 
-        Utils::DirectionalLight mDirectionalLight[3];
+        DirectionalLight mDirectionalLight[3];
 
-        Utils::Material mFloorMaterial;
-        Utils::Material mShapesMaterial;
+        Material mFloorMaterial;
+        Material mShapesMaterial;
 
         Shaders::ConstantBuffer<Shaders::FloorVSPerObjectBuffer> mFloorVSPerObjectBuffer;
 

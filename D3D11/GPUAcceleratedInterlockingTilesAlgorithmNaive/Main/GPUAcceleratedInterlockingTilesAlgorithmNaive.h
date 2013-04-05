@@ -37,9 +37,9 @@ namespace Framework
 
         Camera mCamera;
 
-        Utils::DirectionalLight mDirectionalLight[3];
+        DirectionalLight mDirectionalLight[3];
 
-        Utils::Material mTerrainMaterial;
+        Material mTerrainMaterial;
         
         Shaders::ConstantBuffer<Shaders::GridVSPerFrameBuffer> mGridVSPerObjectBuffer;
 

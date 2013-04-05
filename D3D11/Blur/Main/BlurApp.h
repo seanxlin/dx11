@@ -52,10 +52,10 @@ namespace Framework
 
         Framework::BlurFilter mBlurFilter;
 
-        Utils::DirectionalLight mDirectionalLight;
-        Utils::SpotLight mSpotLight;
+        DirectionalLight mDirectionalLight;
+        SpotLight mSpotLight;
 
-        Utils::Material mSandMaterial;
+        Material mSandMaterial;
 
         Shaders::ConstantBuffer<Shaders::LandPerFrameBuffer> mLandPerFrameBuffer;
         Shaders::ConstantBuffer<Shaders::LandPerObjectBuffer> mLandPerObjectBuffer;

@@ -54,11 +54,11 @@ namespace Framework
     private:
         Geometry::Waves mWaves;
 
-        Utils::DirectionalLight mDirectionalLight;
-        Utils::PointLight mPointLight;
-        Utils::SpotLight mSpotLight;
-        Utils::Material mLandMaterial;
-        Utils::Material mWavesMaterial;
+        DirectionalLight mDirectionalLight;
+        PointLight mPointLight;
+        SpotLight mSpotLight;
+        Material mLandMaterial;
+        Material mWavesMaterial;
 
         ID3D11Buffer* mLandVertexBuffer;
         ID3D11Buffer* mWavesVertexBuffer;

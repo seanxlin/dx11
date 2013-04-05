@@ -8,9 +8,9 @@ namespace Shaders
 {
     struct PerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight;
-        Utils::PointLight mPointLight;
-        Utils::SpotLight mSpotLight;
+        DirectionalLight mDirectionalLight;
+        PointLight mPointLight;
+        SpotLight mSpotLight;
         DirectX::XMFLOAT3 mEyePositionW;
     };
 
@@ -19,6 +19,6 @@ namespace Shaders
         DirectX::XMFLOAT4X4 mWorld;
         DirectX::XMFLOAT4X4 mWorldInverseTranspose;
         DirectX::XMFLOAT4X4 mWorldViewProjection;
-        Utils::Material mMaterial;
+        Material mMaterial;
     };
 }

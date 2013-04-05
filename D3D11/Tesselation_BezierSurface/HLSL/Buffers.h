@@ -21,8 +21,8 @@ namespace Shaders
 
     struct BezierSurfacePSPerFrameBuffer
     {
-        Utils::DirectionalLight mDirectionalLight;
-        Utils::Material mMaterial;
+        DirectionalLight mDirectionalLight;
+        Material mMaterial;
         DirectX::XMFLOAT3 mEyePositionW;
     };
 }
