@@ -1,3 +1,5 @@
+#include <Timer.h>
+
 #include <Managers/GeometryBuffersManager.h>
 #include <Managers/PipelineStatesManager.h>
 #include <Managers/ShaderResourcesManager.h>
@@ -12,6 +14,7 @@ struct Globals
     ShaderResources mShaderResources;
     PipelineStates mPipelineStates;
     GeometryBuffers mGeometryBuffers;
+    Timer mTimer;
 };
 
 static Globals gGlobals;
