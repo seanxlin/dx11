@@ -28,6 +28,8 @@ static WindowState gWindowState;
 struct WindowData
 {
     WindowData()
+        : mClientWidth(0)
+        , mClientHeight(0)
     {
         ZeroMemory(&mAppInstance, sizeof(HINSTANCE));
         ZeroMemory(&mMainWindow, sizeof(HWND));
@@ -35,6 +37,8 @@ struct WindowData
 
     HINSTANCE mAppInstance;
     HWND mMainWindow;
+    uint32_t mClientWidth;
+    uint32_t mClientHeight;
 };
 
 static WindowData gWindowData;
@@ -49,6 +53,8 @@ struct Direct3DData
         , mRenderTargetView(nullptr)
         , mDepthStencilView(nullptr)
         , mDriverType(D3D_DRIVER_TYPE_HARDWARE)
+        , m4xMsaaQuality(0)
+        , mEnable4xMsaa(true)
     {
         ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
     }
@@ -75,6 +81,8 @@ struct Direct3DData
     ID3D11DepthStencilView* mDepthStencilView;
     D3D11_VIEWPORT mScreenViewport;
     D3D_DRIVER_TYPE mDriverType;
+    uint32_t m4xMsaaQuality;
+    bool mEnable4xMsaa;
 };
 
 static Direct3DData gDirect3DData;

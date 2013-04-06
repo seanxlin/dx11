@@ -20,7 +20,7 @@
 
         bool init(Direct3DData& direct3DData, WindowData& windowData);
 
-        inline void onResize(Direct3DData& direct3DData);
+        inline void onResize(Direct3DData& direct3DData, WindowData& windowData);
 
         void updateScene(const float dt);
 
@@ -54,15 +54,7 @@
         bool initDirect3D(Direct3DData& direct3DData, WindowData& windowData);
 
         void calculateFrameStats(WindowData& windowData);
-
-        Timer mTimer;
-
-        // Derived class should set these in derived constructor to customize starting values.
-        uint32_t mClientWidth;
-        uint32_t mClientHeight;
-        uint32_t m4xMsaaQuality;
-        bool mEnable4xMsaa;
-
+        
         Camera mCamera;
 
         DirectionalLight mDirectionalLight[3];
@@ -86,7 +78,7 @@
         bool mWireframeMode;
     };     
 
-    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize(Direct3DData& direct3DData)
+    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize(Direct3DData& direct3DData, WindowData& windowData)
     {
         assert(direct3DData.mImmediateContext);
         assert(direct3DData.mDevice);
@@ -112,8 +104,8 @@
         // Resize the swap chain and recreate the render target view.
         HRESULT result = direct3DData.mSwapChain->ResizeBuffers(
             1, 
-            mClientWidth, 
-            mClientHeight, 
+            windowData.mClientWidth, 
+            windowData.mClientHeight, 
             DXGI_FORMAT_R8G8B8A8_UNORM, 0);
         
         DxErrorChecker(result);
@@ -136,17 +128,17 @@
 
         // Create the depth/stencil buffer and view.
         D3D11_TEXTURE2D_DESC depthStencilDesc;	
-        depthStencilDesc.Width = mClientWidth;
-        depthStencilDesc.Height = mClientHeight;
+        depthStencilDesc.Width = windowData.mClientWidth;
+        depthStencilDesc.Height = windowData.mClientHeight;
         depthStencilDesc.MipLevels = 1;
         depthStencilDesc.ArraySize = 1;
         depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
 
         // Use 4X MSAA? --must match swap chain MSAA values.
-        if (mEnable4xMsaa)
+        if (direct3DData.mEnable4xMsaa)
         {
             depthStencilDesc.SampleDesc.Count = 4;
-            depthStencilDesc.SampleDesc.Quality = m4xMsaaQuality - 1;
+            depthStencilDesc.SampleDesc.Quality = direct3DData.m4xMsaaQuality - 1;
         }
         
         // No MSAA
@@ -184,14 +176,14 @@
         // Set the viewport transform.
         direct3DData.mScreenViewport.TopLeftX = 0;
         direct3DData.mScreenViewport.TopLeftY = 0;
-        direct3DData.mScreenViewport.Width = static_cast<float>(mClientWidth);
-        direct3DData.mScreenViewport.Height = static_cast<float>(mClientHeight);
+        direct3DData.mScreenViewport.Width = static_cast<float>(windowData.mClientWidth);
+        direct3DData.mScreenViewport.Height = static_cast<float>(windowData.mClientHeight);
         direct3DData.mScreenViewport.MinDepth = 0.0f;
         direct3DData.mScreenViewport.MaxDepth = 1.0f;
 
         direct3DData.mImmediateContext->RSSetViewports(1, &direct3DData.mScreenViewport);
 
-        const float aspectRatio = static_cast<float> (mClientWidth / mClientHeight);
+        const float aspectRatio = static_cast<float> (windowData.mClientWidth / windowData.mClientHeight);
         CameraUtils::setFrustrum(
             0.25f * DirectX::XM_PI, 
             aspectRatio, 

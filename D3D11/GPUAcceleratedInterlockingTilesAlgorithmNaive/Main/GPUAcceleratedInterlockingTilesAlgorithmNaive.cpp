@@ -28,11 +28,7 @@ LRESULT CALLBACK
 }
 
 GPUAcceleratedInterlockingTilesAlgorithmNaive::GPUAcceleratedInterlockingTilesAlgorithmNaive()
-    : mClientWidth(800)
-    , mClientHeight(600)
-    , m4xMsaaQuality(0)
-    , mEnable4xMsaa(false)
-    , mWireframeMode(false)
+    : mWireframeMode(false)
 {
     // Get a pointer to the application object so we can forward 
     // Windows messages to the object's window procedure through
@@ -143,7 +139,7 @@ int GPUAcceleratedInterlockingTilesAlgorithmNaive::run(Direct3DData& direct3DDat
 {
     MSG msg = {0};
 
-    TimerUtils::reset(mTimer);
+    TimerUtils::reset(gGlobals.mTimer);
 
     while (msg.message != WM_QUIT)
     {
@@ -156,12 +152,12 @@ int GPUAcceleratedInterlockingTilesAlgorithmNaive::run(Direct3DData& direct3DDat
         // Otherwise, do animation/game stuff.
         else
         {	
-            TimerUtils::tick(mTimer);
+            TimerUtils::tick(gGlobals.mTimer);
 
             if (!windowState.mIsPaused)
             {
                 calculateFrameStats(windowData);
-                updateScene(static_cast<float> (mTimer.mDeltaTime));	
+                updateScene(static_cast<float> (gGlobals.mTimer.mDeltaTime));	
                 drawScene(direct3DData);
             }
             else
@@ -185,12 +181,12 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
         if (LOWORD(wParam) == WA_INACTIVE)
         {
             gWindowState.mIsPaused = true;
-            TimerUtils::stop(mTimer);
+            TimerUtils::stop(gGlobals.mTimer);
         }
         else
         {
             gWindowState.mIsPaused = false;
-            TimerUtils::start(mTimer);
+            TimerUtils::start(gGlobals.mTimer);
         }
 
         return 0;
@@ -198,8 +194,8 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
         // WM_SIZE is sent when the user resizes the window.  
     case WM_SIZE:
         // Save the new client area dimensions.
-        mClientWidth = LOWORD(lParam);
-        mClientHeight = HIWORD(lParam);
+        gWindowData.mClientWidth = LOWORD(lParam);
+        gWindowData.mClientHeight = HIWORD(lParam);
         if (gDirect3DData.mDevice)
         {
             if (wParam == SIZE_MINIMIZED)
@@ -213,7 +209,7 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
                 gWindowState.mIsPaused = false;
                 gWindowState.mIsMinimized = false;
                 gWindowState.mIsMaximized = true;
-                onResize(gDirect3DData);
+                onResize(gDirect3DData, gWindowData);
             }
             else if (wParam == SIZE_RESTORED)
             {				
@@ -222,7 +218,7 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
                 {
                     gWindowState.mIsPaused = false;
                     gWindowState.mIsMinimized = false;
-                    onResize(gDirect3DData);
+                    onResize(gDirect3DData, gWindowData);
                 }
 
                 // Restoring from maximized state?
@@ -230,7 +226,7 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
                 {
                     gWindowState.mIsPaused = false;
                     gWindowState.mIsMaximized = false;
-                    onResize(gDirect3DData);
+                    onResize(gDirect3DData, gWindowData);
                 }
 
                 else if (gWindowState.mIsResizing)
@@ -246,7 +242,7 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
                 }
 
                 else // API call such as SetWindowPos or mSwapChain->SetFullscreenState.
-                    onResize(gDirect3DData);
+                    onResize(gDirect3DData, gWindowData);
             }
         }
 
@@ -256,7 +252,7 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
     case WM_ENTERSIZEMOVE:
         gWindowState.mIsPaused = true;
         gWindowState.mIsResizing  = true;
-        TimerUtils::stop(mTimer);
+        TimerUtils::stop(gGlobals.mTimer);
         return 0;
 
         // WM_EXITSIZEMOVE is sent when the user releases the resize bars.
@@ -264,8 +260,8 @@ LRESULT GPUAcceleratedInterlockingTilesAlgorithmNaive::msgProc(HWND hwnd, UINT m
     case WM_EXITSIZEMOVE:
         gWindowState.mIsPaused = false;
         gWindowState.mIsResizing  = false;
-        TimerUtils::start(mTimer);
-        onResize(gDirect3DData);
+        TimerUtils::start(gGlobals.mTimer);
+        onResize(gDirect3DData, gWindowData);
         return 0;
 
         // WM_DESTROY is sent when the window is being destroyed.
@@ -487,13 +483,27 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::initMainWindow(WindowData& w
         return false;
     }
 
+    // Init window size
+    windowData.mClientWidth = 800;
+    windowData.mClientHeight = 600;
+
     // Compute window rectangle dimensions based on requested client area dimensions.
-    RECT rect = { 0, 0, mClientWidth, mClientHeight };
-    AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, false);
+    RECT rect = 
+    { 
+        0, 
+        0, 
+        windowData.mClientWidth, 
+        windowData.mClientHeight 
+    };
+    AdjustWindowRect(
+        &rect, 
+        WS_OVERLAPPEDWINDOW, 
+        false);
     const uint32_t width = rect.right - rect.left;
     const uint32_t height = rect.bottom - rect.top;
 
-    windowData.mMainWindow = CreateWindow(L"D3DWndClassName", 
+    windowData.mMainWindow = CreateWindow(
+        L"D3DWndClassName", 
         L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo", 
         WS_OVERLAPPEDWINDOW, 
         CW_USEDEFAULT, 
@@ -556,15 +566,15 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::initDirect3D(Direct3DData& d
     // target formats, so we only need to check quality support.
     result = direct3DData.mDevice->CheckMultisampleQualityLevels(DXGI_FORMAT_R8G8B8A8_UNORM, 
         4, 
-        &m4xMsaaQuality);
+        &direct3DData.m4xMsaaQuality);
     DxErrorChecker(result);
 
-    assert(m4xMsaaQuality > 0);
+    assert(direct3DData.m4xMsaaQuality > 0);
 
     // Fill out a DXGI_SWAP_CHAIN_DESC to describe our swap chain.
     DXGI_SWAP_CHAIN_DESC swapChainDescription;
-    swapChainDescription.BufferDesc.Width = mClientWidth;
-    swapChainDescription.BufferDesc.Height = mClientHeight;
+    swapChainDescription.BufferDesc.Width = windowData.mClientWidth;
+    swapChainDescription.BufferDesc.Height = windowData.mClientHeight;
     swapChainDescription.BufferDesc.RefreshRate.Numerator = 60;
     swapChainDescription.BufferDesc.RefreshRate.Denominator = 1;
     swapChainDescription.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
@@ -572,10 +582,10 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::initDirect3D(Direct3DData& d
     swapChainDescription.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
 
     // Use 4X MSAA? 
-    if (mEnable4xMsaa)
+    if (direct3DData.mEnable4xMsaa)
     {
         swapChainDescription.SampleDesc.Count = 4;
-        swapChainDescription.SampleDesc.Quality = m4xMsaaQuality - 1;
+        swapChainDescription.SampleDesc.Quality = direct3DData.m4xMsaaQuality - 1;
     }
     // No MSAA
     else
@@ -617,7 +627,7 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::initDirect3D(Direct3DData& d
     // The remaining steps that need to be carried out for d3d creation
     // also need to be executed every time the window is resized. So
     // just call the OnResize method here to avoid code duplication.	
-    onResize(direct3DData);
+    onResize(direct3DData, windowData);
 
     return true;
 }
@@ -633,7 +643,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::calculateFrameStats(WindowDa
     ++frameCounter;
 
     // Compute averages over one second period.
-    if( (TimerUtils::inGameTime(mTimer) - timeElapsed) >= 1.0f )
+    if( (TimerUtils::inGameTime(gGlobals.mTimer) - timeElapsed) >= 1.0f )
     {
         const float fps = static_cast<float> (frameCounter); // fps = frameCnt / 1
         const float mspf = 1000.0f / fps;
@@ -641,8 +651,8 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::calculateFrameStats(WindowDa
         std::wostringstream outs;   
         outs.precision(6);
         outs << L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo" << L"    "
-            << L"FPS: " << fps << L"    " 
-            << L"Frame Time: " << mspf << L" (ms)";
+             << L"FPS: " << fps << L"    " 
+             << L"Frame Time: " << mspf << L" (ms)";
 
         SetWindowText(windowData.mMainWindow, outs.str().c_str());
 
