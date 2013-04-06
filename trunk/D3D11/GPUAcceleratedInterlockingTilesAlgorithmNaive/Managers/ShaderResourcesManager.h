@@ -19,8 +19,6 @@ struct ShaderResources
     ID3D11ShaderResourceView* mHeightMapSRV;
 };
 
-static ShaderResources gShaderResources;
-
 namespace ShaderResourcesUtils
 {
     void initAll(ID3D11Device& device, 

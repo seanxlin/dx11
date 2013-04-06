@@ -45,9 +45,6 @@
     <ClCompile Include="Managers\PipelineStatesManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Managers\ResourcesManager.cpp">
-      <Filter>Managers</Filter>
-    </ClCompile>
     <ClCompile Include="Managers\ShadersManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
@@ -58,6 +55,12 @@
       <Filter>Common</Filter>
     </ClCompile>
     <ClCompile Include="Main\Direct3D.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\ShaderResourcesManager.cpp">
+      <Filter>Managers</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Globals.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
@@ -98,9 +101,6 @@
     <ClInclude Include="Managers\PipelineStatesManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Managers\ResourcesManager.h">
-      <Filter>Managers</Filter>
-    </ClInclude>
     <ClInclude Include="Managers\ShadersManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
@@ -112,6 +112,12 @@
     </ClInclude>
     <ClInclude Include="Main\Direct3D.h">
       <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Globals.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\ShaderResourcesManager.h">
+      <Filter>Managers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
