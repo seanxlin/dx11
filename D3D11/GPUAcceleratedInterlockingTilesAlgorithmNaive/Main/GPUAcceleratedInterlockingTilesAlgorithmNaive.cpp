@@ -28,8 +28,7 @@ LRESULT CALLBACK
 }
 
 GPUAcceleratedInterlockingTilesAlgorithmNaive::GPUAcceleratedInterlockingTilesAlgorithmNaive()
-    : mMainWindowCaption(L"D3D11 Application")
-    , mClientWidth(800)
+    : mClientWidth(800)
     , mClientHeight(600)
     , m4xMsaaQuality(0)
     , mEnable4xMsaa(false)
@@ -39,8 +38,6 @@ GPUAcceleratedInterlockingTilesAlgorithmNaive::GPUAcceleratedInterlockingTilesAl
     // Windows messages to the object's window procedure through
     // the global window procedure.
     gD3DApp = this;
-
-    mMainWindowCaption = L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo";
 
     mCamera.mPosition = DirectX::XMFLOAT3(0.0f, 2.0f, -15.0f);
 
@@ -497,7 +494,7 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::initMainWindow(WindowData& w
     const uint32_t height = rect.bottom - rect.top;
 
     windowData.mMainWindow = CreateWindow(L"D3DWndClassName", 
-        mMainWindowCaption.c_str(), 
+        L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo", 
         WS_OVERLAPPEDWINDOW, 
         CW_USEDEFAULT, 
         CW_USEDEFAULT, 
@@ -643,7 +640,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::calculateFrameStats(WindowDa
 
         std::wostringstream outs;   
         outs.precision(6);
-        outs << mMainWindowCaption << L"    "
+        outs << L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo" << L"    "
             << L"FPS: " << fps << L"    " 
             << L"Frame Time: " << mspf << L" (ms)";
 

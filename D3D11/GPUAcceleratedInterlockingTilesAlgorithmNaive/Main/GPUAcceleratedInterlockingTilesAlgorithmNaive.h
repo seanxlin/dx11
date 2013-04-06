@@ -58,7 +58,6 @@
         Timer mTimer;
 
         // Derived class should set these in derived constructor to customize starting values.
-        std::wstring mMainWindowCaption;
         uint32_t mClientWidth;
         uint32_t mClientHeight;
         uint32_t m4xMsaaQuality;
