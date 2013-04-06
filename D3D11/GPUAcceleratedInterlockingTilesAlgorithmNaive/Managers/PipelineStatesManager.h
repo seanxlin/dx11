@@ -17,8 +17,6 @@ struct PipelineStates
     ID3D11RasterizerState* mWireframeRS;
 };
 
-static PipelineStates gPipelineStates;
-
 namespace PipelineStatesUtils
 {
     void initAll(ID3D11Device& device, PipelineStates& pipelineStates);

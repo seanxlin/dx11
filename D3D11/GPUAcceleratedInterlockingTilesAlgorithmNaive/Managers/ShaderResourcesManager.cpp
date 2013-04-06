@@ -1,4 +1,4 @@
-#include "ResourcesManager.h"
+#include "ShaderResourcesManager.h"
 
 #include <cassert>
 #include <fstream>

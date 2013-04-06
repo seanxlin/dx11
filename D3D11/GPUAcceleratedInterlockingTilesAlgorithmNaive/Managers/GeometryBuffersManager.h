@@ -75,8 +75,6 @@ struct GeometryBuffers
     IndexedBufferInfo* mBufferInfo;
 };
 
-static GeometryBuffers gGeometryBuffers;
-
 namespace GeometryBuffersUtils
 {
     void initAll(ID3D11Device& device, GeometryBuffers& geometryBuffers);

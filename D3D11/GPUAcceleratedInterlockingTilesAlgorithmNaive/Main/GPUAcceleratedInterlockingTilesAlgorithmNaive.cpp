@@ -9,10 +9,7 @@
 #include <GeometryGenerator.h>
 #include <MathHelper.h>
 
-#include "Managers/GeometryBuffersManager.h"
-#include "Managers/PipelineStatesManager.h"
-#include "Managers/ResourcesManager.h"
-#include "Managers/ShadersManager.h"
+#include "Globals.h"
 
 namespace
 {
@@ -83,10 +80,7 @@ GPUAcceleratedInterlockingTilesAlgorithmNaive::GPUAcceleratedInterlockingTilesAl
 
 GPUAcceleratedInterlockingTilesAlgorithmNaive::~GPUAcceleratedInterlockingTilesAlgorithmNaive()
 {
-    ShaderResourcesUtils::destroyAll(gShaderResources);
-    ShadersUtils::destroyAll(gShaders);
-    PipelineStatesUtils::destroyAll(gPipelineStates);
-    GeometryBuffersUtils::destroyAll(gGeometryBuffers);
+    GlobalsUtils::destroy(gGlobals);
 }
 
 bool GPUAcceleratedInterlockingTilesAlgorithmNaive::init(Direct3DData& direct3DData, WindowData& windowData)
@@ -101,13 +95,10 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::init(Direct3DData& direct3DD
     ConstantBufferUtils::initialize(*direct3DData.mDevice, mGridVSPerObjectBuffer);
         
     assert(direct3DData.mImmediateContext);
-    ShadersUtils::initAll(*direct3DData.mDevice, gShaders);   
-    ShaderResourcesUtils::initAll(
-        *direct3DData.mDevice, 
-        *direct3DData.mImmediateContext, 
-        gShaderResources);
-    PipelineStatesUtils::initAll(*direct3DData.mDevice, gPipelineStates);
-    GeometryBuffersUtils::initAll(*direct3DData.mDevice, gGeometryBuffers);
+    GlobalsUtils::init(
+        *direct3DData.mDevice,
+        *direct3DData.mImmediateContext,
+        gGlobals);
 
     return true;
 }
@@ -321,7 +312,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawScene(Direct3DData& dire
 {
     direct3DData.mImmediateContext->ClearRenderTargetView(direct3DData.mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Silver));
     direct3DData.mImmediateContext->ClearDepthStencilView(direct3DData.mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    direct3DData.mImmediateContext->RSSetState(mWireframeMode ? gPipelineStates.mWireframeRS : nullptr);
+    direct3DData.mImmediateContext->RSSetState(mWireframeMode ? gGlobals.mPipelineStates.mWireframeRS : nullptr);
 
     CameraUtils::updateViewMatrix(mCamera);
        
@@ -357,20 +348,20 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     //
 
     // Input Layout 
-    ID3D11InputLayout * const inputLayout = gShaders.mTerrainIL;
+    ID3D11InputLayout * const inputLayout = gGlobals.mShaders.mTerrainIL;
     direct3DData.mImmediateContext->IASetInputLayout(inputLayout);
 
     // Primitive Topology
     direct3DData.mImmediateContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_12_CONTROL_POINT_PATCHLIST);
 
     // Vertex Buffer
-    ID3D11Buffer* vertexBuffer = gGeometryBuffers.mBufferInfo->mVertexBuffer;
+    ID3D11Buffer* vertexBuffer = gGlobals.mGeometryBuffers.mBufferInfo->mVertexBuffer;
     uint32_t stride = sizeof(Vertex);
     uint32_t offset = 0;
     direct3DData.mImmediateContext->IASetVertexBuffers(0, 1, &vertexBuffer, &stride, &offset);
 
     // Index Buffer
-    ID3D11Buffer* indexBuffer = gGeometryBuffers.mBufferInfo->mIndexBuffer;
+    ID3D11Buffer* indexBuffer = gGlobals.mGeometryBuffers.mBufferInfo->mIndexBuffer;
     direct3DData.mImmediateContext->IASetIndexBuffer(indexBuffer, DXGI_FORMAT_R32_UINT, 0);
 
     //
@@ -378,7 +369,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     //
         
     // Shader
-    ID3D11VertexShader * const vertexShader = gShaders.mTerrainVS;
+    ID3D11VertexShader * const vertexShader = gGlobals.mShaders.mTerrainVS;
     direct3DData.mImmediateContext->VSSetShader(vertexShader, nullptr, 0);
 
     // Per Frame Constant Buffer
@@ -397,7 +388,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     //
 
     // Shader
-    ID3D11HullShader * const hullShader = gShaders.mTerrainHS;
+    ID3D11HullShader * const hullShader = gGlobals.mShaders.mTerrainHS;
     direct3DData.mImmediateContext->HSSetShader(hullShader, nullptr, 0);
 
     // Per Frame Constant Buffer
@@ -413,7 +404,7 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     //
 
     // Shader
-    ID3D11DomainShader * const domainShader = gShaders.mTerrainDS;
+    ID3D11DomainShader * const domainShader = gGlobals.mShaders.mTerrainDS;
     direct3DData.mImmediateContext->DSSetShader(domainShader, nullptr, 0);
 
     // Per Frame Constant Buffer
@@ -431,18 +422,18 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     direct3DData.mImmediateContext->DSSetConstantBuffers(0, 1, &domainShaderBuffers);
 
     // Resources
-    ID3D11ShaderResourceView * const domainShaderResources[] = { gShaderResources.mHeightMapSRV };
+    ID3D11ShaderResourceView * const domainShaderResources[] = { gGlobals.mShaderResources.mHeightMapSRV };
     direct3DData.mImmediateContext->DSSetShaderResources(0, 1, domainShaderResources);
 
     // Sampler state
-    direct3DData.mImmediateContext->DSSetSamplers(0, 1, &gPipelineStates.mLinearSS);
+    direct3DData.mImmediateContext->DSSetSamplers(0, 1, &gGlobals.mPipelineStates.mLinearSS);
 
     //
     // Pixel Shader Stage
     //
 
     // Shader
-    ID3D11PixelShader* const pixelShader = gShaders.mTerrainPS;
+    ID3D11PixelShader* const pixelShader = gGlobals.mShaders.mTerrainPS;
     direct3DData.mImmediateContext->PSSetShader(pixelShader, nullptr, 0);
 
     // Per Frame Constant Buffer
@@ -461,20 +452,20 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::drawGrid(Direct3DData& direc
     // Resources
     ID3D11ShaderResourceView * const pixelShaderResources[] = 
     { 
-        gShaderResources.mTerrainDiffuseMapSRV,
-        gShaderResources.mHeightMapSRV
+        gGlobals.mShaderResources.mTerrainDiffuseMapSRV,
+        gGlobals.mShaderResources.mHeightMapSRV
     };
     direct3DData.mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
 
     // Sampler state
-    direct3DData.mImmediateContext->PSSetSamplers(0, 1, &gPipelineStates.mLinearSS);
+    direct3DData.mImmediateContext->PSSetSamplers(0, 1, &gGlobals.mPipelineStates.mLinearSS);
 
     //
     // Draw
     // 
-    const uint32_t baseVertexLocation = gGeometryBuffers.mBufferInfo->mBaseVertexLocation;
-    const uint32_t startIndexLocation = gGeometryBuffers.mBufferInfo->mStartIndexLocation;
-    const uint32_t indexCount = gGeometryBuffers.mBufferInfo->mIndexCount;
+    const uint32_t baseVertexLocation = gGlobals.mGeometryBuffers.mBufferInfo->mBaseVertexLocation;
+    const uint32_t startIndexLocation = gGlobals.mGeometryBuffers.mBufferInfo->mStartIndexLocation;
+    const uint32_t indexCount = gGlobals.mGeometryBuffers.mBufferInfo->mIndexCount;
     direct3DData.mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
 }
 

@@ -27,8 +27,6 @@ struct Shaders
     ID3D11DomainShader* mTerrainDS;
 };
 
-static Shaders gShaders;
-
 namespace ShadersUtils
 {
     void initAll(ID3D11Device& device, Shaders& shaders);
