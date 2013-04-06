@@ -18,9 +18,6 @@
     <ClCompile Include="..\Common\Camera.cpp">
       <Filter>Common</Filter>
     </ClCompile>
-    <ClCompile Include="..\Common\D3DApplication.cpp">
-      <Filter>Common</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\DDSTextureLoader.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -60,15 +57,15 @@
     <ClCompile Include="..\Common\HeightMap.cpp">
       <Filter>Common</Filter>
     </ClCompile>
+    <ClCompile Include="Main\Direct3D.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Common\Camera.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\ConstantBuffer.h">
-      <Filter>Common</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Common\D3DApplication.h">
       <Filter>Common</Filter>
     </ClInclude>
     <ClInclude Include="..\Common\DDSTextureLoader.h">
@@ -112,6 +109,9 @@
     </ClInclude>
     <ClInclude Include="..\Common\HeightMap.h">
       <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Direct3D.h">
+      <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

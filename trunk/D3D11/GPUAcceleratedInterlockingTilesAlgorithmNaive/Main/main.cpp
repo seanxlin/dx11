@@ -7,10 +7,12 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
 
-    Framework::GPUAcceleratedInterlockingTilesAlgorithmNaive gpuAcceleratedInterlockingTilesAlgorithmNaive(hInstance); 
+    gWindowData.mAppInstance = hInstance;
 
-    if (!gpuAcceleratedInterlockingTilesAlgorithmNaive.init())
+    GPUAcceleratedInterlockingTilesAlgorithmNaive gpuAcceleratedInterlockingTilesAlgorithmNaive; 
+
+    if (!gpuAcceleratedInterlockingTilesAlgorithmNaive.init(gDirect3DData, gWindowData))
         return 0;
 
-    return gpuAcceleratedInterlockingTilesAlgorithmNaive.run();
+    return gpuAcceleratedInterlockingTilesAlgorithmNaive.run(gDirect3DData, gWindowState, gWindowData);
 }
