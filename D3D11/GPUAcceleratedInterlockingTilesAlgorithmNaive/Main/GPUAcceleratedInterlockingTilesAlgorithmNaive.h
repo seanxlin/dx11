@@ -6,34 +6,38 @@
 
 #include <Camera.h>
 #include <ConstantBuffer.h>
-#include <D3DApplication.h>
 #include <LightHelper.h>
 
-namespace Framework
-{
+#include "Direct3D.h"
+
     class GPUAcceleratedInterlockingTilesAlgorithmNaive : public D3DApplication
     {
     public:
-        GPUAcceleratedInterlockingTilesAlgorithmNaive(HINSTANCE hInstance);
+        GPUAcceleratedInterlockingTilesAlgorithmNaive();
 
         ~GPUAcceleratedInterlockingTilesAlgorithmNaive();
 
-        bool init();
+        bool init(Direct3DData& direct3DData, WindowData& windowData);
 
-        inline void onResize();
+        inline void onResize(Direct3DData& direct3DData);
 
         void updateScene(const float dt);
 
-        void drawScene(); 
+        void drawScene(Direct3DData& direct3DData); 
 
-        inline void onMouseDown(WPARAM btnState, const int32_t x, const int32_t y);
+        inline void onMouseDown(WPARAM btnState, 
+                                const int32_t x, 
+                                const int32_t y,
+                                WindowData& windowData);
 
-        inline void onMouseUp(WPARAM btnState, const int32_t x, const int32_t y);
+        inline void onMouseUp(WPARAM btnState, 
+                              const int32_t x, 
+                              const int32_t y);
 
         void onMouseMove(WPARAM btnState, const int32_t x, const int32_t y);
 
     private:       
-        void drawGrid();
+        void drawGrid(Direct3DData& direct3DData);
 
         Camera mCamera;
 
@@ -58,23 +62,29 @@ namespace Framework
         bool mWireframeMode;
     };     
 
-    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize()
+    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize(Direct3DData& direct3DData)
     {
-        D3DApplication::onResize();
+        D3DApplication::onResize(direct3DData);
 
-        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, aspectRatio(), 1.0f, 1000.0f, mCamera);
+        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, 
+                                 aspectRatio(), 
+                                 1.0f, 
+                                 1000.0f, 
+                                 mCamera);
     }
 
-    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseDown(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseDown(WPARAM btnState, 
+                                                                           const int32_t x, 
+                                                                           const int32_t y,
+                                                                           WindowData& windowData)
     {
         mLastMousePosition.x = x;
         mLastMousePosition.y = y;
 
-        SetCapture(mMainWindow);
+        SetCapture(windowData.mMainWindow);
     }
 
     inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
     {
         ReleaseCapture();
     }
-}
