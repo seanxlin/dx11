@@ -11,7 +11,7 @@
 
 #include "Direct3D.h"
 
-    class GPUAcceleratedInterlockingTilesAlgorithmNaive : public D3DApplication
+    class GPUAcceleratedInterlockingTilesAlgorithmNaive
     {
     public:
         GPUAcceleratedInterlockingTilesAlgorithmNaive();
@@ -35,10 +35,34 @@
                               const int32_t x, 
                               const int32_t y);
 
-        void onMouseMove(WPARAM btnState, const int32_t x, const int32_t y);
+        void onMouseMove(WPARAM btnState, 
+                         const int32_t x, 
+                         const int32_t y);
+
+        int run(Direct3DData& direct3DData, 
+                WindowState& windowState,
+                WindowData& windowData);
+
+        LRESULT msgProc(HWND hwnd, 
+                        UINT msg, 
+                        WPARAM wParam, 
+                        LPARAM lParam);
 
     private:       
         void drawGrid(Direct3DData& direct3DData);
+        bool initMainWindow(WindowData& windowData);
+        bool initDirect3D(Direct3DData& direct3DData, WindowData& windowData);
+
+        void calculateFrameStats(WindowData& windowData);
+
+        Timer mTimer;
+
+        // Derived class should set these in derived constructor to customize starting values.
+        std::wstring mMainWindowCaption;
+        uint32_t mClientWidth;
+        uint32_t mClientHeight;
+        uint32_t m4xMsaaQuality;
+        bool mEnable4xMsaa;
 
         Camera mCamera;
 
@@ -168,9 +192,10 @@
 
         direct3DData.mImmediateContext->RSSetViewports(1, &direct3DData.mScreenViewport);
 
+        const float aspectRatio = static_cast<float> (mClientWidth / mClientHeight);
         CameraUtils::setFrustrum(
             0.25f * DirectX::XM_PI, 
-            aspectRatio(), 
+            aspectRatio, 
             1.0f, 
             1000.0f, 
             mCamera);
