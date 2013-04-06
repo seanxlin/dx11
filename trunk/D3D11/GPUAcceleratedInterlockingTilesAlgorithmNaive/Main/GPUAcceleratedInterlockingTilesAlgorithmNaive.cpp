@@ -63,7 +63,7 @@ GPUAcceleratedInterlockingTilesAlgorithmNaive::~GPUAcceleratedInterlockingTilesA
 
 bool GPUAcceleratedInterlockingTilesAlgorithmNaive::init(Direct3DData& direct3DData, WindowData& windowData)
 {
-    if(!D3DApplication::init(direct3DData, windowData))
+    if(!initMainWindow(windowData) || !initDirect3D(direct3DData, windowData))
         return false;
 
     assert(direct3DData.mDevice);
@@ -74,9 +74,10 @@ bool GPUAcceleratedInterlockingTilesAlgorithmNaive::init(Direct3DData& direct3DD
         
     assert(direct3DData.mImmediateContext);
     ShadersUtils::initAll(*direct3DData.mDevice, gShaders);   
-    ShaderResourcesUtils::initAll(*direct3DData.mDevice, 
-                                  *direct3DData.mImmediateContext, 
-                                  gShaderResources);
+    ShaderResourcesUtils::initAll(
+        *direct3DData.mDevice, 
+        *direct3DData.mImmediateContext, 
+        gShaderResources);
     PipelineStatesUtils::initAll(*direct3DData.mDevice, gPipelineStates);
     GeometryBuffersUtils::initAll(*direct3DData.mDevice, gGeometryBuffers);
 
@@ -90,16 +91,24 @@ void GPUAcceleratedInterlockingTilesAlgorithmNaive::updateScene(const float dt)
     //
     const float offset = 50.0f;
     if (GetAsyncKeyState('W') & 0x8000)
+    {
         CameraUtils::walk(offset * dt, mCamera);
+    }
 
     if (GetAsyncKeyState('S') & 0x8000)
+    {
         CameraUtils::walk(-offset * dt, mCamera);
+    }
 
     if (GetAsyncKeyState('A') & 0x8000)
+    {
         CameraUtils::strafe(-offset * dt, mCamera);
+    }
 
     if (GetAsyncKeyState('D') & 0x8000)
+    {
         CameraUtils::strafe(offset * dt, mCamera);
+    }
 
     if (GetAsyncKeyState('T') & 0x8000) 
     {

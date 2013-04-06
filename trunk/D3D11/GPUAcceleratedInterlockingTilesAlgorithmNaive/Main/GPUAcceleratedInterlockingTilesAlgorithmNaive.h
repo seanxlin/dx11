@@ -2,11 +2,12 @@
 
 #include <DirectXMath.h>
 
-#include "HLSL/Buffers.h"
-
 #include <Camera.h>
 #include <ConstantBuffer.h>
+#include <DxErrorChecker.h>
 #include <LightHelper.h>
+
+#include "HLSL/Buffers.h"
 
 #include "Direct3D.h"
 
@@ -64,13 +65,115 @@
 
     inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onResize(Direct3DData& direct3DData)
     {
-        D3DApplication::onResize(direct3DData);
+        assert(direct3DData.mImmediateContext);
+        assert(direct3DData.mDevice);
+        assert(direct3DData.mSwapChain);
 
-        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, 
-                                 aspectRatio(), 
-                                 1.0f, 
-                                 1000.0f, 
-                                 mCamera);
+        // Release the old views, as they hold references to the buffers we
+        // will be destroying. Also release the old depth/stencil buffer.
+        if (direct3DData.mRenderTargetView)
+        {
+            direct3DData.mRenderTargetView->Release();
+        }
+
+        if (direct3DData.mDepthStencilView)
+        {
+            direct3DData.mDepthStencilView->Release();
+        }
+
+        if (direct3DData.mDepthStencilBuffer)
+        {
+            direct3DData.mDepthStencilBuffer->Release();
+        }
+
+        // Resize the swap chain and recreate the render target view.
+        HRESULT result = direct3DData.mSwapChain->ResizeBuffers(
+            1, 
+            mClientWidth, 
+            mClientHeight, 
+            DXGI_FORMAT_R8G8B8A8_UNORM, 0);
+        
+        DxErrorChecker(result);
+
+        ID3D11Texture2D* backBuffer = nullptr;
+        result = direct3DData.mSwapChain->GetBuffer(
+            0, 
+            __uuidof(ID3D11Texture2D), 
+            reinterpret_cast<void**>(&backBuffer));
+        
+        DxErrorChecker(result);
+
+        result = direct3DData.mDevice->CreateRenderTargetView(
+            backBuffer, 
+            0, 
+            &direct3DData.mRenderTargetView);
+        
+        DxErrorChecker(result);
+        backBuffer->Release();
+
+        // Create the depth/stencil buffer and view.
+        D3D11_TEXTURE2D_DESC depthStencilDesc;	
+        depthStencilDesc.Width = mClientWidth;
+        depthStencilDesc.Height = mClientHeight;
+        depthStencilDesc.MipLevels = 1;
+        depthStencilDesc.ArraySize = 1;
+        depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+
+        // Use 4X MSAA? --must match swap chain MSAA values.
+        if (mEnable4xMsaa)
+        {
+            depthStencilDesc.SampleDesc.Count = 4;
+            depthStencilDesc.SampleDesc.Quality = m4xMsaaQuality - 1;
+        }
+        
+        // No MSAA
+        else
+        {
+            depthStencilDesc.SampleDesc.Count = 1;
+            depthStencilDesc.SampleDesc.Quality = 0;
+        }
+
+        depthStencilDesc.Usage = D3D11_USAGE_DEFAULT;
+        depthStencilDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        depthStencilDesc.CPUAccessFlags = 0; 
+        depthStencilDesc.MiscFlags = 0;
+
+        result = direct3DData.mDevice->CreateTexture2D(
+            &depthStencilDesc, 
+            0, 
+            &direct3DData.mDepthStencilBuffer);
+        
+        DxErrorChecker(result);
+
+        result = direct3DData.mDevice->CreateDepthStencilView(
+            direct3DData.mDepthStencilBuffer,
+            0, 
+            &direct3DData.mDepthStencilView);
+        
+        DxErrorChecker(result);
+
+        // Bind the render target view and depth/stencil view to the pipeline.
+        direct3DData.mImmediateContext->OMSetRenderTargets(
+            1, 
+            &direct3DData.mRenderTargetView, 
+            direct3DData.mDepthStencilView);
+
+        // Set the viewport transform.
+        direct3DData.mScreenViewport.TopLeftX = 0;
+        direct3DData.mScreenViewport.TopLeftY = 0;
+        direct3DData.mScreenViewport.Width = static_cast<float>(mClientWidth);
+        direct3DData.mScreenViewport.Height = static_cast<float>(mClientHeight);
+        direct3DData.mScreenViewport.MinDepth = 0.0f;
+        direct3DData.mScreenViewport.MaxDepth = 1.0f;
+
+        direct3DData.mImmediateContext->RSSetViewports(1, &direct3DData.mScreenViewport);
+
+        CameraUtils::setFrustrum(
+            0.25f * DirectX::XM_PI, 
+            aspectRatio(), 
+            1.0f, 
+            1000.0f, 
+            mCamera);
     }
 
     inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseDown(WPARAM btnState, 
@@ -84,7 +187,9 @@
         SetCapture(windowData.mMainWindow);
     }
 
-    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseUp(WPARAM btnState, const int32_t x, const int32_t y)
+    inline void GPUAcceleratedInterlockingTilesAlgorithmNaive::onMouseUp(WPARAM btnState, 
+                                                                         const int32_t x, 
+                                                                         const int32_t y)
     {
         ReleaseCapture();
     }
