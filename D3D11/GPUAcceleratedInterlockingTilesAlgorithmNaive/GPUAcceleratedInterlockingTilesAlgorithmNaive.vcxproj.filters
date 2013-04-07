@@ -125,9 +125,6 @@
     <ClInclude Include="Main\D3DData.h">
       <Filter>Main</Filter>
     </ClInclude>
-    <ClInclude Include="Main\Direct3D.h">
-      <Filter>Main</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="HLSL\Lights.hlsli">

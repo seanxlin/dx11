@@ -2,7 +2,6 @@
 
 #include <cstdint>
 #include <d3d11.h>
-#include <WindowsX.h>
 
 struct WindowState
 {
