@@ -163,10 +163,11 @@
     <ClCompile Include="..\Common\MathHelper.cpp" />
     <ClCompile Include="..\Common\ShadowMapper.cpp" />
     <ClCompile Include="..\Common\Timer.cpp" />
-    <ClCompile Include="Main\Direct3D.cpp" />
+    <ClCompile Include="Main\D3DData.cpp" />
     <ClCompile Include="Main\Globals.cpp" />
     <ClCompile Include="Main\main.cpp" />
     <ClCompile Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.cpp" />
+    <ClCompile Include="Main\WindowManager.cpp" />
     <ClCompile Include="Managers\GeometryBuffersManager.cpp" />
     <ClCompile Include="Managers\PipelineStatesManager.cpp" />
     <ClCompile Include="Managers\ShaderResourcesManager.cpp" />
@@ -184,9 +185,11 @@
     <ClInclude Include="..\Common\ShadowMapper.h" />
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="HLSL\Buffers.h" />
+    <ClInclude Include="Main\D3DData.h" />
     <ClInclude Include="Main\Direct3D.h" />
     <ClInclude Include="Main\Globals.h" />
     <ClInclude Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.h" />
+    <ClInclude Include="Main\WindowManager.h" />
     <ClInclude Include="Managers\GeometryBuffersManager.h" />
     <ClInclude Include="Managers\PipelineStatesManager.h" />
     <ClInclude Include="Managers\ShaderResourcesManager.h" />
