@@ -186,7 +186,6 @@
     <ClInclude Include="..\Common\Timer.h" />
     <ClInclude Include="HLSL\Buffers.h" />
     <ClInclude Include="Main\D3DData.h" />
-    <ClInclude Include="Main\Direct3D.h" />
     <ClInclude Include="Main\Globals.h" />
     <ClInclude Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.h" />
     <ClInclude Include="Main\WindowManager.h" />

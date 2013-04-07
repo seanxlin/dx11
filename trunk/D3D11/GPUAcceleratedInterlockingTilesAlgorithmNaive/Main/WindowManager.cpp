@@ -1,7 +1,6 @@
 #include "WindowManager.h"
 
-#include <d3d11.h>
-#include <WindowsX.h>
+#include <windowsx.h>
 
 #include <DxErrorChecker.h>
 #include <Timer.h>
@@ -243,55 +242,65 @@ namespace Events
     void onResize()
     {
         assert(Globals::gDirect3DData.mImmediateContext);
+        ID3D11DeviceContext& context = *Globals::gDirect3DData.mImmediateContext;
+
         assert(Globals::gDirect3DData.mDevice);
+        ID3D11Device& device = *Globals::gDirect3DData.mDevice;
+
         assert(Globals::gDirect3DData.mSwapChain);
+        IDXGISwapChain& swapChain = *Globals::gDirect3DData.mSwapChain;
 
         // Release the old views, as they hold references to the buffers we
         // will be destroying. Also release the old depth/stencil buffer.
-        if (Globals::gDirect3DData.mRenderTargetView)
+        ID3D11RenderTargetView*& renderTargetView = Globals::gDirect3DData.mRenderTargetView;
+        if (renderTargetView)
         {
-            Globals::gDirect3DData.mRenderTargetView->Release();
+            renderTargetView->Release();
         }
 
-        if (Globals::gDirect3DData.mDepthStencilView)
+        ID3D11DepthStencilView*& depthStencilView = Globals::gDirect3DData.mDepthStencilView;
+        if (depthStencilView)
         {
-            Globals::gDirect3DData.mDepthStencilView->Release();
+            depthStencilView->Release();
         }
 
-        if (Globals::gDirect3DData.mDepthStencilBuffer)
+        ID3D11Texture2D*& depthStencilBuffer = Globals::gDirect3DData.mDepthStencilBuffer;
+        if (depthStencilBuffer)
         {
-            Globals::gDirect3DData.mDepthStencilBuffer->Release();
+            depthStencilBuffer->Release();
         }
 
         // Resize the swap chain and recreate the render target view.
-        HRESULT result = Globals::gDirect3DData.mSwapChain->ResizeBuffers(
+        const uint32_t windowWidth = Globals::gWindowData.mClientWidth;
+        const uint32_t windowHeight = Globals::gWindowData.mClientHeight;
+        HRESULT result = swapChain.ResizeBuffers(
             1, 
-            Globals::gWindowData.mClientWidth, 
-            Globals::gWindowData.mClientHeight, 
+            windowWidth, 
+            windowHeight, 
             DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 
         DxErrorChecker(result);
 
         ID3D11Texture2D* backBuffer = nullptr;
-        result = Globals::gDirect3DData.mSwapChain->GetBuffer(
+        result = swapChain.GetBuffer(
             0, 
             __uuidof(ID3D11Texture2D), 
             reinterpret_cast<void**>(&backBuffer));
 
         DxErrorChecker(result);
 
-        result = Globals::gDirect3DData.mDevice->CreateRenderTargetView(
+        result = device.CreateRenderTargetView(
             backBuffer, 
             0, 
-            &Globals::gDirect3DData.mRenderTargetView);
+            &renderTargetView);
 
         DxErrorChecker(result);
         backBuffer->Release();
 
         // Create the depth/stencil buffer and view.
         D3D11_TEXTURE2D_DESC depthStencilDesc;	
-        depthStencilDesc.Width = Globals::gWindowData.mClientWidth;
-        depthStencilDesc.Height = Globals::gWindowData.mClientHeight;
+        depthStencilDesc.Width = windowWidth;
+        depthStencilDesc.Height = windowHeight;
         depthStencilDesc.MipLevels = 1;
         depthStencilDesc.ArraySize = 1;
         depthStencilDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
@@ -315,41 +324,42 @@ namespace Events
         depthStencilDesc.CPUAccessFlags = 0; 
         depthStencilDesc.MiscFlags = 0;
 
-        result = Globals::gDirect3DData.mDevice->CreateTexture2D(
+        result = device.CreateTexture2D(
             &depthStencilDesc, 
             0, 
-            &Globals::gDirect3DData.mDepthStencilBuffer);
+            &depthStencilBuffer);
 
         DxErrorChecker(result);
 
-        result = Globals::gDirect3DData.mDevice->CreateDepthStencilView(
-            Globals::gDirect3DData.mDepthStencilBuffer,
+        result = device.CreateDepthStencilView(
+            depthStencilBuffer,
             0, 
-            &Globals::gDirect3DData.mDepthStencilView);
+            &depthStencilView);
 
         DxErrorChecker(result);
 
         // Bind the render target view and depth/stencil view to the pipeline.
-        Globals::gDirect3DData.mImmediateContext->OMSetRenderTargets(
+        context.OMSetRenderTargets(
             1, 
-            &Globals::gDirect3DData.mRenderTargetView, 
-            Globals::gDirect3DData.mDepthStencilView);
+            &renderTargetView, 
+            depthStencilView);
 
         // Set the viewport transform.
-        if (!Globals::gDirect3DData.mScreenViewport) {
-            Globals::gDirect3DData.mScreenViewport = new D3D11_VIEWPORT();
+        D3D11_VIEWPORT*& screenViewport = Globals::gDirect3DData.mScreenViewport;
+        if (!screenViewport) {
+            screenViewport = new D3D11_VIEWPORT();
         }
 
-        Globals::gDirect3DData.mScreenViewport->TopLeftX = 0;
-        Globals::gDirect3DData.mScreenViewport->TopLeftY = 0;
-        Globals::gDirect3DData.mScreenViewport->Width = static_cast<float>(Globals::gWindowData.mClientWidth);
-        Globals::gDirect3DData.mScreenViewport->Height = static_cast<float>(Globals::gWindowData.mClientHeight);
-        Globals::gDirect3DData.mScreenViewport->MinDepth = 0.0f;
-        Globals::gDirect3DData.mScreenViewport->MaxDepth = 1.0f;
+        screenViewport->TopLeftX = 0;
+        screenViewport->TopLeftY = 0;
+        screenViewport->Width = static_cast<float>(windowWidth);
+        screenViewport->Height = static_cast<float>(windowHeight);
+        screenViewport->MinDepth = 0.0f;
+        screenViewport->MaxDepth = 1.0f;
 
-        Globals::gDirect3DData.mImmediateContext->RSSetViewports(1, Globals::gDirect3DData.mScreenViewport);
+        context.RSSetViewports(1, screenViewport);
 
-        const float aspectRatio = static_cast<float> (Globals::gWindowData.mClientWidth) / Globals::gWindowData.mClientHeight;
+        const float aspectRatio = static_cast<float> (windowWidth) / windowHeight;
         CameraUtils::setFrustrum(
             0.25f * DirectX::XM_PI, 
             aspectRatio, 
