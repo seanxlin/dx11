@@ -1,4 +1,7 @@
+#include "Globals.h"
 #include "GPUAcceleratedInterlockingTilesAlgorithmNaive.h"
+
+#include <crtdbg.h>
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, int showCmd)
 {
@@ -6,13 +9,15 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
 #if defined(DEBUG) | defined(_DEBUG)
     _CrtSetDbgFlag( _CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF );
 #endif
-
-    gWindowData.mAppInstance = hInstance;
-
+    
+    Globals::gAppInstance = hInstance;
+    
     GPUAcceleratedInterlockingTilesAlgorithmNaive gpuAcceleratedInterlockingTilesAlgorithmNaive; 
 
-    if (!gpuAcceleratedInterlockingTilesAlgorithmNaive.init(gDirect3DData, gWindowData))
+    if (!gpuAcceleratedInterlockingTilesAlgorithmNaive.init())
+    {
         return 0;
+    }
 
-    return gpuAcceleratedInterlockingTilesAlgorithmNaive.run(gDirect3DData, gWindowState, gWindowData);
+    return run();
 }

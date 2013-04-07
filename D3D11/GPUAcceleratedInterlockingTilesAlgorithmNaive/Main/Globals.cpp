@@ -1,31 +1,47 @@
 #include "Globals.h"
 
+HINSTANCE Globals::gAppInstance;
+WindowData Globals::gWindowData;
+Direct3DData Globals::gDirect3DData;
+Shaders Globals::gShaders;
+ShaderResources Globals::gShaderResources;
+PipelineStates Globals::gPipelineStates;
+GeometryBuffers Globals::gGeometryBuffers;
+Timer Globals::gTimer;
+Camera Globals::gCamera;
+MouseProperties Globals::gMouseProperties;
+WindowState Globals::gWindowState;
+
 namespace GlobalsUtils
 {
-    void init(ID3D11Device& device, 
-              ID3D11DeviceContext& context, 
-              Globals& globals)
+    void init()
     {
-        ShadersUtils::initAll(device, globals.mShaders);
+        WindowDataUtils::init(Globals::gWindowData);
+
+        Direct3DDataUtils::init(Globals::gDirect3DData, Globals::gWindowData);
+
+        ShadersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gShaders);
 
         ShaderResourcesUtils::initAll(
-            device, 
-            context, 
-            globals.mShaderResources);
+            *Globals::gDirect3DData.mDevice, 
+            *Globals::gDirect3DData.mImmediateContext, 
+            Globals::gShaderResources);
         
-        PipelineStatesUtils::initAll(device, globals.mPipelineStates);
+        PipelineStatesUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gPipelineStates);
 
-        GeometryBuffersUtils::initAll(device, globals.mGeometryBuffers);
+        GeometryBuffersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gGeometryBuffers);
     }
 
-    void destroy(Globals& globals)
+    void destroy()
     {
-        ShadersUtils::destroyAll(globals.mShaders);
+        ShadersUtils::destroyAll(Globals::gShaders);
 
-        ShaderResourcesUtils::destroyAll(globals.mShaderResources);
+        ShaderResourcesUtils::destroyAll(Globals::gShaderResources);
 
-        PipelineStatesUtils::destroyAll(globals.mPipelineStates);
+        PipelineStatesUtils::destroyAll(Globals::gPipelineStates);
 
-        GeometryBuffersUtils::destroyAll(globals.mGeometryBuffers);
+        GeometryBuffersUtils::destroyAll(Globals::gGeometryBuffers);
+
+        Direct3DDataUtils::destroy(Globals::gDirect3DData);
     }
 }

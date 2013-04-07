@@ -1,3 +1,6 @@
+#pragma once
+
+#include <Camera.h>
 #include <Timer.h>
 
 #include <Managers/GeometryBuffersManager.h>
@@ -5,24 +8,26 @@
 #include <Managers/ShaderResourcesManager.h>
 #include <Managers/ShadersManager.h>
 
-struct ID3D11Device;
-struct ID3D11DeviceContext;
+#include "D3DData.h"
+#include "WindowManager.h"
 
 struct Globals
 {
-    Shaders mShaders;
-    ShaderResources mShaderResources;
-    PipelineStates mPipelineStates;
-    GeometryBuffers mGeometryBuffers;
-    Timer mTimer;
+    static HINSTANCE gAppInstance;
+    static WindowData gWindowData;
+    static Direct3DData gDirect3DData;
+    static Shaders gShaders;
+    static ShaderResources gShaderResources;
+    static PipelineStates gPipelineStates;
+    static GeometryBuffers gGeometryBuffers;
+    static Timer gTimer;
+    static Camera gCamera;
+    static MouseProperties gMouseProperties;
+    static WindowState gWindowState;
 };
-
-static Globals gGlobals;
 
 namespace GlobalsUtils
 {
-    void init(ID3D11Device& device, 
-              ID3D11DeviceContext& context, 
-              Globals& globals);
-    void destroy(Globals& globals);
+    void init();
+    void destroy();
 }

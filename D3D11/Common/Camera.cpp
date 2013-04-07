@@ -1,23 +1,5 @@
 #include "Camera.h"
 
-namespace
-{
-    void lookAt(DirectX::FXMVECTOR position, 
-                DirectX::FXMVECTOR target, 
-                DirectX::FXMVECTOR worldUp,
-                Camera& camera)
-    {
-        const DirectX::XMVECTOR look = DirectX::XMVector3Normalize(DirectX::XMVectorSubtract(target, position));
-        const DirectX::XMVECTOR right = DirectX::XMVector3Normalize(DirectX::XMVector3Cross(worldUp, look));
-        const DirectX::XMVECTOR up = DirectX::XMVector3Cross(look, right);
-
-        DirectX::XMStoreFloat3(&camera.mPosition, position);
-        DirectX::XMStoreFloat3(&camera.mLook, look);
-        DirectX::XMStoreFloat3(&camera.mRight, right);
-        DirectX::XMStoreFloat3(&camera.mUp, up);
-    }
-}
-
 namespace CameraUtils
 {
     void setFrustrum(const float fieldOfViewY, 
@@ -36,7 +18,8 @@ namespace CameraUtils
         camera.mNearWindowHeight = 2.0f * camera.mNearZ * tanf(halfFovY);
         camera.mFarWindowHeight  = 2.0f * camera.mFarZ * tanf(halfFovY);
 
-        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(camera.mFovY, 
+        DirectX::XMMATRIX projectionMatrix = DirectX::XMMatrixPerspectiveFovLH(
+            camera.mFovY, 
             camera.mAspect, 
             camera.mNearZ, 
             camera.mFarZ);
