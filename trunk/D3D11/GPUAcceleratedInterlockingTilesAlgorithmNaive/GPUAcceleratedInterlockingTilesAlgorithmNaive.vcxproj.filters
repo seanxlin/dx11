@@ -48,9 +48,6 @@
     <ClCompile Include="Managers\ShadersManager.cpp">
       <Filter>Managers</Filter>
     </ClCompile>
-    <ClCompile Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.cpp">
-      <Filter>Main</Filter>
-    </ClCompile>
     <ClCompile Include="..\Common\HeightMap.cpp">
       <Filter>Common</Filter>
     </ClCompile>
@@ -64,6 +61,12 @@
       <Filter>Main</Filter>
     </ClCompile>
     <ClCompile Include="Main\D3DData.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Application.cpp">
+      <Filter>Main</Filter>
+    </ClCompile>
+    <ClCompile Include="Main\Scene.cpp">
       <Filter>Main</Filter>
     </ClCompile>
   </ItemGroup>
@@ -107,9 +110,6 @@
     <ClInclude Include="Managers\ShadersManager.h">
       <Filter>Managers</Filter>
     </ClInclude>
-    <ClInclude Include="Main\GPUAcceleratedInterlockingTilesAlgorithmNaive.h">
-      <Filter>Main</Filter>
-    </ClInclude>
     <ClInclude Include="..\Common\HeightMap.h">
       <Filter>Common</Filter>
     </ClInclude>
@@ -123,6 +123,12 @@
       <Filter>Main</Filter>
     </ClInclude>
     <ClInclude Include="Main\D3DData.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Application.h">
+      <Filter>Main</Filter>
+    </ClInclude>
+    <ClInclude Include="Main\Scene.h">
       <Filter>Main</Filter>
     </ClInclude>
   </ItemGroup>
