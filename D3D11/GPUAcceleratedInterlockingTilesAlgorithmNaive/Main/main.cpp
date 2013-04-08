@@ -1,5 +1,5 @@
+#include "Application.h"
 #include "Globals.h"
-#include "GPUAcceleratedInterlockingTilesAlgorithmNaive.h"
 
 #include <crtdbg.h>
 
@@ -12,12 +12,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
     
     Globals::gAppInstance = hInstance;
     
-    GPUAcceleratedInterlockingTilesAlgorithmNaive gpuAcceleratedInterlockingTilesAlgorithmNaive; 
-
-    if (!gpuAcceleratedInterlockingTilesAlgorithmNaive.init())
+    if (!Application::init())
     {
         return 0;
     }
 
-    return run();
+    return Application::run();
 }

@@ -28,6 +28,6 @@ struct Globals
 
 namespace GlobalsUtils
 {
-    void init();
+    bool init();
     void destroy();
 }

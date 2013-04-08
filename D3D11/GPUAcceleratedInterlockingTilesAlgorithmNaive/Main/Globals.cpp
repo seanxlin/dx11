@@ -14,11 +14,15 @@ WindowState Globals::gWindowState;
 
 namespace GlobalsUtils
 {
-    void init()
+    bool init()
     {
-        WindowDataUtils::init(Globals::gWindowData);
+        const bool success = WindowDataUtils::init(Globals::gWindowData) && 
+                             Direct3DDataUtils::init(Globals::gDirect3DData, Globals::gWindowData);
 
-        Direct3DDataUtils::init(Globals::gDirect3DData, Globals::gWindowData);
+        if (!success)
+        {
+            return success;
+        }
 
         ShadersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gShaders);
 
@@ -30,6 +34,8 @@ namespace GlobalsUtils
         PipelineStatesUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gPipelineStates);
 
         GeometryBuffersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gGeometryBuffers);
+    
+        return success;
     }
 
     void destroy()
