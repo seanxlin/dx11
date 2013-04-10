@@ -37,6 +37,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ShadowMapping", "ShadowMapp
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingTilesAlgorithmNaive", "GPUAcceleratedInterlockingTilesAlgorithmNaive\GPUAcceleratedInterlockingTilesAlgorithmNaive.vcxproj", "{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingTilesAlgorithmCS", "GPUAcceleratedInterlockingTilesAlgorithmCS\GPUAcceleratedInterlockingTilesAlgorithmCS.vcxproj", "{0A109334-FBAF-4339-8900-E4BFC303F9BA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -263,6 +265,18 @@ Global
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|Win32.Build.0 = Release|Win32
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|x64.ActiveCfg = Release|x64
 		{D2D1559A-B8ED-47C7-92E5-8565C1824AFB}.Release|x64.Build.0 = Release|x64
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|Win32.ActiveCfg = Debug|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|Win32.Build.0 = Debug|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|x64.ActiveCfg = Debug|x64
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Debug|x64.Build.0 = Debug|x64
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|Win32.ActiveCfg = Release|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|Win32.Build.0 = Release|Win32
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|x64.ActiveCfg = Release|x64
+		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

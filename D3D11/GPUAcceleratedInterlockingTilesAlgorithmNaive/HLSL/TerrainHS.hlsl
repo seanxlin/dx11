@@ -27,7 +27,7 @@ struct HSPerPatchOutput
 #define MAX_DISTANCE 256.0f
 #define MIN_MAX_DIFFERENCE_INVERTED (1.0f / (MAX_DISTANCE - MIN_DISTANCE))
 #define MIN_LOD 1.0f
-#define MAX_LOD 5.0f
+#define MAX_LOD 6.0f
 
 float3 computePatchMidPoint(const float3 point0, const float3 point1, const float3 point2, const float3 point3)
 {
