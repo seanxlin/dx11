@@ -124,39 +124,58 @@ namespace ShaderResourcesUtils
                  ID3D11DeviceContext& context, 
                  ShaderResources& shaderResources)
     {
-        assert(shaderResources.mTerrainDiffuseMapSRV == nullptr);
         assert(shaderResources.mHeightMapSRV == nullptr);
+        assert(shaderResources.mTerrainDiffuseMapArraySRV == nullptr);
+        assert(shaderResources.mTerrainBlendMapSRV == nullptr);
 
         ID3D11Resource* texture = nullptr;
-
-        // Diffuse map
-        HRESULT result = CreateDDSTextureFromFile(&device, 
-                                                  L"Resources/Textures/stone.dds", 
-                                                  &texture, 
-                                                  &shaderResources.mTerrainDiffuseMapSRV);
-        DxErrorChecker(result);  
-
-        texture->Release();
 
         // Height map
         const uint32_t heightMapDimension = 512;
         HeightMap heightMap(heightMapDimension);
-        const float heightMapScaleFactor = 50.0f;
-        HeightMapUtils::loadHeightMapFromRAWFile("Resources/Textures/terrain33.raw",
-                                                 heightMapScaleFactor, 
-                                                 heightMap);
+        const float heightMapScaleFactor = 150.0f;
+        HeightMapUtils::loadHeightMapFromRAWFile(
+            "Resources/Textures/terrainRaw.raw",
+            heightMapScaleFactor, 
+            heightMap);
+
         HeightMapUtils::applyNeighborsFilter(heightMap);
-        shaderResources.mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(device, 
-                                                                          heightMap,  
-                                                                          D3D11_BIND_SHADER_RESOURCE);
+        shaderResources.mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(
+            device,
+            heightMap,
+            D3D11_BIND_SHADER_RESOURCE);
+
+        // Create terrain textures array.
+        std::vector<std::wstring> texturesFilenames;
+        texturesFilenames.push_back(L"Resources/Textures/grass.dds");
+        texturesFilenames.push_back(L"Resources/Textures/lightdirt.dds");
+        texturesFilenames.push_back(L"Resources/Textures/stone.dds");
+        texturesFilenames.push_back(L"Resources/Textures/darkdirt.dds");
+        texturesFilenames.push_back(L"Resources/Textures/snow.dds");
+        shaderResources.mTerrainDiffuseMapArraySRV = createTexture2DArraySRV(
+            device, 
+            context, 
+            texturesFilenames); 
+
+        // Blend map
+        HRESULT result = CreateDDSTextureFromFile(&device, 
+            L"Resources/Textures/blend.dds", 
+            &texture, 
+            &shaderResources.mTerrainBlendMapSRV);
+        DxErrorChecker(result);  
+
+        texture->Release();
     }
     
     void destroyAll(ShaderResources& shaderResources)
     {
-        assert(shaderResources.mTerrainDiffuseMapSRV);
         assert(shaderResources.mHeightMapSRV);
+        assert(shaderResources.mTerrainDiffuseMapArraySRV);
+        assert(shaderResources.mTerrainBlendMapSRV);
 
-        shaderResources.mTerrainDiffuseMapSRV->Release();
         shaderResources.mHeightMapSRV->Release();
+        shaderResources.mTerrainDiffuseMapArraySRV->Release();
+        shaderResources.mTerrainBlendMapSRV->Release();
+
     }
 }

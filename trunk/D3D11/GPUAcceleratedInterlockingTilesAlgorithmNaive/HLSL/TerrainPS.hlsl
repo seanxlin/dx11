@@ -10,7 +10,8 @@ cbuffer cbPerFrame : register(b0)
     float gWorldCellSpace;
 };
 
-SamplerState gSamplerState : register(s0);
+SamplerState gHeightMapSampler : register(s0);
+SamplerState gTexturesSampler : register(s1);
 
 struct PSInput
 {
@@ -19,16 +20,31 @@ struct PSInput
     float2 mTexCoord : TEXCOORD;
 };
 
-Texture2D gDiffuseMap : register(t0);
-Texture2D gHeightMap : register(t1);
+Texture2D gHeightMap : register(t0);
+Texture2DArray gLayerMapArray : register(t1);
+Texture2D gBlendMap : register(t2);
 
 float4 main(in PSInput psInput) : SV_TARGET
 {
     // Compute vector from pixel position to eye.
 	const float3 toEyeW = normalize(gEyePositionW - psInput.mPositionW);
-
-    // Sample texture
-    float4 texColor = gDiffuseMap.Sample(gSamplerState, psInput.mTexCoord);
+    
+    // Sample layers in texture array.
+	const float4 texel0 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 0.0f) );
+	const float4 texel1 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 1.0f) );
+	//float4 texel2 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 2.0f) );
+	float4 texel3 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 3.0f) );
+	//float4 texel4 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 4.0f) ); 
+	
+	// Sample the blend map.
+	const float4 blendMapTexel  = gBlendMap.Sample( gTexturesSampler, psInput.mTexCoord ); 
+    
+    // Blend the layers on top of each other.
+    float4 texColor = texel0;
+    texColor = lerp(texColor, texel1, blendMapTexel.r);
+    //texColor = lerp(texColor, texel2, blendMapTexel.g);
+    texColor = lerp(texColor, texel3, blendMapTexel.b);
+    //texColor = lerp(texColor, texel4, blendMapTexel.a);
 
 	// Start with a sum of zero. 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
@@ -48,10 +64,10 @@ float4 main(in PSInput psInput) : SV_TARGET
 	const float2 bottomTexel = psInput.mTexCoord + float2(0.0f, gTexelCellSpaceV);
 	const float2 topTexel = psInput.mTexCoord + float2(0.0f, -gTexelCellSpaceV);
 	
-	const float leftTexelHeight = gHeightMap.SampleLevel(gSamplerState, leftTexel, 0).r;
-	const float rightTexelHeight  = gHeightMap.SampleLevel(gSamplerState, rightTexel, 0).r;
-	const float bottomTexelHeight = gHeightMap.SampleLevel(gSamplerState, bottomTexel, 0).r;
-	const float topTexelHeight = gHeightMap.SampleLevel(gSamplerState, topTexel, 0).r;
+	const float leftTexelHeight = gHeightMap.SampleLevel(gHeightMapSampler, leftTexel, 0).r;
+	const float rightTexelHeight  = gHeightMap.SampleLevel(gHeightMapSampler, rightTexel, 0).r;
+	const float bottomTexelHeight = gHeightMap.SampleLevel(gHeightMapSampler, bottomTexel, 0).r;
+	const float topTexelHeight = gHeightMap.SampleLevel(gHeightMapSampler, topTexel, 0).r;
 	
 	const float3 tangent = normalize(float3(2.0f * gWorldCellSpace, rightTexelHeight - leftTexelHeight, 0.0f));
 	const float3 bitangent = normalize(float3(0.0f, bottomTexelHeight - topTexelHeight, 2.0f * gWorldCellSpace)); 

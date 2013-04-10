@@ -7,13 +7,14 @@ struct ID3D11SamplerState;
 struct PipelineStates
 {
     PipelineStates()
-        : mLinearSS(nullptr)
+        : mLinearClampSS(nullptr)
         , mWireframeRS(nullptr)
     {
 
     }
 
-    ID3D11SamplerState* mLinearSS;
+    ID3D11SamplerState* mLinearClampSS;
+    ID3D11SamplerState* mLinearWrapSS;
     ID3D11RasterizerState* mWireframeRS;
 };
 

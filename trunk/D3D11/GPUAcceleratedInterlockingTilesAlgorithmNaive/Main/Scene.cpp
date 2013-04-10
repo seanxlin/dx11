@@ -135,7 +135,7 @@ namespace TerrainSceneUtils
         context.DSSetShaderResources(0, 1, domainShaderResources);
 
         // Sampler state
-        context.DSSetSamplers(0, 1, &Globals::gPipelineStates.mLinearSS);
+        context.DSSetSamplers(0, 1, &Globals::gPipelineStates.mLinearClampSS);
 
         //
         // Pixel Shader Stage
@@ -165,13 +165,19 @@ namespace TerrainSceneUtils
         // Resources
         ID3D11ShaderResourceView * const pixelShaderResources[] = 
         { 
-            Globals::gShaderResources.mTerrainDiffuseMapSRV,
-            Globals::gShaderResources.mHeightMapSRV
+            Globals::gShaderResources.mHeightMapSRV,
+            Globals::gShaderResources.mTerrainDiffuseMapArraySRV,
+            Globals::gShaderResources.mTerrainBlendMapSRV
         };
-        context.PSSetShaderResources(0, 2, pixelShaderResources);
+        context.PSSetShaderResources(0, 3, pixelShaderResources);
 
         // Sampler state
-        context.PSSetSamplers(0, 1, &Globals::gPipelineStates.mLinearSS);
+        ID3D11SamplerState* const samplerStates[] =
+        {
+            Globals::gPipelineStates.mLinearClampSS,
+            Globals::gPipelineStates.mLinearWrapSS
+        };
+        context.PSSetSamplers(0, 2, samplerStates);
 
         //
         // Draw

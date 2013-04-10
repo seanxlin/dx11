@@ -9,14 +9,16 @@ struct ID3D11RenderTargetView;
 struct ShaderResources
 {
     ShaderResources()
-        : mTerrainDiffuseMapSRV(nullptr)
-        , mHeightMapSRV(nullptr)
+        : mHeightMapSRV(nullptr)
+        , mTerrainDiffuseMapArraySRV(nullptr)
+        , mTerrainBlendMapSRV(nullptr)
     {
 
     }
 
-    ID3D11ShaderResourceView* mTerrainDiffuseMapSRV;
     ID3D11ShaderResourceView* mHeightMapSRV;
+    ID3D11ShaderResourceView* mTerrainDiffuseMapArraySRV;
+    ID3D11ShaderResourceView* mTerrainBlendMapSRV;
 };
 
 namespace ShaderResourcesUtils
