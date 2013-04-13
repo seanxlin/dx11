@@ -107,7 +107,7 @@ float computePatchLODUsingLookup(in const float3 midPoint,
 	//    naieve linear form (see ComputePatchLOD) but it will work
 	//    to ensure extra triangles aren't generated for patches that
 	//    don't need them.
-	const float lod = lookup.a * (1.0f - scaledDistance);
+	const float lod = lookup.w * (1.0f - scaledDistance);
 	
 	// Finally, transform this value into an actual LOD
 	return lerp(MIN_LOD, MAX_LOD, clamp(lod, 0.0f, 1.0f) );
