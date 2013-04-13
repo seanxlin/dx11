@@ -28,8 +28,8 @@ struct HSPerPatchOutput
 #define MIN_MAX_DIFFERENCE_INVERTED (1.0f / (MAX_DISTANCE - MIN_DISTANCE))
 #define MIN_LOD 1.0f
 #define MAX_LOD 6.0f
-#define HEIGHT_MAP_WIDTH 512.0f
-#define HEIGHT_MAP_HEIGHT 512.0f
+#define NUM_GROUPS_X 32
+#define NUM_GROUPS_Y 32
 
 Texture2D gTextureLODLookup : register(t0);
 
@@ -61,30 +61,27 @@ float computePatchLOD(const float3 midPoint)
 float4 readLookup(in const uint2 index)
 {
     const uint3 extendedIndex = uint3(index, 0);
-    const float4 altaSarasa = gTextureLODLookup.Load(extendedIndex);
-    const float4 sa = altaSarasa * 4;
-	return altaSarasa;
+    const float4 texel = gTextureLODLookup.Load(extendedIndex);
+
+	return texel;
 }
 
 uint2 computeLookupIndex(in const uint patch, 
                          in const int xOffset, 
                          in const int zOffset)
 {
-    const uint oControl = patch;
-    const uint sarasa = oControl + 10;
-
 	// For a 32x32 grid there will be 1024 patches
 	// thus 'patch' is 0-1023, we need to decode
 	// this into an XY coordinate
 	uint2 p;
 	
-	p.x = oControl % (uint)32;
-	p.y = oControl / (uint)32;
+	p.x = patch % NUM_GROUPS_X;
+	p.y = patch / NUM_GROUPS_Y;
 	
 	// With the XY coordinate for the patch being rendered we
 	// then need to offset it according to the parameters
-	p.x = clamp(p.x + xOffset, 0, ((uint)32) - 1);
-	p.y = clamp(p.y + zOffset, 0, ((uint)32) - 1);
+	p.x = clamp(p.x + xOffset, 0, (NUM_GROUPS_X - 1));
+	p.y = clamp(p.y + zOffset, 0, (NUM_GROUPS_Y - 1));
 	
 	return p;
 }
@@ -93,7 +90,7 @@ float computePatchLODUsingLookup(in const float3 midPoint,
                                  in const float4 lookup)
 {
 	// Compute the scaled distance
-	const float scaledDistance = computeScaledDistance(gEyePositionW, midPoint);
+	const float scaledDistance = min(computeScaledDistance(gEyePositionW, midPoint), 1.0f);
 	
 	// lookup:
 	//	x,y,z = patch normal
@@ -110,7 +107,7 @@ float computePatchLODUsingLookup(in const float3 midPoint,
 	//    naieve linear form (see ComputePatchLOD) but it will work
 	//    to ensure extra triangles aren't generated for patches that
 	//    don't need them.
-	const float lod = lookup.r * (1.0f - scaledDistance);
+	const float lod = lookup.a * (1.0f - scaledDistance);
 	
 	// Finally, transform this value into an actual LOD
 	return lerp(MIN_LOD, MAX_LOD, clamp(lod, 0.0f, 1.0f) );
@@ -209,12 +206,9 @@ HSOutput main(in const InputPatch<HSInput, NUM_INPUT_CONTROL_POINTS> inputPatch,
               in const uint outputControlPointID : SV_OutputControlPointID)
 {
 	HSOutput hsOutput = (HSOutput)0;
-
-    const uint oControl = outputControlPointID;
-    const uint sarasa = oControl + 10;
     
-    hsOutput.mPositionW = inputPatch[oControl].mPositionW;
-    hsOutput.mTexCoord = inputPatch[oControl].mTexCoord;
+    hsOutput.mPositionW = inputPatch[outputControlPointID].mPositionW;
+    hsOutput.mTexCoord = inputPatch[outputControlPointID].mTexCoord;
 
 	return hsOutput;
 }
