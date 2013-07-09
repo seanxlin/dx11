@@ -149,9 +149,7 @@ namespace ShaderResourcesUtils
         std::vector<std::wstring> texturesFilenames;
         texturesFilenames.push_back(L"Resources/Textures/grass.dds");
         texturesFilenames.push_back(L"Resources/Textures/lightdirt.dds");
-        texturesFilenames.push_back(L"Resources/Textures/stone.dds");
         texturesFilenames.push_back(L"Resources/Textures/darkdirt.dds");
-        texturesFilenames.push_back(L"Resources/Textures/snow.dds");
         shaderResources.mTerrainDiffuseMapArraySRV = createTexture2DArraySRV(
             device, 
             context, 

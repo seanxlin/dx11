@@ -32,9 +32,7 @@ float4 main(in PSInput psInput) : SV_TARGET
     // Sample layers in texture array.
 	const float4 texel0 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 0.0f) );
 	const float4 texel1 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 1.0f) );
-	//float4 texel2 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 2.0f) );
-	float4 texel3 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 3.0f) );
-	//float4 texel4 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 4.0f) ); 
+	const float4 texel2 = gLayerMapArray.Sample( gTexturesSampler, float3(psInput.mTexCoord * 10.0f, 2.0f) );
 	
 	// Sample the blend map.
 	const float4 blendMapTexel  = gBlendMap.Sample( gTexturesSampler, psInput.mTexCoord ); 
@@ -42,10 +40,8 @@ float4 main(in PSInput psInput) : SV_TARGET
     // Blend the layers on top of each other.
     float4 texColor = texel0;
     texColor = lerp(texColor, texel1, blendMapTexel.r);
-    //texColor = lerp(texColor, texel2, blendMapTexel.g);
-    texColor = lerp(texColor, texel3, blendMapTexel.b);
-    //texColor = lerp(texColor, texel4, blendMapTexel.a);
-
+    texColor = lerp(texColor, texel2, blendMapTexel.b);
+    
 	// Start with a sum of zero. 
 	float4 ambient = float4(0.0f, 0.0f, 0.0f, 0.0f);
 	float4 diffuse = float4(0.0f, 0.0f, 0.0f, 0.0f);

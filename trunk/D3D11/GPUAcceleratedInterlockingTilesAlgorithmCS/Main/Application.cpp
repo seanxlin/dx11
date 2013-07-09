@@ -57,6 +57,9 @@ namespace Application
 
         TerrainSceneUtils::init(gTerrainScene);
 
+        Globals::gCamera.mPosition = DirectX::XMFLOAT3(0.0f, 100.0f, 0.0f);
+        Globals::gCamera.mLook = DirectX::XMFLOAT3(0.0f, -1.0f, 0.0f);
+
         return success;
     }
 
@@ -142,7 +145,7 @@ namespace Application
     {
         assert(Globals::gDirect3DData.mImmediateContext);
 
-        Globals::gDirect3DData.mImmediateContext->ClearRenderTargetView(Globals::gDirect3DData.mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Silver));
+        Globals::gDirect3DData.mImmediateContext->ClearRenderTargetView(Globals::gDirect3DData.mRenderTargetView, reinterpret_cast<const float*>(&DirectX::Colors::Black));
         Globals::gDirect3DData.mImmediateContext->ClearDepthStencilView(Globals::gDirect3DData.mDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
         Globals::gDirect3DData.mImmediateContext->RSSetState(Globals::gWindowData.mWireframeMode ? Globals::gPipelineStates.mWireframeRS : nullptr);
 

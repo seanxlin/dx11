@@ -56,21 +56,34 @@ namespace TerrainSceneUtils
         context.CSSetShader(Globals::gShaders.mTerrainCS, nullptr, 0);
 
         // Set shaders resources
-        ID3D11ShaderResourceView* shaderResourceViews[] = 
+        const uint32_t srvMaxSlots = D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT;
+        ID3D11ShaderResourceView* shaderResourceViews[srvMaxSlots] = 
         { 
             Globals::gShaderResources.mHeightMapSRV 
         };
-        context.CSSetShaderResources(0, 1, shaderResourceViews);
+        context.CSSetShaderResources(0, srvMaxSlots, shaderResourceViews);
 
-        ID3D11UnorderedAccessView* unorderedAccessViews[] = 
+        const uint32_t uavMaxSlots = D3D11_PS_CS_UAV_REGISTER_COUNT;
+        ID3D11UnorderedAccessView* unorderedAccessViews[uavMaxSlots] = 
         { 
             Globals::gShaderResources.mGroupResultsUAV
         };
-        context.CSSetUnorderedAccessViews(0, 1, unorderedAccessViews, nullptr);  
+        context.CSSetUnorderedAccessViews(0, uavMaxSlots, unorderedAccessViews, nullptr);  
 
         // For a 512 x 512 texture we will consider 32 x 32 thread groups
         // with 16 x 16 threads per group
         context.Dispatch(32, 32, 1);
+
+        memset(shaderResourceViews, 0, sizeof(ID3D11ShaderResourceView*) * srvMaxSlots);
+        context.CSSetShaderResources(0, 
+            srvMaxSlots, 
+            shaderResourceViews);
+
+        memset(unorderedAccessViews, 0, sizeof(ID3D11ShaderResourceView*) * uavMaxSlots);
+        context.CSSetUnorderedAccessViews(0, 
+            uavMaxSlots, 
+            unorderedAccessViews,
+            nullptr);
     }
 
     void draw(TerrainScene& terrainScene)
