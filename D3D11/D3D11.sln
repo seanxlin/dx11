@@ -39,6 +39,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingT
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GPUAcceleratedInterlockingTilesAlgorithmCS", "GPUAcceleratedInterlockingTilesAlgorithmCS\GPUAcceleratedInterlockingTilesAlgorithmCS.vcxproj", "{0A109334-FBAF-4339-8900-E4BFC303F9BA}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TestingCS", "TestingCS\TestingCS.vcxproj", "{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Mixed Platforms = Debug|Mixed Platforms
@@ -277,6 +279,18 @@ Global
 		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|Win32.Build.0 = Release|Win32
 		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|x64.ActiveCfg = Release|x64
 		{0A109334-FBAF-4339-8900-E4BFC303F9BA}.Release|x64.Build.0 = Release|x64
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|Win32.ActiveCfg = Debug|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|Win32.Build.0 = Debug|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|x64.ActiveCfg = Debug|x64
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Debug|x64.Build.0 = Debug|x64
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|Win32.ActiveCfg = Release|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|Win32.Build.0 = Release|Win32
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|x64.ActiveCfg = Release|x64
+		{00B52CA7-D1A7-43EA-8499-8CA1A8BD7EF3}.Release|x64.Build.0 = Release|x64
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
