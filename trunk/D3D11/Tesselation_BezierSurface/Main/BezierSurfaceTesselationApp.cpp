@@ -86,7 +86,7 @@ namespace Framework
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
             CameraUtils::pitch(dy, mCamera);
-            CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::rotateAboutYAxis(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -163,13 +163,13 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mSandTexTransform);
         DirectX::XMStoreFloat4x4(&mBezierSurfaceDSPerFrameBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mBezierSurfaceDSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mBezierSurfaceDSPerFrameBuffer);
         
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mBezierSurfaceHSPerFrameBuffer);
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mBezierSurfaceDSPerFrameBuffer);
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mBezierSurfacePSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mBezierSurfaceHSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mBezierSurfaceDSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mBezierSurfacePSPerFrameBuffer);
         mImmediateContext->Draw(vertexCount, baseVertexLocation);
     }
 }

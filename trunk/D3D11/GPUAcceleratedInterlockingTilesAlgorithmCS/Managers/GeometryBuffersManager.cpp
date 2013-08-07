@@ -20,7 +20,7 @@ namespace
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGridForInterlockingTiles(512, 512, 32, 32, grid);
+        GeometryGenerator::generateGridForInterlockingTiles(512, 512, 32, 32, grid);
 
         // Cache base vertex location
         geometryBuffers.mBufferInfo->mBaseVertexLocation = 0;

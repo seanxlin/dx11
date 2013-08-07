@@ -12,10 +12,9 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE prevInstance, PSTR cmdLine, in
     
     Globals::gAppInstance = hInstance;
     
-    if (!Application::init())
-    {
+    if (!Application::initApplication()) {
         return 0;
     }
 
-    return Application::run();
+    return Application::executeApplication();
 }

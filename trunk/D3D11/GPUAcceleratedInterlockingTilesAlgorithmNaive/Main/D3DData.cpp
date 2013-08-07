@@ -26,15 +26,13 @@ namespace
                                            &context);
 
         // Check proper creation
-        if (result < 0)
-        {
+        if (result < 0) {
             MessageBox(0, L"D3D11CreateDevice Failed.", 0, 0);
 
             return false;
         }
 
-        if (featureLevel != D3D_FEATURE_LEVEL_11_0)
-        {
+        if (featureLevel != D3D_FEATURE_LEVEL_11_0) {
             MessageBox(0, L"Direct3D Feature Level 11 unsupported.", 0, 0);
 
             return false;
@@ -86,18 +84,19 @@ namespace
     {
         // To correctly create the swap chain, we must use the IDXGIFactory that was
         // used to create the device."
-        IDXGIDevice* dxgiDevice = nullptr;
+        IDXGIDevice* dxgiDevice;
         HRESULT result = device.QueryInterface(__uuidof(IDXGIDevice), 
                                                reinterpret_cast<void**> (&dxgiDevice));
         DxErrorChecker(result);  
         assert(dxgiDevice);
 
-        IDXGIAdapter* dxgiAdapter = nullptr;
-        result = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**> (&dxgiAdapter));
+        IDXGIAdapter* dxgiAdapter;
+        result = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), 
+                                       reinterpret_cast<void**> (&dxgiAdapter));
         DxErrorChecker(result);  
         assert(dxgiAdapter);
 
-        IDXGIFactory* dxgiFactory = nullptr;
+        IDXGIFactory* dxgiFactory;
         result = dxgiAdapter->GetParent(__uuidof(IDXGIFactory), 
                                         reinterpret_cast<void**> (&dxgiFactory));
         DxErrorChecker(result);
@@ -137,6 +136,18 @@ namespace
     }
 }
 
+Direct3DData::Direct3DData()
+    : mDevice(nullptr)
+    , mImmediateContext(nullptr)
+    , mSwapChain(nullptr)
+    , mDepthStencilBuffer(nullptr)
+    , mRenderTargetView(nullptr)
+    , mDepthStencilView(nullptr)
+    , mScreenViewport(nullptr)
+{
+
+}
+
 namespace Direct3DDataUtils
 {
     bool init(Direct3DData& direct3DData, WindowData& windowData)
@@ -167,8 +178,7 @@ namespace Direct3DDataUtils
                                                     createDeviceFlags,
                                                     driverType);
 
-        if (!success)
-        {
+        if (!success) {
             return false;
         }
 
@@ -178,7 +188,7 @@ namespace Direct3DDataUtils
         //
 
         uint32_t& msaaQuality = windowData.m4xMsaaQuality;
-        const uint32_t sampleCount = 1;//4;
+        const uint32_t sampleCount = 1; //4
         const DXGI_FORMAT displayFormat = DXGI_FORMAT_R8G8B8A8_UNORM;
         HRESULT result = device->CheckMultisampleQualityLevels(displayFormat,
                                                                sampleCount,
@@ -198,7 +208,7 @@ namespace Direct3DDataUtils
                           windowData.mClientHeight,
                           sampleCount,
                           displayFormat,
-                          1,//msaaQuality,
+                          msaaQuality,
                           windowData.mMainWindow);
 
         IDXGISwapChain*& swapChain = direct3DData.mSwapChain;
@@ -208,7 +218,7 @@ namespace Direct3DDataUtils
         //
         // Create render target view
         //
-        ID3D11Texture2D* backBuffer = nullptr;
+        ID3D11Texture2D* backBuffer;
         result = swapChain->GetBuffer(0, // buffer number
                                       __uuidof(ID3D11Texture2D), 
                                       reinterpret_cast<void**>(&backBuffer));
@@ -256,9 +266,7 @@ namespace Direct3DDataUtils
         assert(depthStencilView);
 
         // Bind the render target view and depth/stencil view to the pipeline.
-        context->OMSetRenderTargets(1,
-                                    &renderTargetView, 
-                                    depthStencilView);
+        context->OMSetRenderTargets(1, &renderTargetView, depthStencilView);
 
 
         //
@@ -273,22 +281,20 @@ namespace Direct3DDataUtils
         screenViewport->MinDepth = 0.0f;
         screenViewport->MaxDepth = 1.0f;
 
-        context->RSSetViewports(1, 
-                                screenViewport);
+        context->RSSetViewports(1, screenViewport);
 
 
         //
         // Initialize camera
         //
 
-        const float aspectRatio = static_cast<float> (windowData.mClientWidth) 
-                                  / windowData.mClientHeight;
-        CameraUtils::setFrustrum(
-            0.25f * DirectX::XM_PI, 
-            aspectRatio, 
-            1.0f, 
-            1000.0f, 
-            Globals::gCamera);
+        const float aspectRatio = 
+            static_cast<float> (windowData.mClientWidth) / windowData.mClientHeight;
+        CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, 
+                                 aspectRatio, 
+                                 1.0f, 
+                                 1000.0f, 
+                                 Globals::gCamera);
 
         return true;
     }

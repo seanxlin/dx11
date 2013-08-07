@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Manager class to initialize, destroy and access to shader resources
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 struct ID3D11Device;
@@ -8,13 +14,7 @@ struct ID3D11RenderTargetView;
 
 struct ShaderResources
 {
-    ShaderResources()
-        : mHeightMapSRV(nullptr)
-        , mTerrainDiffuseMapArraySRV(nullptr)
-        , mTerrainBlendMapSRV(nullptr)
-    {
-
-    }
+    ShaderResources();
 
     ID3D11ShaderResourceView* mHeightMapSRV;
     ID3D11ShaderResourceView* mTerrainDiffuseMapArraySRV;

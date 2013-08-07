@@ -58,7 +58,7 @@ namespace Framework
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
             CameraUtils::pitch(dy, mCamera);
-            CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::rotateAboutYAxis(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -80,10 +80,10 @@ namespace Framework
         //
         memcpy(&mCommonPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mCommonPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mCommonPSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mCommonPSPerFrameBuffer);
 
         mCommonPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mCommonPSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mCommonPSPerObjectBuffer);
         
         //
         // Set sampler states
@@ -148,7 +148,7 @@ namespace Framework
         
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesVSPerObjectBuffer);
 
         ID3D11Buffer* vertexShaderBuffers = mShapesVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);
@@ -211,7 +211,7 @@ namespace Framework
 
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mCommonTexTransform);
         DirectX::XMStoreFloat4x4(&mFloorVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mFloorVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mFloorVSPerObjectBuffer);
 
         ID3D11Buffer* vertexShaderBuffers = mFloorVSPerObjectBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderBuffers);

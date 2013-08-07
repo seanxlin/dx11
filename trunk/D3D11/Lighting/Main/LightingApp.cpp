@@ -133,7 +133,7 @@ namespace Framework
         mPerFrameBuffer.mData.mPointLight = mPointLight;
         mPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerFrameBuffer);
 
         //////////////////////////////////////////////////////////////////////////
         // Draw land
@@ -165,7 +165,7 @@ namespace Framework
         mPerObjectBuffer.mData.mMaterial = mLandMaterial;
 
         // Apply buffer changes and draw.
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
         //////////////////////////////////////////////////////////////////////////
@@ -198,7 +198,7 @@ namespace Framework
         mPerObjectBuffer.mData.mMaterial = mWavesMaterial;
 
         // Apply buffer changes and draw.
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 
         // Present results
@@ -245,7 +245,7 @@ namespace Framework
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
+        GeometryGenerator::generateGrid(160.0f, 160.0f, 50, 50, grid);
 
         // Cache the index count
         mLandIndexCount = static_cast<uint32_t> (grid.mIndices.size());

@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Manage window's events, state and information
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include <cstdint>
@@ -50,17 +56,17 @@ namespace WindowDataUtils
 
 namespace Events
 {
-    void onMouseMove(WPARAM btnState, 
+    void onMouseMove(WPARAM buttonState, 
                      const int32_t x, 
                      const int32_t y,
                      MouseProperties& mouseProperties);
 
-    void onMouseDown(WPARAM btnState, 
+    void onMouseDown(WPARAM buttonState, 
                      const int32_t x,
                      const int32_t y,
                      MouseProperties& mouseProperties);
 
-    void onMouseUp(WPARAM btnState, 
+    void onMouseUp(WPARAM buttonState, 
                    const int32_t x,
                    const int32_t y,
                    MouseProperties& mouseProperties);

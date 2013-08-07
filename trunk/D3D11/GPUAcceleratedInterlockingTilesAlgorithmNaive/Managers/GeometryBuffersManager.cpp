@@ -20,7 +20,7 @@ namespace
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGridForInterlockingTiles(512, 512, 32, 32, grid);
+        GeometryGenerator::generateGridForInterlockingTiles(512, 512, 32, 32, grid);
 
         // Cache base vertex location
         geometryBuffers.mBufferInfo->mBaseVertexLocation = 0;
@@ -45,9 +45,11 @@ namespace
         D3D11_SUBRESOURCE_DATA initData;
         std::vector<Vertex> vertices;
         vertices.reserve(totalVertexCount);
-        for (size_t vertexIndex = 0; vertexIndex < totalVertexCount; ++vertexIndex)
-        {
-            vertices.push_back(Vertex(grid.mVertices[vertexIndex].mPosition, grid.mVertices[vertexIndex].mTexCoord));
+        for (size_t vertexIndex = 0; vertexIndex < totalVertexCount; ++vertexIndex) {
+
+            vertices.push_back(Vertex(grid.mVertices[vertexIndex].mPosition, 
+                                      grid.mVertices[vertexIndex].mTexCoord)
+                              );
         }
         initData.pSysMem = &vertices[0];
         HRESULT result = device.CreateBuffer(&vertexBufferDesc, 
@@ -71,6 +73,63 @@ namespace
                                      &geometryBuffers.mBufferInfo->mIndexBuffer);
         DxErrorChecker(result);
     }
+}
+
+//
+// Buffer info
+//
+
+IndexedBufferInfo::IndexedBufferInfo()
+    : mVertexBuffer(nullptr)
+    , mIndexBuffer(nullptr)
+    , mBaseVertexLocation(0)
+    , mStartIndexLocation(0)
+    , mIndexCount(0)
+{
+
+}
+
+NonIndexedBufferInfo::NonIndexedBufferInfo()
+    : mVertexBuffer(nullptr)
+    , mBaseVertexLocation(0)
+    , mVertexCount(0)
+{
+
+}
+
+
+//
+// Vertex
+//
+
+Vertex::Vertex() { }
+
+Vertex::Vertex(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& texCoord)
+       : mPosition(position)
+       , mTexCoord(texCoord)
+{
+
+}
+
+Vertex::Vertex(const float positionX, 
+               const float positionY, 
+               const float positionZ,
+               const float texCoordU, 
+               const float texCoordV)
+       : mPosition(positionX, positionY, positionZ)
+       , mTexCoord(texCoordU, texCoordV)
+{
+
+}
+
+//
+// Geometry buffers
+//
+
+GeometryBuffers::GeometryBuffers()
+    : mBufferInfo(nullptr)
+{
+
 }
 
 namespace GeometryBuffersUtils

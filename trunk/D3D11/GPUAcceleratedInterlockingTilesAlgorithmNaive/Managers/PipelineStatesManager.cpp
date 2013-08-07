@@ -5,6 +5,13 @@
 
 #include <DxErrorChecker.h>
 
+PipelineStates::PipelineStates()
+    : mLinearClampSS(nullptr)
+    , mWireframeRS(nullptr)
+{
+
+}
+
 namespace PipelineStatesUtils
 {
     void initAll(ID3D11Device& device, PipelineStates& pipelineStates)
@@ -32,7 +39,8 @@ namespace PipelineStatesUtils
         samplerDesc.MinLOD = 0.0f; // FLT_MIN 
         samplerDesc.MaxLOD = D3D11_FLOAT32_MAX; // FLT_MAX
 
-        HRESULT result = device.CreateSamplerState(&samplerDesc, &pipelineStates.mLinearClampSS);
+        HRESULT result = device.CreateSamplerState(&samplerDesc, 
+                                                   &pipelineStates.mLinearClampSS);
         DxErrorChecker(result);
 
         //
@@ -53,7 +61,8 @@ namespace PipelineStatesUtils
         samplerDesc.MinLOD = 0.0f; // FLT_MIN 
         samplerDesc.MaxLOD = D3D11_FLOAT32_MAX; // FLT_MAX
 
-        result = device.CreateSamplerState(&samplerDesc, &pipelineStates.mLinearWrapSS);
+        result = device.CreateSamplerState(&samplerDesc, 
+                                           &pipelineStates.mLinearWrapSS);
         DxErrorChecker(result);
 
         //
@@ -66,7 +75,8 @@ namespace PipelineStatesUtils
         wireframeDesc.FrontCounterClockwise = false;
         wireframeDesc.DepthClipEnable = true;
 
-        result = device.CreateRasterizerState(&wireframeDesc, &pipelineStates.mWireframeRS);
+        result = device.CreateRasterizerState(&wireframeDesc, 
+                                              &pipelineStates.mWireframeRS);
         DxErrorChecker(result);
     }
 

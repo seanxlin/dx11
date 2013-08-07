@@ -22,17 +22,20 @@ namespace
         // CPU can read the resource.
         //
 
-        const uint32_t size = static_cast<uint32_t> (filenames.size());
+        const uint32_t numFilenames = static_cast<uint32_t> (filenames.size());
 
         std::vector<ID3D11Texture2D*> sourceTextures;
-        sourceTextures.resize(size);
-        for(uint32_t i = 0; i < size; ++i)
-        {
-            ID3D11ShaderResourceView* shaderResourceView =  nullptr;
-            ID3D11Resource* resource =  nullptr;
+        sourceTextures.resize(numFilenames);
+        for(uint32_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
+            ID3D11Texture2D * const resource = sourceTextures[filenameIndex];
+            assert(resource);
+            ID3D11Resource* texture = reinterpret_cast<ID3D11Resource*> (resource);
+            assert(texture);
+
+            ID3D11ShaderResourceView* shaderResourceView;
             HRESULT result = CreateDDSTextureFromFile(&device, 
-                                                      filenames[i].c_str(),
-                                                      reinterpret_cast<ID3D11Resource**> (&sourceTextures[i]), 
+                                                      filenames[filenameIndex].c_str(),
+                                                      &texture, 
                                                       &shaderResourceView);
             DxErrorChecker(result);
 
@@ -51,7 +54,7 @@ namespace
         textureArrayDesc.Width = textureElementDesc.Width;
         textureArrayDesc.Height = textureElementDesc.Height;
         textureArrayDesc.MipLevels = textureElementDesc.MipLevels;
-        textureArrayDesc.ArraySize = size;
+        textureArrayDesc.ArraySize = numFilenames;
         textureArrayDesc.Format = textureElementDesc.Format;
         textureArrayDesc.SampleDesc.Count = 1;
         textureArrayDesc.SampleDesc.Quality = 0;
@@ -60,36 +63,38 @@ namespace
         textureArrayDesc.CPUAccessFlags = 0;
         textureArrayDesc.MiscFlags = 0;
 
-        ID3D11Texture2D* textureArray = 0;
+        ID3D11Texture2D* textureArray;
         HRESULT result = device.CreateTexture2D(&textureArrayDesc, 0, &textureArray);
         DxErrorChecker(result);
 
         D3D11_TEXTURE2D_DESC textureElementDesc2;
         textureArray->GetDesc(&textureElementDesc2);
-        const size_t ml = textureElementDesc2.MipLevels; 
+        
 
         //
         // Copy individual texture elements into texture array.
         //
 
         // for each texture element...
-        for (uint32_t texElement = 0; texElement < size; ++texElement)
-        {
+        const size_t mipLevels = textureElementDesc.MipLevels; 
+        for (uint32_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
             // for each mipmap level...
-            for(uint32_t mipLevel = 0; mipLevel < textureElementDesc.MipLevels; ++mipLevel)
-            {
-                const uint32_t subResourceIndex = D3D11CalcSubresource(mipLevel, 
+            for(uint32_t mipLevelIndex = 0; 
+                         mipLevelIndex < mipLevels; 
+                         ++mipLevelIndex) {
+                const uint32_t subResourceIndex = D3D11CalcSubresource(mipLevelIndex, 
                                                                        0, 
-                                                                       textureElementDesc.MipLevels);
-                const uint32_t destinationSubresource = D3D11CalcSubresource(mipLevel, 
-                                                                             texElement, 
-                                                                             textureElementDesc.MipLevels);
+                                                                       mipLevels);
+                const uint32_t destinationSubresource = 
+                    D3D11CalcSubresource(mipLevelIndex,
+                                         filenameIndex,
+                                         mipLevels);
                 context.CopySubresourceRegion(textureArray, 
                                               static_cast<uint32_t> (destinationSubresource), 
                                               0, 
                                               0, 
                                               0, 
-                                              sourceTextures[texElement], 
+                                              sourceTextures[filenameIndex], 
                                               subResourceIndex, 
                                               nullptr);
             }
@@ -102,20 +107,29 @@ namespace
         viewDesc.Texture2DArray.MostDetailedMip = 0;
         viewDesc.Texture2DArray.MipLevels = textureArrayDesc.MipLevels;
         viewDesc.Texture2DArray.FirstArraySlice = 0;
-        viewDesc.Texture2DArray.ArraySize = size;
+        viewDesc.Texture2DArray.ArraySize = numFilenames;
 
-        ID3D11ShaderResourceView* textureArraySRV = 0;
+        ID3D11ShaderResourceView* textureArraySRV;
         result = device.CreateShaderResourceView(textureArray, &viewDesc, &textureArraySRV);
         DxErrorChecker(result);
 
         // Cleanup--we only need the resource view.
         textureArray->Release();
 
-        for(size_t i = 0; i < size; ++i)
-            sourceTextures[i]->Release();
+        for(size_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
+            sourceTextures[filenameIndex]->Release();
+        }
 
         return textureArraySRV;
     }
+}
+
+ShaderResources::ShaderResources()
+    : mHeightMapSRV(nullptr)
+    , mTerrainDiffuseMapArraySRV(nullptr)
+    , mTerrainBlendMapSRV(nullptr)
+{
+
 }
 
 namespace ShaderResourcesUtils
@@ -128,22 +142,20 @@ namespace ShaderResourcesUtils
         assert(shaderResources.mTerrainDiffuseMapArraySRV == nullptr);
         assert(shaderResources.mTerrainBlendMapSRV == nullptr);
 
-        ID3D11Resource* texture = nullptr;
+        ID3D11Resource* texture;
 
         // Height map
         const uint32_t heightMapDimension = 512;
         HeightMap heightMap(heightMapDimension);
         const float heightMapScaleFactor = 150.0f;
-        HeightMapUtils::loadHeightMapFromRAWFile(
-            "Resources/Textures/terrainRaw.raw",
-            heightMapScaleFactor, 
-            heightMap);
+        HeightMapUtils::loadFromRAWFile("Resources/Textures/terrainRaw.raw",
+                                        heightMapScaleFactor, 
+                                        heightMap);
 
         HeightMapUtils::applyNeighborsFilter(heightMap);
-        shaderResources.mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(
-            device,
-            heightMap,
-            D3D11_BIND_SHADER_RESOURCE);
+        shaderResources.mHeightMapSRV = HeightMapUtils::buildSRV(device,
+                                                                 heightMap,
+                                                                 D3D11_BIND_SHADER_RESOURCE);
 
         // Create terrain textures array.
         std::vector<std::wstring> texturesFilenames;
@@ -151,15 +163,16 @@ namespace ShaderResourcesUtils
         texturesFilenames.push_back(L"Resources/Textures/lightdirt.dds");
         texturesFilenames.push_back(L"Resources/Textures/darkdirt.dds");
         shaderResources.mTerrainDiffuseMapArraySRV = createTexture2DArraySRV(
-            device, 
-            context, 
-            texturesFilenames); 
+            device,
+            context,
+            texturesFilenames
+        ); 
 
         // Blend map
-        HRESULT result = CreateDDSTextureFromFile(&device, 
-            L"Resources/Textures/blend.dds", 
-            &texture, 
-            &shaderResources.mTerrainBlendMapSRV);
+        const HRESULT result = CreateDDSTextureFromFile(&device, 
+                                                        L"Resources/Textures/blend.dds", 
+                                                        &texture,
+                                                        &shaderResources.mTerrainBlendMapSRV);
         DxErrorChecker(result);  
 
         texture->Release();

@@ -84,9 +84,11 @@ namespace TerrainSceneUtils
         // Per Frame Constant Buffer
         const DirectX::XMMATRIX world = DirectX::XMLoadFloat4x4(&terrainScene.mWorldMatrix);
         const DirectX::XMMATRIX textureScale = DirectX::XMLoadFloat4x4(&terrainScene.mTextureScaleMatrix);
-        DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
-        DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mTextureScale, DirectX::XMMatrixTranspose(textureScale));
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridVSPerObjectBuffer);
+        DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mWorld, 
+                                 DirectX::XMMatrixTranspose(world));
+        DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mTextureScale, 
+                                 DirectX::XMMatrixTranspose(textureScale));
+        ConstantBufferUtils::copyData(context, terrainScene.mGridVSPerObjectBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const vertexShaderBuffers[] = { terrainScene.mGridVSPerObjectBuffer.mBuffer };
@@ -102,7 +104,7 @@ namespace TerrainSceneUtils
 
         // Per Frame Constant Buffer
         terrainScene.mGridHSPerFrameBuffer.mData.mEyePositionW = Globals::gCamera.mPosition;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridHSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridHSPerFrameBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const hullShaderBuffers = { terrainScene.mGridHSPerFrameBuffer.mBuffer };
@@ -119,12 +121,14 @@ namespace TerrainSceneUtils
         // Per Frame Constant Buffer
         const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(Globals::gCamera);
         const DirectX::XMMATRIX worldInverseTranspose = MathHelper::inverseTranspose(world);
-        DirectX::XMStoreFloat4x4(&terrainScene.mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, DirectX::XMMatrixTranspose(worldInverseTranspose));
-        DirectX::XMStoreFloat4x4(&terrainScene.mGridDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
+        DirectX::XMStoreFloat4x4(&terrainScene.mGridDSPerFrameBuffer.mData.mWorldInverseTranspose, 
+                                 DirectX::XMMatrixTranspose(worldInverseTranspose));
+        DirectX::XMStoreFloat4x4(&terrainScene.mGridDSPerFrameBuffer.mData.mViewProjection,
+                                 DirectX::XMMatrixTranspose(viewProjection));
         const float heightMapTexelSize = 1.0f / 512.0f;
         terrainScene.mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[0] = heightMapTexelSize;
         terrainScene.mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[1] = heightMapTexelSize;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridDSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridDSPerFrameBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const domainShaderBuffers = { terrainScene.mGridDSPerFrameBuffer.mBuffer };
@@ -156,7 +160,7 @@ namespace TerrainSceneUtils
         terrainScene.mGridPSPerFrameBuffer.mData.mTexelCellSpaceU = heightMapTexelSize;
         terrainScene.mGridPSPerFrameBuffer.mData.mTexelCellSpaceV = heightMapTexelSize;
         terrainScene.mGridPSPerFrameBuffer.mData.mWorldCellSpace = 0.5f;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridPSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridPSPerFrameBuffer);
 
         // Set constant buffers
         ID3D11Buffer * const pixelShaderBuffers[] = { terrainScene.mGridPSPerFrameBuffer.mBuffer };

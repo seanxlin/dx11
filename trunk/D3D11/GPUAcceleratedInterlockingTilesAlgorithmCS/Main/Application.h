@@ -1,13 +1,16 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Main application functions
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 namespace Application
 {
-    bool init();
-    void destroy();
+    bool initApplication();
 
-    int run();
-
-    void updateScene(const float dt);
-
-    void drawScene();
+    // Executes application until it finishes
+    // and returns its state. 
+    int executeApplication();
 }

@@ -96,7 +96,7 @@ namespace Framework
             const float dy = DirectX::XMConvertToRadians(0.35f * static_cast<float>(y - mLastMousePos.y));
 
             CameraUtils::pitch(dy, mCamera);
-            CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::rotateAboutYAxis(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -121,11 +121,11 @@ namespace Framework
         // Update per frame constant buffers
         mSpherePSPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mSpherePSPerFrameBuffer.mData.mEyePositionW = camera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mSpherePSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mSpherePSPerFrameBuffer);
 
         // Set pixel shader per object buffer
         mSpherePSPerObjectBuffer.mData.mMaterial = mSphereMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mSpherePSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mSpherePSPerObjectBuffer);
 
         // Set input layout and primitive topology.
         mImmediateContext->IASetInputLayout(inputLayout);
@@ -171,7 +171,7 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mSandTexTransform);
         DirectX::XMStoreFloat4x4(&mSphereVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mSphereVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mSphereVSPerObjectBuffer);
 
         ID3D11ShaderResourceView* pixelShaderShaderResources[] = {Managers::ResourcesManager::mSphereDiffuseMapSRV, Managers::ResourcesManager::mDynamicCubeMapSRV};
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderShaderResources);
@@ -210,7 +210,7 @@ namespace Framework
 
         for(size_t i = 0; i < 6; ++i)
         {
-            CameraUtils::lookAt(center, targets[i], ups[i], mCubeMapCamera[i]);
+            CameraUtils::setCoordinateSystem(center, targets[i], ups[i], mCubeMapCamera[i]);
             CameraUtils::setFrustrum(0.25f * DirectX::XM_PI, 1.0f, 0.1f, 1000.0f, mCubeMapCamera[i]);
             CameraUtils::updateViewMatrix(mCubeMapCamera[i]);
         }
@@ -234,7 +234,7 @@ namespace Framework
         // Update per frame constant buffers for land and billboards
         mLandPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mLandPerFrameBuffer.mData.mEyePositionW = camera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandPerFrameBuffer);
 
         // Set input layout and primitive topology.
         mImmediateContext->IASetInputLayout(inputLayout);
@@ -281,13 +281,13 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mSandTexTransform);
         DirectX::XMStoreFloat4x4(&mLandVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandVSPerObjectBuffer);
         
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
         // Set pixel shader per object buffer
         mLandPSPerObjectBuffer.mData.mMaterial = mSandMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandPSPerObjectBuffer);
 
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }
@@ -301,7 +301,7 @@ namespace Framework
         // Update per frame buffer
         const DirectX::XMMATRIX worldViewProjection = DirectX::XMMatrixMultiply(skyTranslation, CameraUtils::computeViewProjectionMatrix(camera));
         DirectX::XMStoreFloat4x4(&mSkyPerFrameBuffer.mData.mWorldViewProjection, DirectX::XMMatrixTranspose(worldViewProjection));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mSkyPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mSkyPerFrameBuffer);
         ID3D11Buffer* vertexShaderPerFrameBuffer = mSkyPerFrameBuffer.mBuffer;
         mImmediateContext->VSSetConstantBuffers(0, 1, &vertexShaderPerFrameBuffer);
 

@@ -10,7 +10,8 @@
 
 namespace 
 {
-    void computeShaderByteCode(const std::wstring& fileName, std::vector<char>& shaderByteCode)
+    void computeShaderByteCode(const std::wstring& fileName, 
+                               std::vector<char>& shaderByteCode)
     {
         assert(!fileName.empty());
 
@@ -31,7 +32,9 @@ namespace
         fin.close();
     }
 
-    void buildShapesVertexLayout(ID3D11Device& device, std::vector<char>& shaderByteCode, ID3D11InputLayout* &inputLayout)
+    void buildShapesVertexLayout(ID3D11Device& device, 
+                                 std::vector<char>& shaderByteCode, 
+                                 ID3D11InputLayout* &inputLayout)
     {
         assert(!inputLayout);
         assert(!shaderByteCode.empty());
@@ -44,11 +47,24 @@ namespace
         };
 
         // Create the input layout
-        const HRESULT result = device.CreateInputLayout(vertexDesc, 2, &shaderByteCode[0], 
-            shaderByteCode.size(), &inputLayout);
-
+        const UINT numElements = 2;
+        const HRESULT result = device.CreateInputLayout(vertexDesc, 
+                                                        numElements, 
+                                                        &shaderByteCode[0],
+                                                        shaderByteCode.size(), 
+                                                        &inputLayout);
         DxErrorChecker(result);
     }
+}
+
+Shaders::Shaders()
+    : mTerrainVS(nullptr)
+    , mTerrainIL(nullptr)
+    , mTerrainPS(nullptr)
+    , mTerrainHS(nullptr)
+    , mTerrainDS(nullptr)
+{
+
 }
 
 namespace ShadersUtils
@@ -67,22 +83,34 @@ namespace ShadersUtils
         // Vertex shader
         computeShaderByteCode(L"HLSL/TerrainVS.cso", shaderByteCode);
         buildShapesVertexLayout(device, shaderByteCode, shaders.mTerrainIL);
-        HRESULT result = device.CreateVertexShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &shaders.mTerrainVS);
+        HRESULT result = device.CreateVertexShader(&shaderByteCode[0], 
+                                                   shaderByteCode.size(), 
+                                                   nullptr, 
+                                                   &shaders.mTerrainVS);
         DxErrorChecker(result);
 
         // Pixel shader
         computeShaderByteCode(L"HLSL/TerrainPS.cso", shaderByteCode);        
-        result = device.CreatePixelShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &shaders.mTerrainPS);
+        result = device.CreatePixelShader(&shaderByteCode[0], 
+                                          shaderByteCode.size(), 
+                                          nullptr, 
+                                          &shaders.mTerrainPS);
         DxErrorChecker(result);
 
         // Hull shader
         computeShaderByteCode(L"HLSL/TerrainHS.cso", shaderByteCode);        
-        result = device.CreateHullShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &shaders.mTerrainHS);
+        result = device.CreateHullShader(&shaderByteCode[0], 
+                                         shaderByteCode.size(), 
+                                         nullptr, 
+                                         &shaders.mTerrainHS);
         DxErrorChecker(result);
 
         // Pixel shader
         computeShaderByteCode(L"HLSL/TerrainDS.cso", shaderByteCode);        
-        result = device.CreateDomainShader(&shaderByteCode[0], shaderByteCode.size(), nullptr, &shaders.mTerrainDS);
+        result = device.CreateDomainShader(&shaderByteCode[0], 
+                                           shaderByteCode.size(), 
+                                           nullptr, 
+                                           &shaders.mTerrainDS);
         DxErrorChecker(result);
     }
     

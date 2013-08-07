@@ -46,7 +46,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerFrameBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerFrameBuffer);
 
         // Draw grid        
         mImmediateContext->DrawIndexed(static_cast<uint32_t> (mGridIndexCount), 0, 0);
@@ -90,7 +90,7 @@ namespace Framework
     void HillApp::buildGeometryBuffers()
     {
         MeshData grid;
-        GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
+        GeometryGenerator::generateGrid(160.0f, 160.0f, 50, 50, grid);
 
         mGridIndexCount = grid.mIndices.size();
 

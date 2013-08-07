@@ -59,7 +59,7 @@ namespace Managers
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGrid(200.0f, 200.0f, 50, 50, grid);
+        GeometryGenerator::generateGrid(200.0f, 200.0f, 50, 50, grid);
 
         // Cache base vertex location
         mLandBufferInfo->mBaseVertexLocation = 0;

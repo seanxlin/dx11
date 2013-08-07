@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Useful mathematics functions
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include <DirectXMath.h>
@@ -5,18 +11,10 @@
 namespace MathHelper
 {
     template<typename T>
-    T computeMax(const T& a, 
-                 const T& b)
-    {
-        return a > b ? a : b;
-    }
+    T computeMax(const T& a, const T& b) { return a > b ? a : b; }
 
     template<typename T>
-    T computeMin(const T& a, 
-                 const T& b)
-    {
-        return a < b ? a : b;
-    }
+    T computeMin(const T& a, const T& b) { return a < b ? a : b; }
 
     template<typename T>
     T clamp(const T& x, 
@@ -33,11 +31,13 @@ namespace MathHelper
     float randomFloat(const float leftLimit, 
                       const float righLimit);
 
-    DirectX::XMMATRIX inverseTranspose(DirectX::CXMMATRIX matrix);
+    DirectX::XMMATRIX inverseTranspose(const DirectX::XMMATRIX& matrix);
 
-    float height(const float x, 
-                 const float z);
+    // Based on x and z coordinates, it returns
+    // y coordinates which represents height
+    float height(const float x, const float z);
 
-    float angleFromXY(const float x, 
-                      const float y);
+    // Euler angle from positive x axis
+    // to the segment that goes from (0, 0) --> (x, y)
+    float angle(const float x, const float y);
 }

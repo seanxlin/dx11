@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Functions to initialize/destroy needed Direct3D structures
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include <cstdint>
@@ -7,17 +13,7 @@ struct WindowData;
 
 struct Direct3DData
 {
-    Direct3DData()
-        : mDevice(nullptr)
-        , mImmediateContext(nullptr)
-        , mSwapChain(nullptr)
-        , mDepthStencilBuffer(nullptr)
-        , mRenderTargetView(nullptr)
-        , mDepthStencilView(nullptr)
-        , mScreenViewport(nullptr)
-    {
-        ZeroMemory(&mScreenViewport, sizeof(D3D11_VIEWPORT));
-    }
+    Direct3DData();
 
     ID3D11Device* mDevice;
     ID3D11DeviceContext* mImmediateContext;
