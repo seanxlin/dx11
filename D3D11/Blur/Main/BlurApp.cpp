@@ -79,7 +79,7 @@ namespace Framework
             const float dy = DirectX::XMConvertToRadians(0.35f * static_cast<float>(y - mLastMousePos.y));
 
             CameraUtils::pitch(dy, mCamera);
-            CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::rotateAboutYAxis(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -95,7 +95,7 @@ namespace Framework
         mLandPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mLandPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mLandPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandPerFrameBuffer);
 
         // Set input layout and primitive topology.
         mImmediateContext->IASetInputLayout(Managers::ShadersManager::mCommonIL);
@@ -154,7 +154,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
         // Apply buffer changes and draw.
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandPerObjectBuffer);
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }
 
@@ -195,7 +195,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mWorldInverseTranspose, identity);
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mWorldViewProjection, identity);
         DirectX::XMStoreFloat4x4(&mScreenQuadVSPerFrameBuffer.mData.mTexTransform, identity);
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mScreenQuadVSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mScreenQuadVSPerFrameBuffer);
 
         // Set texture
         //ID3D11ShaderResourceView* blurredOuputSRV = mBlurFilter.blurredOutput();

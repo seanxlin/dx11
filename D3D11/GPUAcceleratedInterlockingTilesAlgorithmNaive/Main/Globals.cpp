@@ -16,24 +16,25 @@ namespace GlobalsUtils
 {
     bool init()
     {
-        const bool success = WindowDataUtils::init(Globals::gWindowData) && 
-                             Direct3DDataUtils::init(Globals::gDirect3DData, Globals::gWindowData);
+        const bool success = 
+            WindowDataUtils::init(Globals::gWindowData) && 
+            Direct3DDataUtils::init(Globals::gDirect3DData, Globals::gWindowData);
 
-        if (!success)
-        {
+        if (!success) {
             return success;
         }
 
         ShadersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gShaders);
 
-        ShaderResourcesUtils::initAll(
-            *Globals::gDirect3DData.mDevice, 
-            *Globals::gDirect3DData.mImmediateContext, 
-            Globals::gShaderResources);
+        ShaderResourcesUtils::initAll(*Globals::gDirect3DData.mDevice,
+                                      *Globals::gDirect3DData.mImmediateContext, 
+                                      Globals::gShaderResources);
         
-        PipelineStatesUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gPipelineStates);
+        PipelineStatesUtils::initAll(*Globals::gDirect3DData.mDevice, 
+                                     Globals::gPipelineStates);
 
-        GeometryBuffersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gGeometryBuffers);
+        GeometryBuffersUtils::initAll(*Globals::gDirect3DData.mDevice, 
+                                      Globals::gGeometryBuffers);
     
         return success;
     }

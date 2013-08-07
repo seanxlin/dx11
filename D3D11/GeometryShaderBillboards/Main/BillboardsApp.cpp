@@ -68,7 +68,7 @@ namespace Framework
         mCommonPerFrameBuffer.mData.mDirectionalLight = mDirectionalLight;
         mCommonPerFrameBuffer.mData.mSpotLight = mSpotLight;
         mCommonPerFrameBuffer.mData.mEyePositionW = mEyePositionW;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mCommonPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mCommonPerFrameBuffer);
 
         drawBillboards(viewProjection);
         drawLand(viewProjection);
@@ -142,7 +142,7 @@ namespace Framework
         // Update pero object constant buffer
         DirectX::XMStoreFloat4x4(&mBillboardsPerObjectBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         mBillboardsPerObjectBuffer.mData.mMaterial = mPalmMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mBillboardsPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mBillboardsPerObjectBuffer);
 
         // Set blend state
         float blendFactor[] = {0.0f, 0.0f, 0.0f, 0.0f}; 
@@ -219,7 +219,7 @@ namespace Framework
         mImmediateContext->PSSetShaderResources(0, 1, &Managers::ResourcesManager::mSandSRV);
 
         // Apply buffer changes and draw.
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mLandPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mLandPerObjectBuffer);
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }
 }

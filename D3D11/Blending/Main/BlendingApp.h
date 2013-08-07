@@ -236,7 +236,7 @@ namespace Framework
         mImmutableBuffer.mData.mFogStart = 15.0f;
         mImmutableBuffer.mData.mFogRange = 175.0f;
         DirectX::XMStoreFloat4(&mImmutableBuffer.mData.mFogColor, DirectX::Colors::Silver);
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mImmutableBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mImmutableBuffer);
 
         ConstantBufferUtils::initialize(*mDevice, mPerFrameBuffer);
         ConstantBufferUtils::initialize(*mDevice, mPerObjectBuffer);

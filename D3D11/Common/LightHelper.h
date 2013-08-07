@@ -1,5 +1,7 @@
 //////////////////////////////////////////////////////////////////////////
-// Helper classes for lighting.
+//
+// Structures used for lighting
+//
 //////////////////////////////////////////////////////////////////////////
 
 #pragma once
@@ -7,14 +9,22 @@
 #include <DirectXMath.h>
 #include <windows.h>
 
+//////////////////////////////////////////////////////////////////////////
 // Make sure structure alignment agrees with HLSL structure padding rules. 
 // Elements are packed into 4D vectors with the restriction that an element
 // cannot straddle a 4D vector boundary.
+//////////////////////////////////////////////////////////////////////////
+
 struct DirectionalLight
 {
     DirectionalLight() 
+        : mAmbient(0.0f, 0.0f, 0.0f, 0.0f)
+        , mDiffuse(0.0f, 0.0f, 0.0f, 0.0f)
+        , mSpecular(0.0f, 0.0f, 0.0f, 0.0f)
+        , mDirection(0.0f, 0.0f, 0.0f)
+        , mPad(0.0f)
     { 
-        ZeroMemory(this, sizeof(this)); 
+
     }
 
     DirectX::XMFLOAT4 mAmbient;
@@ -27,8 +37,15 @@ struct DirectionalLight
 struct PointLight
 {
     PointLight() 
+        : mAmbient(0.0f, 0.0f, 0.0f, 0.0f)
+        , mDiffuse(0.0f, 0.0f, 0.0f, 0.0f)
+        , mSpecular(0.0f, 0.0f, 0.0f, 0.0f)
+        , mPosition(0.0f, 0.0f, 0.0f)
+        , mRange(0.0f)
+        , mAttenuation(0.0f, 0.0f, 0.0f)
+        , mPad(0.0f)
     { 
-        ZeroMemory(this, sizeof(this)); 
+
     }
 
     DirectX::XMFLOAT4 mAmbient;
@@ -47,8 +64,17 @@ struct PointLight
 struct SpotLight
 {
     SpotLight() 
+        : mAmbient(0.0f, 0.0f, 0.0f, 0.0f)
+        , mDiffuse(0.0f, 0.0f, 0.0f, 0.0f)
+        , mSpecular(0.0f, 0.0f, 0.0f, 0.0f)
+        , mPosition(0.0f, 0.0f, 0.0f)
+        , mRange(0.0f)
+        , mDirection(0.0f, 0.0f, 0.0f)
+        , mSpot(0.0f)
+        , mAttenuation(0.0f, 0.0f, 0.0f)
+        , mPad(0.0f)
     { 
-        ZeroMemory(this, sizeof(this));
+
     }
 
     DirectX::XMFLOAT4 mAmbient;
@@ -71,8 +97,12 @@ struct SpotLight
 struct Material
 {
     Material() 
+        : mAmbient(0.0f, 0.0f, 0.0f, 0.0f)
+        , mDiffuse(0.0f, 0.0f, 0.0f, 0.0f)
+        , mSpecular(0.0f, 0.0f, 0.0f, 0.0f)
+        , mReflect(0.0f, 0.0f, 0.0f, 0.0f)
     { 
-        ZeroMemory(this, sizeof(this)); 
+
     }
 
     DirectX::XMFLOAT4 mAmbient;

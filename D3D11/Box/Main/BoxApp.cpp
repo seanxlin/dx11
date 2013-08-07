@@ -35,7 +35,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerFrameBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerFrameBuffer);
 
         // Draw box 
         mImmediateContext->DrawIndexed(36, 0, 0);

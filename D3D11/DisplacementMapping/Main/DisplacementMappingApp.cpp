@@ -89,7 +89,7 @@ namespace Framework
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mLastMousePos.y));
 
             CameraUtils::pitch(dy, mCamera);
-            CameraUtils::rotateY(dx, mCamera);
+            CameraUtils::rotateAboutYAxis(dx, mCamera);
         }
 
         mLastMousePos.x = x;
@@ -114,19 +114,19 @@ namespace Framework
         // Update constant buffers
         //
         mShapesHSPerFrameBuffer.mData.mTessellationFactor = mTesselationFactor;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesHSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesHSPerFrameBuffer);
 
         const DirectX::XMMATRIX viewProjection = CameraUtils::computeViewProjectionMatrix(mCamera);
         DirectX::XMStoreFloat4x4(&mShapesDSPerFrameBuffer.mData.mViewProjection, DirectX::XMMatrixTranspose(viewProjection));
         mShapesDSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesDSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesDSPerFrameBuffer);
 
         memcpy(&mShapesPSPerFrameBuffer.mData.mDirectionalLight, &mDirectionalLight, sizeof(mDirectionalLight));
         mShapesPSPerFrameBuffer.mData.mEyePositionW = mCamera.mPosition;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesPSPerFrameBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesPSPerFrameBuffer);
 
         mShapesPSPerObjectBuffer.mData.mMaterial = mShapesMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesPSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesPSPerObjectBuffer);
 
         //
         // Set constant buffers
@@ -191,7 +191,7 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mShapesTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesVSPerObjectBuffer);
 
         ID3D11ShaderResourceView* pixelShaderResources[] = { Managers::ResourcesManager::mBoxDiffuseMapSRV, Managers::ResourcesManager::mBoxNormalMapSRV };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
@@ -235,7 +235,7 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mShapesTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesVSPerObjectBuffer);
 
         ID3D11ShaderResourceView* pixelShaderResources[] = { Managers::ResourcesManager::mSpheresDiffuseMapSRV, Managers::ResourcesManager::mSpheresNormalMapSRV };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
@@ -279,7 +279,7 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mShapesTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesVSPerObjectBuffer);
 
         ID3D11ShaderResourceView* pixelShaderResources[] = { Managers::ResourcesManager::mCylinderDiffuseMapSRV, Managers::ResourcesManager::mCylinderNormalMapSRV };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
@@ -322,7 +322,7 @@ namespace Framework
         // Update texture transform matrix.
         DirectX::XMMATRIX texTransform = DirectX::XMLoadFloat4x4(&mShapesTexTransform);
         DirectX::XMStoreFloat4x4(&mShapesVSPerObjectBuffer.mData.mTexTransform, DirectX::XMMatrixTranspose(texTransform));
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesVSPerObjectBuffer);
         
         ID3D11ShaderResourceView* pixelShaderResources[] = { Managers::ResourcesManager::mFloorDiffuseMapSRV, Managers::ResourcesManager::mFloorNormalMapSRV };
         mImmediateContext->PSSetShaderResources(0, 2, pixelShaderResources);
@@ -332,7 +332,7 @@ namespace Framework
 
         // Set pixel shader per object buffer
         mShapesPSPerObjectBuffer.mData.mMaterial = mFloorMaterial;
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mShapesPSPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mShapesPSPerObjectBuffer);
 
         mImmediateContext->DrawIndexed(indexCount, startIndexLocation, baseVertexLocation);
     }    

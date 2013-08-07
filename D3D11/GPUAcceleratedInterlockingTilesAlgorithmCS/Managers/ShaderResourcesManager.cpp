@@ -140,13 +140,13 @@ namespace ShaderResourcesUtils
         const uint32_t heightMapDimension = 512;
         HeightMap heightMap(heightMapDimension);
         const float heightMapScaleFactor = 150.0f;
-        HeightMapUtils::loadHeightMapFromRAWFile(
+        HeightMapUtils::loadFromRAWFile(
             "Resources/Textures/terrainRaw.raw",
             heightMapScaleFactor, 
             heightMap);
 
         HeightMapUtils::applyNeighborsFilter(heightMap);
-        shaderResources.mHeightMapSRV = HeightMapUtils::buildHeightMapSRV(
+        shaderResources.mHeightMapSRV = HeightMapUtils::buildSRV(
             device,
             heightMap,
             D3D11_BIND_SHADER_RESOURCE);

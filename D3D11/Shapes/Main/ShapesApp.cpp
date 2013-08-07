@@ -38,7 +38,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mGridIndexCount, mGridIndexOffset, mGridVertexOffset);
 
         // Draw the box, updating first per object buffer
@@ -46,7 +46,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
         
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mBoxIndexCount, mBoxIndexOffset, mBoxVertexOffset);
 
         // Draw center sphere, updating first per object buffer
@@ -54,7 +54,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
         
-       ConstantBufferUtils::applyChanges(*mImmediateContext,  mPerObjectBuffer);
+       ConstantBufferUtils::copyData(*mImmediateContext,  mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mSphereIndexCount, mSphereIndexOffset, mSphereVertexOffset);
 
         // Draw the cylinders, updating first per object buffer
@@ -64,7 +64,7 @@ namespace Framework
             DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
                 DirectX::XMMatrixTranspose(worldViewProjection));
             
-            ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+            ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
             mImmediateContext->DrawIndexed(mCylinderIndexCount, mCylinderIndexOffset, mCylinderVertexOffset);
         }
 
@@ -75,7 +75,7 @@ namespace Framework
             DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
                 DirectX::XMMatrixTranspose(worldViewProjection));
 
-            ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+            ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
             mImmediateContext->DrawIndexed(mSphereIndexCount, mSphereIndexOffset, mSphereVertexOffset);
         }
 
@@ -122,10 +122,10 @@ namespace Framework
         MeshData sphere;
         MeshData cylinder;
 
-        GeometryGenerator::createBox(1.0f, 1.0f, 1.0f, box);
-        GeometryGenerator::createGrid(20.0f, 30.0f, 60, 40, grid);
-        GeometryGenerator::createSphere(0.5f, 20, 20, sphere);
-        GeometryGenerator::createCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
+        GeometryGenerator::generateBox(1.0f, 1.0f, 1.0f, box);
+        GeometryGenerator::generateGrid(20.0f, 30.0f, 60, 40, grid);
+        GeometryGenerator::generateSphere(0.5f, 20, 20, sphere);
+        GeometryGenerator::generateCylinder(0.5f, 0.3f, 3.0f, 20, 20, cylinder);
 
         // Cache the vertex offsets to each object in the concatenated vertex buffer.
         mBoxVertexOffset = 0;

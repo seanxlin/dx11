@@ -72,7 +72,7 @@ namespace Managers
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGrid(400.0f, 400.0f, 100, 100, grid);
+        GeometryGenerator::generateGrid(400.0f, 400.0f, 100, 100, grid);
 
         // Cache base vertex location
         mLandBufferInfo->mBaseVertexLocation = 0;
@@ -145,7 +145,7 @@ namespace Managers
         // Fill vertices to insert in the vertex buffer
         const float skySphereRadius = 20.0f;
         MeshData sphere;
-        GeometryGenerator::createSphere(skySphereRadius, 30, 30, sphere);
+        GeometryGenerator::generateSphere(skySphereRadius, 30, 30, sphere);
 
         std::vector<Geometry::SkyVertex> vertices(sphere.mVertices.size());
 
@@ -200,7 +200,7 @@ namespace Managers
         // Fill vertices to insert in the vertex buffer
         const float sphereRadius = 70.0f;
         MeshData sphere;
-        GeometryGenerator::createSphere(sphereRadius, 50, 50, sphere);
+        GeometryGenerator::generateSphere(sphereRadius, 50, 50, sphere);
 
         std::vector<Geometry::CommonVertex> vertices(sphere.mVertices.size());
 

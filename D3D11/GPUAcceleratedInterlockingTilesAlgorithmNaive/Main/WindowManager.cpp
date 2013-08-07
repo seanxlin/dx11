@@ -14,19 +14,15 @@ namespace
                     WPARAM wParam,
                     LPARAM lParam)
     {
-        switch (msg)
-        {
+        switch (msg) {
             // WM_ACTIVATE is sent when the window is activated or deactivated.  
             // We pause the game when the window is deactivated and unpause it 
             // when it becomes active.  
         case WM_ACTIVATE:
-            if (LOWORD(wParam) == WA_INACTIVE)
-            {
+            if (LOWORD(wParam) == WA_INACTIVE) {
                 Globals::gWindowState.mIsPaused = true;
                 TimerUtils::stop(Globals::gTimer);
-            }
-            else
-            {
+            } else {
                 Globals::gWindowState.mIsPaused = false;
                 TimerUtils::start(Globals::gTimer);
             }
@@ -36,6 +32,7 @@ namespace
             // WM_DESTROY is sent when the window is being destroyed.
         case WM_DESTROY:
             PostQuitMessage(0);
+
             return 0;
 
             // The WM_MENUCHAR message is sent when a menu is active and the user presses 
@@ -48,34 +45,35 @@ namespace
         case WM_GETMINMAXINFO:
             (reinterpret_cast<MINMAXINFO*> (lParam))->ptMinTrackSize.x = 200;
             (reinterpret_cast<MINMAXINFO*> (lParam))->ptMinTrackSize.y = 200; 
+
             return 0;
 
         case WM_LBUTTONDOWN:
         case WM_MBUTTONDOWN:
         case WM_RBUTTONDOWN:
-            Events::onMouseDown(
-                wParam, 
-                GET_X_LPARAM(lParam), 
-                GET_Y_LPARAM(lParam),
-                Globals::gMouseProperties);
+            Events::onMouseDown(wParam,
+                                GET_X_LPARAM(lParam),
+                                GET_Y_LPARAM(lParam),
+                                Globals::gMouseProperties);
+
             return 0;
 
         case WM_LBUTTONUP:
         case WM_MBUTTONUP:
         case WM_RBUTTONUP:
-            Events::onMouseUp(
-                wParam, 
-                GET_X_LPARAM(lParam), 
-                GET_Y_LPARAM(lParam),
-                Globals::gMouseProperties);
+            Events::onMouseUp(wParam,
+                              GET_X_LPARAM(lParam),
+                              GET_Y_LPARAM(lParam),
+                              Globals::gMouseProperties);
+
             return 0;
 
         case WM_MOUSEMOVE:
-            Events::onMouseMove(
-                wParam, 
-                GET_X_LPARAM(lParam), 
-                GET_Y_LPARAM(lParam),
-                Globals::gMouseProperties);
+            Events::onMouseMove(wParam, 
+                                GET_X_LPARAM(lParam), 
+                                GET_Y_LPARAM(lParam),
+                                Globals::gMouseProperties);
+
             return 0;
         }
 
@@ -99,6 +97,7 @@ namespace WindowDataUtils
     {
         const HINSTANCE& appInstance = Globals::gAppInstance;
 
+        // Set window class properties
         WNDCLASS windowClass;
         windowClass.style = CS_HREDRAW | CS_VREDRAW;
         windowClass.lpfnWndProc = MainWndProc; 
@@ -111,8 +110,8 @@ namespace WindowDataUtils
         windowClass.lpszMenuName = 0;
         windowClass.lpszClassName = L"D3DWndClassName";
 
-        if (!RegisterClass(&windowClass))
-        {
+        // Register window class
+        if (!RegisterClass(&windowClass)) {
             MessageBox(0, L"RegisterClass Failed.", 0, 0);
 
             return false;
@@ -130,13 +129,13 @@ namespace WindowDataUtils
             windowData.mClientWidth, 
             windowData.mClientHeight 
         };
-        AdjustWindowRect(
-            &rect, 
-            WS_OVERLAPPEDWINDOW, 
-            false);
+        AdjustWindowRect(&rect, 
+                         WS_OVERLAPPEDWINDOW,
+                         false);
         const uint32_t width = rect.right - rect.left;
         const uint32_t height = rect.bottom - rect.top;
 
+        // Create window
         windowData.mMainWindow = CreateWindow(
             L"D3DWndClassName", 
             L"GPU Accelerated Interlocking Tiles Algorithm Naive Demo", 
@@ -148,9 +147,9 @@ namespace WindowDataUtils
             0, 
             0, 
             appInstance, 
-            0); 
-        if (!windowData.mMainWindow)
-        {
+            0
+        ); 
+        if (!windowData.mMainWindow) {
             MessageBox(0, L"CreateWindow Failed.", 0, 0);
 
             return false;
@@ -165,7 +164,7 @@ namespace WindowDataUtils
 
 namespace Events
 {
-    void onMouseDown(WPARAM btnState, 
+    void onMouseDown(WPARAM buttonState, 
                      const int32_t x,
                      const int32_t y,
                      MouseProperties& mouseProperties)
@@ -192,14 +191,16 @@ namespace Events
                      const int32_t y,
                      MouseProperties& mouseProperties)
     {
-        if ((btnState & MK_LBUTTON) != 0)
-        {
+        if ((btnState & MK_LBUTTON) != 0) {
             // Make each pixel correspond to a quarter of a degree.
-            const float dx = DirectX::XMConvertToRadians(0.15f * static_cast<float>(x - mouseProperties.mLastPosition.x));
-            const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mouseProperties.mLastPosition.y));
+            const float deltaX = static_cast<float>(x - mouseProperties.mLastPosition.x);
+            const float deltaY = static_cast<float>(y - mouseProperties.mLastPosition.y);
+            const float factor = 0.15f;
+            const float deltaXInRadians = DirectX::XMConvertToRadians(factor * deltaX);
+            const float deltaYInRadians = DirectX::XMConvertToRadians(factor * deltaY);
 
-            CameraUtils::pitch(dy, Globals::gCamera);
-            CameraUtils::rotateY(dx, Globals::gCamera);
+            CameraUtils::pitch(deltaYInRadians, Globals::gCamera);
+            CameraUtils::rotateAboutYAxis(deltaXInRadians, Globals::gCamera);
         }
 
         mouseProperties.mLastPosition.x = x;

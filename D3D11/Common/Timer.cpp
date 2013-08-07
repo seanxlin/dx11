@@ -1,12 +1,26 @@
 #include "Timer.h"
 
+Timer::Timer()
+    : mLastStartTime(0)
+    , mInPauseTime(0)
+    , mPreviousTickTime(0)
+    , mCurrentTickTime(0)
+    , mSecondsPerCount(0.0)
+    , mDeltaTime(-1.0)
+    , mIsStopped(false)
+{
+    // Get the frequency of the high-resolution performance counter, if one exists. 
+    // The frequency cannot change while the system is running.
+    uint64_t countsPerSec;
+    QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *> (&countsPerSec));
+    mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
+}
+
 namespace TimerUtils
 {
-    // Returns the total time elapsed since reset() was called, NOT counting any
-    // time when the clock is stopped.
     float inGameTime(const Timer& timer)
     {
-        // IF we are stopped, do not count the time that has passed since we stopped.
+        // If we are stopped, do not count the time that has passed since we stopped.
         //
         // ----*---------------*------------------------------*------> time
         // mLastStartTime  mLastStopTime                mCurrentTickTime
@@ -21,21 +35,13 @@ namespace TimerUtils
         //                     |<---mInPauseTime-->|
         // ----*---------------*-------------------*-------------*------> time
         //  mLastStartTime  mLastStopTime       newStartTime  mCurrentTickTime
-        float time = 0.0f;
-        if (timer.mIsStopped) 
-        {
-            time = static_cast<float> ((timer.mLastStopTime - timer.mLastStartTime) * timer.mSecondsPerCount);
-        } 
-
-        else 
-        {
-            time = static_cast<float> ((timer.mCurrentTickTime - timer.mInPauseTime - timer.mLastStartTime) * timer.mSecondsPerCount );
-        }
-
+        const float time = (timer.mIsStopped) 
+            ? static_cast<float> ((timer.mLastStopTime - timer.mLastStartTime) * timer.mSecondsPerCount)
+            : static_cast<float> ((timer.mCurrentTickTime - timer.mInPauseTime - timer.mLastStartTime) * timer.mSecondsPerCount);
+        
         return time;
     }
 
-    // Call before message loop.
     void reset(Timer& timer)
     {
         // Last start time will be the current elapsed time.
@@ -49,7 +55,6 @@ namespace TimerUtils
         timer.mIsStopped  = false;
     }
 
-    // Call when unpaused.
     void start(Timer& timer)
     {
         // Accumulate the time elapsed between stop and start pairs.
@@ -58,8 +63,7 @@ namespace TimerUtils
         // ----*---------------*-----------------*------------> time
         //  mLastStartTime    mLastStopTime      newStartTime     
 
-        if (timer.mIsStopped)
-        {
+        if (timer.mIsStopped) {
             // If timer was stopped then the previous tick time will be the new start time.
             QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&timer.mPreviousTickTime));
 
@@ -72,11 +76,9 @@ namespace TimerUtils
         }
     }
 
-    // Call when paused.
     void stop(Timer& timer)
     {
-        if (!timer.mIsStopped)
-        {
+        if (!timer.mIsStopped) {
             // If the timer is not stopped, then we need to update the 
             // last stop time.
             QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&timer.mLastStopTime));
@@ -85,23 +87,18 @@ namespace TimerUtils
         }
     }
 
-    // Call every frame.
     void tick(Timer& timer)
     {
         // If timer is stopped, then there is no delta time between
         // previous and current tick time.
-        if (timer.mIsStopped)
-        {
+        if (timer.mIsStopped) {
             timer.mDeltaTime = 0.0;
-        }
-
-        else 
-        {
+        } else {
             // Update current tick time.
             QueryPerformanceCounter(reinterpret_cast<LARGE_INTEGER *> (&timer.mCurrentTickTime));
 
             // Time difference between this frame and the previous.
-            // Force nonnegative.  The DXSDK's CDXUTTimer mentions that if the 
+            // Force nonnegative. The DXSDK's CDXUTTimer mentions that if the 
             // processor goes into a power save mode or we get shuffled to another
             // processor, then mDeltaTime can be negative.
             const double newDeltaTime = (timer.mCurrentTickTime - timer.mPreviousTickTime) * timer.mSecondsPerCount;

@@ -78,7 +78,7 @@ namespace Managers
         const float height = 15.0f;
         const float depth = 15.0f;
         MeshData box;
-        GeometryGenerator::createBox(width, height, depth, box);
+        GeometryGenerator::generateBox(width, height, depth, box);
 
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
@@ -127,7 +127,7 @@ namespace Managers
         const uint32_t sliceCount = 200;
         const uint32_t stackCount = 100;
         MeshData sphere;
-        GeometryGenerator::createSphere(radius, sliceCount, stackCount, sphere);
+        GeometryGenerator::generateSphere(radius, sliceCount, stackCount, sphere);
 
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
@@ -178,7 +178,7 @@ namespace Managers
         const uint32_t sliceCount = 200;
         const uint32_t stackCount = 100;
         MeshData cylinder;
-        GeometryGenerator::createCylinder(bottomRadius, topRadius, height, sliceCount, stackCount, cylinder);
+        GeometryGenerator::generateCylinder(bottomRadius, topRadius, height, sliceCount, stackCount, cylinder);
 
         // Create vertex buffer
         D3D11_BUFFER_DESC vertexBufferDesc;
@@ -225,7 +225,7 @@ namespace Managers
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGrid(400.0f, 400.0f, 100, 100, grid);
+        GeometryGenerator::generateGrid(400.0f, 400.0f, 100, 100, grid);
 
         // Cache base vertex location
         mFloorBufferInfo->mBaseVertexLocation = 0;

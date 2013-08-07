@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Manages initialization, destruction and access to vertex and index
+// buffers of the geometry that will be rendered
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include <cstdint>
@@ -7,15 +14,7 @@
 
 struct IndexedBufferInfo
 {
-    IndexedBufferInfo()
-        : mVertexBuffer(nullptr)
-        , mIndexBuffer(nullptr)
-        , mBaseVertexLocation(0)
-        , mStartIndexLocation(0)
-        , mIndexCount(0)
-    {
-
-    }
+    IndexedBufferInfo();
 
     ID3D11Buffer* mVertexBuffer;
     ID3D11Buffer* mIndexBuffer;
@@ -26,13 +25,7 @@ struct IndexedBufferInfo
 
 struct NonIndexedBufferInfo
 {
-    NonIndexedBufferInfo()
-        : mVertexBuffer(nullptr)
-        , mBaseVertexLocation(0)
-        , mVertexCount(0)
-    {
-
-    }
+    NonIndexedBufferInfo();
 
     ID3D11Buffer* mVertexBuffer;
     uint32_t mBaseVertexLocation;
@@ -41,24 +34,15 @@ struct NonIndexedBufferInfo
 
 struct Vertex
 {
-    Vertex() { }
+    Vertex();
 
-    Vertex(const DirectX::XMFLOAT3& position,  
-        const DirectX::XMFLOAT2& texCoord)
-        : mPosition(position)
-        , mTexCoord(texCoord)
-    {
-    }
+    Vertex(const DirectX::XMFLOAT3& position, const DirectX::XMFLOAT2& texCoord);
 
     Vertex(const float positionX, 
-        const float positionY, 
-        const float positionZ,
-        const float texCoordU, 
-        const float texCoordV)
-        : mPosition(positionX, positionY, positionZ)
-        , mTexCoord(texCoordU, texCoordV)
-    {
-    }
+           const float positionY, 
+           const float positionZ,
+           const float texCoordU, 
+           const float texCoordV);
 
     DirectX::XMFLOAT3 mPosition;
     DirectX::XMFLOAT2 mTexCoord;
@@ -66,11 +50,7 @@ struct Vertex
 
 struct GeometryBuffers
 {
-    GeometryBuffers()
-        : mBufferInfo(nullptr)
-    {
-
-    }
+    GeometryBuffers();
 
     IndexedBufferInfo* mBufferInfo;
 };

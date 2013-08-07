@@ -199,7 +199,7 @@ namespace Events
             const float dy = DirectX::XMConvertToRadians(0.15f * static_cast<float>(y - mouseProperties.mLastPosition.y));
 
             CameraUtils::pitch(dy, Globals::gCamera);
-            CameraUtils::rotateY(dx, Globals::gCamera);
+            CameraUtils::rotateAboutYAxis(dx, Globals::gCamera);
         }
 
         mouseProperties.mLastPosition.x = x;

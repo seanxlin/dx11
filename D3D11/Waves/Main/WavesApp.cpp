@@ -97,7 +97,7 @@ namespace Framework
         DirectX::XMStoreFloat4x4(&mPerObjectBuffer.mData.mWorldViewProjectionTranspose,
             DirectX::XMMatrixTranspose(worldViewProjection));
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mLandIndexCount, mLandIndexOffset, 0);
 
         //
@@ -113,7 +113,7 @@ namespace Framework
         // Update vertex buffer
         mImmediateContext->IASetVertexBuffers(0, 1, &mWavesVertexBuffer, &stride, &offset);
 
-        ConstantBufferUtils::applyChanges(*mImmediateContext, mPerObjectBuffer);
+        ConstantBufferUtils::copyData(*mImmediateContext, mPerObjectBuffer);
         mImmediateContext->DrawIndexed(mWavesIndexCount, mWavesIndexOffset, 0);
 
         // Reset rasterizer state to default
@@ -162,7 +162,7 @@ namespace Framework
         // Cache vertex offset, index count and offset
         //
         MeshData grid;
-        GeometryGenerator::createGrid(160.0f, 160.0f, 50, 50, grid);
+        GeometryGenerator::generateGrid(160.0f, 160.0f, 50, 50, grid);
 
         // Cache the index count
         mLandIndexCount = static_cast<uint32_t> (grid.mIndices.size());

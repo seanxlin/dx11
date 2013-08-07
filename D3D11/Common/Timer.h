@@ -1,3 +1,9 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Timer class 
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 #include <cstdint>
@@ -5,21 +11,7 @@
 
 struct Timer
 {
-    Timer()
-        : mLastStartTime(0)
-        , mInPauseTime(0)
-        , mPreviousTickTime(0)
-        , mCurrentTickTime(0)
-        , mSecondsPerCount(0.0)
-        , mDeltaTime(-1.0)
-        , mIsStopped(false)
-    {
-        // Get the frequency of the high-resolution performance counter, if one exists. 
-        // The frequency cannot change while the system is running.
-        uint64_t countsPerSec;
-        QueryPerformanceFrequency(reinterpret_cast<LARGE_INTEGER *> (&countsPerSec));
-        mSecondsPerCount = 1.0 / static_cast<double> (countsPerSec);
-    }
+    Timer();
 
     uint64_t mLastStartTime;
     uint64_t mInPauseTime;

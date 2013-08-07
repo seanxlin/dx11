@@ -1,3 +1,10 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Manager class to initialize, destroy and access to shaders and
+// input layouts
+//
+//////////////////////////////////////////////////////////////////////////
+
 #pragma once
 
 struct ID3D11ComputeShader;
@@ -10,15 +17,7 @@ struct ID3D11VertexShader;
 
 struct Shaders
 {
-    Shaders()
-        : mTerrainVS(nullptr)
-        , mTerrainIL(nullptr)
-        , mTerrainPS(nullptr)
-        , mTerrainHS(nullptr)
-        , mTerrainDS(nullptr)
-    {
-
-    }
+    Shaders();
 
     ID3D11VertexShader* mTerrainVS;
     ID3D11InputLayout* mTerrainIL;

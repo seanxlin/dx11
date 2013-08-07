@@ -125,7 +125,7 @@ namespace TerrainSceneUtils
         const DirectX::XMMATRIX textureScale = DirectX::XMLoadFloat4x4(&terrainScene.mTextureScaleMatrix);
         DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mWorld, DirectX::XMMatrixTranspose(world));
         DirectX::XMStoreFloat4x4(&terrainScene.mGridVSPerObjectBuffer.mData.mTextureScale, DirectX::XMMatrixTranspose(textureScale));
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridVSPerObjectBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridVSPerObjectBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const vertexShaderBuffers[] = 
@@ -144,7 +144,7 @@ namespace TerrainSceneUtils
 
         // Per Frame Constant Buffer
         terrainScene.mGridHSPerFrameBuffer.mData.mEyePositionW = Globals::gCamera.mPosition;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridHSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridHSPerFrameBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const hullShaderBuffers = 
@@ -176,7 +176,7 @@ namespace TerrainSceneUtils
         const float heightMapTexelSize = 1.0f / 512.0f;
         terrainScene.mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[0] = heightMapTexelSize;
         terrainScene.mGridDSPerFrameBuffer.mData.mHeightMapTexelWidthHeight[1] = heightMapTexelSize;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridDSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridDSPerFrameBuffer);
 
         // Set Constant Buffers
         ID3D11Buffer* const domainShaderBuffers = 
@@ -214,7 +214,7 @@ namespace TerrainSceneUtils
         terrainScene.mGridPSPerFrameBuffer.mData.mTexelCellSpaceU = heightMapTexelSize;
         terrainScene.mGridPSPerFrameBuffer.mData.mTexelCellSpaceV = heightMapTexelSize;
         terrainScene.mGridPSPerFrameBuffer.mData.mWorldCellSpace = 0.5f;
-        ConstantBufferUtils::applyChanges(context, terrainScene.mGridPSPerFrameBuffer);
+        ConstantBufferUtils::copyData(context, terrainScene.mGridPSPerFrameBuffer);
 
         // Set constant buffers
         ID3D11Buffer * const pixelShaderBuffers[] = 
