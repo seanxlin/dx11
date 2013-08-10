@@ -27,10 +27,8 @@ namespace
         std::vector<ID3D11Texture2D*> sourceTextures;
         sourceTextures.resize(numFilenames);
         for(uint32_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
-            ID3D11Texture2D * const resource = sourceTextures[filenameIndex];
-            assert(resource);
-            ID3D11Resource* texture = reinterpret_cast<ID3D11Resource*> (resource);
-            assert(texture);
+            ID3D11Texture2D * &resource = sourceTextures[filenameIndex];
+            ID3D11Resource* &texture = reinterpret_cast<ID3D11Resource*&> (resource);
 
             ID3D11ShaderResourceView* shaderResourceView;
             HRESULT result = CreateDDSTextureFromFile(&device, 
