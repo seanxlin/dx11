@@ -1,0 +1,16 @@
+//////////////////////////////////////////////////////////////////////////
+//
+// Main application functions
+//
+//////////////////////////////////////////////////////////////////////////
+
+#pragma once
+
+namespace Application
+{
+    bool initApplication();
+
+    // Executes application until it finishes
+    // and returns its state. 
+    int executeApplication();
+}
