@@ -144,9 +144,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="HLSL\TerrainCS.hlsl">
-      <Filter>HLSL</Filter>
-    </FxCompile>
     <FxCompile Include="HLSL\TerrainDS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
@@ -157,6 +154,12 @@
       <Filter>HLSL</Filter>
     </FxCompile>
     <FxCompile Include="HLSL\TerrainVS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ParticleUpdaterCS.hlsl">
+      <Filter>HLSL</Filter>
+    </FxCompile>
+    <FxCompile Include="HLSL\ParticleEmitterCS.hlsl">
       <Filter>HLSL</Filter>
     </FxCompile>
   </ItemGroup>

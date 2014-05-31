@@ -46,10 +46,10 @@ namespace
         std::vector<Vertex> vertices;
         vertices.reserve(totalVertexCount);
         for (size_t vertexIndex = 0; vertexIndex < totalVertexCount; ++vertexIndex) {
-
-            vertices.push_back(Vertex(grid.mVertices[vertexIndex].mPosition, 
-                                      grid.mVertices[vertexIndex].mTexCoord)
-                              );
+            const DirectX::XMFLOAT3& position = grid.mVertices[vertexIndex].mPosition;
+            const DirectX::XMFLOAT2& texCoord = grid.mVertices[vertexIndex].mTexCoord;
+            const Vertex newVertex(position, texCoord);
+            vertices.push_back(newVertex);
         }
         initData.pSysMem = &vertices[0];
         HRESULT result = device.CreateBuffer(&vertexBufferDesc, 
@@ -134,12 +134,12 @@ GeometryBuffers::GeometryBuffers()
 
 namespace GeometryBuffersUtils
 {   
-    void initAll(ID3D11Device& device, GeometryBuffers& geometryBuffers)
+    void init(ID3D11Device& device, GeometryBuffers& geometryBuffers)
     {
         buildTerrainBuffers(device, geometryBuffers);
     }
 
-    void destroyAll(GeometryBuffers& geometryBuffers)
+    void destroy(GeometryBuffers& geometryBuffers)
     {
         assert(geometryBuffers.mBufferInfo);
 

@@ -132,7 +132,7 @@ ShaderResources::ShaderResources()
 
 namespace ShaderResourcesUtils
 {    
-    void initAll(ID3D11Device& device, 
+    void init(ID3D11Device& device, 
                  ID3D11DeviceContext& context, 
                  ShaderResources& shaderResources)
     {
@@ -176,7 +176,7 @@ namespace ShaderResourcesUtils
         texture->Release();
     }
     
-    void destroyAll(ShaderResources& shaderResources)
+    void destroy(ShaderResources& shaderResources)
     {
         assert(shaderResources.mHeightMapSRV);
         assert(shaderResources.mTerrainDiffuseMapArraySRV);

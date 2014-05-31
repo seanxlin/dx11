@@ -9,7 +9,7 @@
 
 namespace
 {
-    const float gMinTessellationFactor = 0.001f;
+    const float gMinTessellationFactor = 0.0001f;
     const float gMaxTessellationFactor = 5.0f;
     const float gTessellationOffset = 0.0025f;
 }
@@ -70,8 +70,8 @@ namespace Framework
 
         setShapesGeneralSettings();
        
-        drawFloor();
-        //drawCylinder();
+        //drawFloor();
+        drawCylinder();
         //drawSphere();
         //drawBox();
 

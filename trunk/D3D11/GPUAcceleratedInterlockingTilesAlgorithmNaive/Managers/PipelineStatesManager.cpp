@@ -14,7 +14,7 @@ PipelineStates::PipelineStates()
 
 namespace PipelineStatesUtils
 {
-    void initAll(ID3D11Device& device, PipelineStates& pipelineStates)
+    void init(ID3D11Device& device, PipelineStates& pipelineStates)
     {
         assert(pipelineStates.mLinearClampSS == nullptr);
         assert(pipelineStates.mLinearWrapSS == nullptr);
@@ -80,7 +80,7 @@ namespace PipelineStatesUtils
         DxErrorChecker(result);
     }
 
-    void destroyAll(PipelineStates& pipelineStates)
+    void destroy(PipelineStates& pipelineStates)
     {
         assert(pipelineStates.mLinearClampSS);
         assert(pipelineStates.mLinearWrapSS);

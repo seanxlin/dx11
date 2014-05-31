@@ -1,7 +1,6 @@
 #include "ShaderResourcesManager.h"
 
 #include <cassert>
-#include <fstream>
 #include <D3D11.h>
 #include <vector>
 
@@ -21,27 +20,27 @@ namespace
         // load the image data from file.  We use the STAGING usage so the
         // CPU can read the resource.
         //
-
-        const uint32_t numFilenames = static_cast<uint32_t> (filenames.size());
-
+                
         std::vector<ID3D11Texture2D*> sourceTextures;
+        const uint32_t numFilenames = static_cast<uint32_t> (filenames.size());
         sourceTextures.resize(numFilenames);
         for(uint32_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
-            ID3D11Texture2D * &resource = sourceTextures[filenameIndex];
+            ID3D11Texture2D* &resource = sourceTextures[filenameIndex];
             ID3D11Resource* &texture = reinterpret_cast<ID3D11Resource*&> (resource);
+            const wchar_t* filename = filenames[filenameIndex].c_str();
 
             ID3D11ShaderResourceView* shaderResourceView;
-            HRESULT result = CreateDDSTextureFromFile(&device, 
-                                                      filenames[filenameIndex].c_str(),
-                                                      &texture, 
-                                                      &shaderResourceView);
+            const HRESULT result = CreateDDSTextureFromFile(&device, 
+                                                            filename,
+                                                            &texture, 
+                                                            &shaderResourceView);
             DxErrorChecker(result);
 
             shaderResourceView->Release();
         }
 
         //
-        // Create the texture array.  Each element in the texture 
+        // Create the texture array. Each element in the texture 
         // array has the same format/dimensions.
         //
 
@@ -77,16 +76,13 @@ namespace
         const size_t mipLevels = textureElementDesc.MipLevels; 
         for (uint32_t filenameIndex = 0; filenameIndex < numFilenames; ++filenameIndex) {
             // for each mipmap level...
-            for(uint32_t mipLevelIndex = 0; 
-                         mipLevelIndex < mipLevels; 
-                         ++mipLevelIndex) {
+            for(uint32_t mipLevelIndex = 0; mipLevelIndex < mipLevels; ++mipLevelIndex) {
                 const uint32_t subResourceIndex = D3D11CalcSubresource(mipLevelIndex, 
                                                                        0, 
                                                                        mipLevels);
                 const uint32_t destinationSubresource = 
-                    D3D11CalcSubresource(mipLevelIndex,
-                                         filenameIndex,
-                                         mipLevels);
+                    D3D11CalcSubresource(mipLevelIndex, filenameIndex, mipLevels);
+
                 context.CopySubresourceRegion(textureArray, 
                                               static_cast<uint32_t> (destinationSubresource), 
                                               0, 
@@ -99,16 +95,18 @@ namespace
         }	
 
         // Create a resource view to the texture array.
-        D3D11_SHADER_RESOURCE_VIEW_DESC viewDesc;
-        viewDesc.Format = textureArrayDesc.Format;
-        viewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-        viewDesc.Texture2DArray.MostDetailedMip = 0;
-        viewDesc.Texture2DArray.MipLevels = textureArrayDesc.MipLevels;
-        viewDesc.Texture2DArray.FirstArraySlice = 0;
-        viewDesc.Texture2DArray.ArraySize = numFilenames;
+        D3D11_SHADER_RESOURCE_VIEW_DESC shaderResourceViewDesc;
+        shaderResourceViewDesc.Format = textureArrayDesc.Format;
+        shaderResourceViewDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+        shaderResourceViewDesc.Texture2DArray.MostDetailedMip = 0;
+        shaderResourceViewDesc.Texture2DArray.MipLevels = textureArrayDesc.MipLevels;
+        shaderResourceViewDesc.Texture2DArray.FirstArraySlice = 0;
+        shaderResourceViewDesc.Texture2DArray.ArraySize = numFilenames;
 
         ID3D11ShaderResourceView* textureArraySRV;
-        result = device.CreateShaderResourceView(textureArray, &viewDesc, &textureArraySRV);
+        result = device.CreateShaderResourceView(textureArray, 
+                                                 &shaderResourceViewDesc, 
+                                                 &textureArraySRV);
         DxErrorChecker(result);
 
         // Cleanup--we only need the resource view.
@@ -132,17 +130,16 @@ ShaderResources::ShaderResources()
 
 namespace ShaderResourcesUtils
 {    
-    void initAll(ID3D11Device& device, 
-                 ID3D11DeviceContext& context, 
-                 ShaderResources& shaderResources)
+    void init(ID3D11Device& device, 
+              ID3D11DeviceContext& context, 
+              ShaderResources& shaderResources)
     {
         assert(shaderResources.mHeightMapSRV == nullptr);
         assert(shaderResources.mTerrainDiffuseMapArraySRV == nullptr);
-        assert(shaderResources.mTerrainBlendMapSRV == nullptr);
-
-        ID3D11Resource* texture;
-
-        // Height map
+        assert(shaderResources.mTerrainBlendMapSRV == nullptr);        
+                
+        // Load, apply filters and build
+        // shader resource for heightmap
         const uint32_t heightMapDimension = 512;
         HeightMap heightMap(heightMapDimension);
         const float heightMapScaleFactor = 150.0f;
@@ -160,23 +157,21 @@ namespace ShaderResourcesUtils
         texturesFilenames.push_back(L"Resources/Textures/grass.dds");
         texturesFilenames.push_back(L"Resources/Textures/lightdirt.dds");
         texturesFilenames.push_back(L"Resources/Textures/darkdirt.dds");
-        shaderResources.mTerrainDiffuseMapArraySRV = createTexture2DArraySRV(
-            device,
-            context,
-            texturesFilenames
-        ); 
+        shaderResources.mTerrainDiffuseMapArraySRV = 
+            createTexture2DArraySRV(device, context, texturesFilenames); 
 
-        // Blend map
+        // Blend map texture
+        ID3D11Resource* blendMapTexture;
         const HRESULT result = CreateDDSTextureFromFile(&device, 
                                                         L"Resources/Textures/blend.dds", 
-                                                        &texture,
+                                                        &blendMapTexture,
                                                         &shaderResources.mTerrainBlendMapSRV);
         DxErrorChecker(result);  
 
-        texture->Release();
+        blendMapTexture->Release();
     }
     
-    void destroyAll(ShaderResources& shaderResources)
+    void destroy(ShaderResources& shaderResources)
     {
         assert(shaderResources.mHeightMapSRV);
         assert(shaderResources.mTerrainDiffuseMapArraySRV);

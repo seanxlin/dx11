@@ -7,7 +7,6 @@
 
 #pragma once
 
-struct ID3D11ComputeShader;
 struct ID3D11Device;
 struct ID3D11DomainShader;
 struct ID3D11HullShader;
@@ -28,6 +27,6 @@ struct Shaders
 
 namespace ShadersUtils
 {
-    void initAll(ID3D11Device& device, Shaders& shaders);
-    void destroyAll(Shaders& shaders);
+    void init(ID3D11Device& device, Shaders& shaders);
+    void destroy(Shaders& shaders);
 }
