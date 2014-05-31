@@ -134,12 +134,12 @@ GeometryBuffers::GeometryBuffers()
 
 namespace GeometryBuffersUtils
 {   
-    void initAll(ID3D11Device& device, GeometryBuffers& geometryBuffers)
+    void init(ID3D11Device& device, GeometryBuffers& geometryBuffers)
     {
         buildTerrainBuffers(device, geometryBuffers);
     }
 
-    void destroyAll(GeometryBuffers& geometryBuffers)
+    void destroy(GeometryBuffers& geometryBuffers)
     {
         assert(geometryBuffers.mBufferInfo);
 

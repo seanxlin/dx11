@@ -28,6 +28,6 @@ struct Shaders
 
 namespace ShadersUtils
 {
-    void initAll(ID3D11Device& device, Shaders& shaders);
-    void destroyAll(Shaders& shaders);
+    void init(ID3D11Device& device, Shaders& shaders);
+    void destroy(Shaders& shaders);
 }

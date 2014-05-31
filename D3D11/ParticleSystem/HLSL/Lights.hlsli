@@ -9,6 +9,7 @@ struct DirectionalLight
 	float4 mAmbient;
 	float4 mDiffuse;
 	float4 mSpecular;
+
 	float3 mDirection;
 	float mPad;
 };
@@ -84,9 +85,9 @@ void computeDirectionalLight(const Material material,
 	[flatten]
 	if (diffuseFactor > 0.0f) {
 		const float3 lightReflection = reflect(-lightVector, normal);
-		const float specularFactor = 
-            pow(max(dot(lightReflection, toEye), 0.0f),
-                material.mSpecular.w);
+        const float specularPower = material.mSpecular.w;
+        const float dotLightReflectionToEye = dot(lightReflection, toEye);
+		const float specularFactor = pow(max(dotLightReflectionToEye, 0.0f), specularPower);
 					
 		diffuse = diffuseFactor * material.mDiffuse * light.mDiffuse;
 		specular = specularFactor * material.mSpecular * light.mSpecular;
@@ -139,21 +140,22 @@ void computePointLight(const Material material,
 	[flatten]
 	if (diffuseFactor > 0.0f) {
 		const float3 lightReflection = reflect(-lightVector, normal);
-		const float specularFactor = 
-            pow(max(dot(lightReflection, toEye), 0.0f),
-                material.mSpecular.w);
+		const float specularPower = material.mSpecular.w;
+        const float dotLightReflectionToEye = dot(lightReflection, toEye);
+		const float specularFactor = pow(max(dotLightReflectionToEye, 0.0f), specularPower);
 					
 		diffuse = diffuseFactor * material.mDiffuse * light.mDiffuse;
 		specular = specularFactor * material.mSpecular * light.mSpecular;
 	}
 
-	// Attenuate
-	float attenuation = 
-        1.0f / dot(light.mAttenuation, 
-                   float3(1.0f, 
-                          surfaceToLightDistance, 
-                          surfaceToLightDistance * surfaceToLightDistance));
-
+	
+    // 1.0f | x | x^2 where x = surfaceToLightDistance
+    const float3 attenuationData = float3(1.0f, 
+                                          surfaceToLightDistance,
+                                          surfaceToLightDistance * surfaceToLightDistance);
+    // Attenuate
+	const float attenuation = 1.0f / dot(light.mAttenuation, attenuationData);
+    
 	diffuse *= attenuation;
 	specular *= attenuation;
 }
@@ -204,9 +206,9 @@ void computeSpotLight(const Material material,
 	[flatten]
 	if (diffuseFactor > 0.0f) {
 		const float3 lightReflection = reflect(-lightVector, normal);
-		const float specularFactor = 
-            pow(max(dot(lightReflection, toEye), 0.0f),
-                material.mSpecular.w);
+		const float specularPower = material.mSpecular.w;
+        const float dotLightReflectionToEye = dot(lightReflection, toEye);
+		const float specularFactor = pow(max(dotLightReflectionToEye, 0.0f), specularPower);
 					
 		diffuse = diffuseFactor * material.mDiffuse * light.mDiffuse;
 		specular = specularFactor * material.mSpecular * light.mSpecular;
@@ -214,15 +216,15 @@ void computeSpotLight(const Material material,
 	
 	// Scale by spotlight factor and attenuate.
 	const float spotLightFactor = 
-        pow(max(dot(-1.0f * lightVector, light.mDirection), 0.0f), 
-            light.mSpot);
+        pow(max(dot(-1.0f * lightVector, light.mDirection), 0.0f), light.mSpot);
 
+    // 1.0f | x | x^2 where x = surfaceToLightDistance
+    const float3 attenuationData = float3(1.0f, 
+                                          surfaceToLightDistance,
+                                          surfaceToLightDistance * surfaceToLightDistance);
+   
 	// Scale by spotlight factor and attenuate.
-	const float attenuation = 
-        spotLightFactor / dot(light.mAttenuation, 
-                              float3(1.0f, 
-                                     surfaceToLightDistance,
-                                     surfaceToLightDistance * surfaceToLightDistance));
+	const float attenuation = spotLightFactor / dot(light.mAttenuation, attenuationData);
 
 	ambient *= spotLightFactor;
 	diffuse *= attenuation;

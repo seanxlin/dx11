@@ -20,6 +20,6 @@ struct PipelineStates
 
 namespace PipelineStatesUtils
 {
-    void initAll(ID3D11Device& device, PipelineStates& pipelineStates);
-    void destroyAll(PipelineStates& pipelineStates);
+    void init(ID3D11Device& device, PipelineStates& pipelineStates);
+    void destroy(PipelineStates& pipelineStates);
 }

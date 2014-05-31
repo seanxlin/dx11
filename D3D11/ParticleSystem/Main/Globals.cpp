@@ -24,16 +24,16 @@ namespace GlobalsUtils
             return success;
         }
 
-        ShadersUtils::initAll(*Globals::gDirect3DData.mDevice, Globals::gShaders);
+        ShadersUtils::init(*Globals::gDirect3DData.mDevice, Globals::gShaders);
 
-        ShaderResourcesUtils::initAll(*Globals::gDirect3DData.mDevice,
+        ShaderResourcesUtils::init(*Globals::gDirect3DData.mDevice,
                                       *Globals::gDirect3DData.mImmediateContext, 
                                       Globals::gShaderResources);
         
-        PipelineStatesUtils::initAll(*Globals::gDirect3DData.mDevice, 
+        PipelineStatesUtils::init(*Globals::gDirect3DData.mDevice, 
                                      Globals::gPipelineStates);
 
-        GeometryBuffersUtils::initAll(*Globals::gDirect3DData.mDevice, 
+        GeometryBuffersUtils::init(*Globals::gDirect3DData.mDevice, 
                                       Globals::gGeometryBuffers);
     
         return success;
@@ -41,13 +41,13 @@ namespace GlobalsUtils
 
     void destroy()
     {
-        ShadersUtils::destroyAll(Globals::gShaders);
+        ShadersUtils::destroy(Globals::gShaders);
 
-        ShaderResourcesUtils::destroyAll(Globals::gShaderResources);
+        ShaderResourcesUtils::destroy(Globals::gShaderResources);
 
-        PipelineStatesUtils::destroyAll(Globals::gPipelineStates);
+        PipelineStatesUtils::destroy(Globals::gPipelineStates);
 
-        GeometryBuffersUtils::destroyAll(Globals::gGeometryBuffers);
+        GeometryBuffersUtils::destroy(Globals::gGeometryBuffers);
 
         Direct3DDataUtils::destroy(Globals::gDirect3DData);
     }

@@ -60,7 +60,7 @@ DomainShaderOutput main(in PatchTess patchTess,
 	const float height = gNormalMap.SampleLevel(mySampler, output.mTexCoord, mipLevel).a;
 	
 	// Offset vertex along normal.
-    const float scaleOffset = 3.0f;
+    const float scaleOffset = 1.0f;
 	output.mPositionW += height * scaleOffset * output.mNormalW;
 	
 	// Project to homogeneous clip space.

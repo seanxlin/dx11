@@ -198,9 +198,9 @@ namespace Managers
         mSphereBufferInfo->mBaseVertexLocation = 0;
 
         // Fill vertices to insert in the vertex buffer
-        const float sphereRadius = 70.0f;
+        const float sphereRadius = 20.0f;
         MeshData sphere;
-        GeometryGenerator::generateSphere(sphereRadius, 50, 50, sphere);
+        GeometryGenerator::generateSphere(sphereRadius, 25, 25, sphere);
 
         std::vector<Geometry::CommonVertex> vertices(sphere.mVertices.size());
 

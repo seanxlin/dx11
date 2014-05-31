@@ -53,7 +53,7 @@ namespace
 
 namespace ShadersUtils
 {    
-    void initAll(ID3D11Device& device, Shaders& shaders)
+    void init(ID3D11Device& device, Shaders& shaders)
     {
         assert(shaders.mTerrainDS == nullptr);
         assert(shaders.mTerrainVS == nullptr);
@@ -112,7 +112,7 @@ namespace ShadersUtils
         DxErrorChecker(result);
     }
     
-    void destroyAll(Shaders& shaders)
+    void destroy(Shaders& shaders)
     {
         assert(shaders.mTerrainDS);
         assert(shaders.mTerrainVS);
